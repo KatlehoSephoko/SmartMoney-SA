@@ -127,14 +127,18 @@ addBtn.addEventListener('click', () => {
     levelDisplay.style.color = "#15803d";
   }
 
-  // Update Savings Goal (assuming balance goes to Emergency Fund)
-  if (currentBalance >= 0) {
-    let goalPercentage = (currentBalance / goalTarget) * 100;
-    if (goalPercentage > 100) goalPercentage = 100; // Cap at 100%
-    
-    goalBar.style.width = goalPercentage + '%';
-    goalText.textContent = Math.round(goalPercentage) + '% Reached';
+  // Update Savings Goal Progress Bar
+  let goalPercentage = (currentBalance / goalTarget) * 100;
+  
+  // Fix: Handle negative balances and over-achieved goals properly
+  if (currentBalance <= 0) {
+    goalPercentage = 0;
+  } else if (goalPercentage > 100) {
+    goalPercentage = 100;
   }
+  
+  goalBar.style.width = goalPercentage + '%';
+  goalText.textContent = Math.round(goalPercentage) + '% Reached';
 
   amountInput.value = '';
 });
@@ -157,7 +161,6 @@ simBtn.addEventListener('click', () => {
   const monthlyRate = 0.08 / 12;
   const months = 60;
   
-  // Future Value of a Series formula
   const futureValue = monthlyContribution * (((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate));
 
   simDisplay.textContent = 'R ' + futureValue.toLocaleString(undefined, { maximumFractionDigits: 2 });
