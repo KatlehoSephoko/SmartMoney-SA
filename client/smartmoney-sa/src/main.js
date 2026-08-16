@@ -19,7 +19,7 @@ document.querySelector('#app').innerHTML = `
       </div>
       <div class="stat">
         <h3>Gamification Level</h3>
-        <p id="user-level">Novice Saver</p>
+        <p id="user-level" style="font-weight: bold; color: #374151;">Novice Saver</p>
       </div>
       <div class="stat">
         <h3>Active Goals</h3>
@@ -32,18 +32,34 @@ document.querySelector('#app').innerHTML = `
       <div class="card">
         <h2>Budget Planner</h2>
         <p style="font-size: 13px; color: #6b7280; margin-bottom: 15px;">Add deposits to earn points!</p>
+        
         <div class="form-group">
           <label>Amount (ZAR)</label>
           <input type="number" id="transaction-amount" placeholder="Enter amount..." />
         </div>
+        
         <div class="form-group">
-          <label>Category</label>
+          <label>Type</label>
           <select id="transaction-type">
-            <option value="Deposit">Deposit</option>
-            <option value="Expense">Expense</option>
+            <option value="Deposit">Income / Deposit (+)</option>
+            <option value="Expense">Expense (-)</option>
           </select>
         </div>
-        <button id="add-transaction-btn">Add Transaction</button>
+
+        <div class="form-group">
+          <label>Category</label>
+          <select id="transaction-category">
+            <option value="Salary / Savings">Salary / Savings</option>
+            <option value="Transportation">Transportation</option>
+            <option value="Accommodation & Rent">Accommodation & Rent</option>
+            <option value="Takeout & Food">Takeout & Food</option>
+            <option value="Tech & Hardware">Tech & Hardware</option>
+            <option value="Sports & Leisure">Sports & Leisure</option>
+            <option value="Holidays & Travel">Holidays & Travel</option>
+          </select>
+        </div>
+        
+        <button id="add-transaction-btn" style="width: 100%; margin-top: 5px;">Add Transaction</button>
       </div>
 
       <!-- Savings Goals -->
@@ -59,6 +75,16 @@ document.querySelector('#app').innerHTML = `
           <div class="progress-text" id="goal-text">77% Reached</div>
         </div>
       </div>
+    </div>
+
+    <!-- Recent Transactions List -->
+    <div class="card" style="margin-top: 20px;">
+      <h2>Recent Transactions</h2>
+      <ul id="transaction-list" style="list-style: none; padding: 0; margin: 0;">
+        <li id="empty-state" style="padding: 15px 0; color: #6b7280; font-style: italic; text-align: center;">
+          No transactions yet. Add one above!
+        </li>
+      </ul>
     </div>
 
     <!-- Financial Simulator -->
@@ -88,18 +114,22 @@ document.querySelector('#app').innerHTML = `
 let currentBalance = 15400;
 let points = 1250;
 let goalTarget = 20000;
+let transactionCount = 0;
 
 // Elements
 const balanceDisplay = document.getElementById('total-balance');
 const amountInput = document.getElementById('transaction-amount');
 const typeSelect = document.getElementById('transaction-type');
+const categorySelect = document.getElementById('transaction-category');
 const addBtn = document.getElementById('add-transaction-btn');
 const pointsDisplay = document.getElementById('user-points');
 const levelDisplay = document.getElementById('user-level');
 const goalBar = document.getElementById('goal-bar');
 const goalText = document.getElementById('goal-text');
+const transactionList = document.getElementById('transaction-list');
+const emptyState = document.getElementById('empty-state');
 
-// 1. Budget Planner & Gamification Logic
+// 1. Main Dashboard Logic
 addBtn.addEventListener('click', () => {
   const amount = parseFloat(amountInput.value);
 
@@ -108,38 +138,75 @@ addBtn.addEventListener('click', () => {
     return;
   }
 
-  if (typeSelect.value === 'Deposit') {
+  const isDeposit = typeSelect.value === 'Deposit';
+  const categoryName = categorySelect.value;
+
+  if (isDeposit) {
     currentBalance += amount;
-    // Gamification: Earn points for depositing money
     points += 50; 
   } else {
     currentBalance -= amount;
   }
 
-  // Update Balance
+  // Update Balance UI
   balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString();
   balanceDisplay.className = currentBalance >= 0 ? 'balance positive' : 'balance negative';
 
-  // Update Points & Levels
+  // Update Points & Levels UI
   pointsDisplay.textContent = points.toLocaleString() + ' pts';
-  if (points >= 1500) {
+  if (points >= 2000) {
+    levelDisplay.textContent = "Financial Guru 👑";
+    levelDisplay.style.color = "#8b5cf6"; 
+  } else if (points >= 1800) {
+    levelDisplay.textContent = "Master Investor 💎";
+    levelDisplay.style.color = "#0ea5e9"; 
+  } else if (points >= 1600) {
     levelDisplay.textContent = "Pro Saver 🏆";
-    levelDisplay.style.color = "#15803d";
+    levelDisplay.style.color = "#15803d"; 
+  } else if (points >= 1400) {
+    levelDisplay.textContent = "Dedicated Saver ⭐";
+    levelDisplay.style.color = "#d97706"; 
   }
 
-  // Update Savings Goal Progress Bar
+  // Update Savings Goal UI
   let goalPercentage = (currentBalance / goalTarget) * 100;
-  
-  // Fix: Handle negative balances and over-achieved goals properly
-  if (currentBalance <= 0) {
-    goalPercentage = 0;
-  } else if (goalPercentage > 100) {
-    goalPercentage = 100;
-  }
-  
+  if (currentBalance <= 0) goalPercentage = 0;
+  if (goalPercentage > 100) goalPercentage = 100;
   goalBar.style.width = goalPercentage + '%';
   goalText.textContent = Math.round(goalPercentage) + '% Reached';
 
+  // --- NEW: Add to Transaction List ---
+  if (transactionCount === 0 && emptyState) {
+    emptyState.remove(); // Remove the "No transactions yet" text
+  }
+  transactionCount++;
+
+  // Create a new list item using JavaScript
+  const li = document.createElement('li');
+  li.style.padding = '12px 0';
+  li.style.borderBottom = '1px solid #e5e7eb';
+  li.style.display = 'flex';
+  li.style.justifyContent = 'space-between';
+  li.style.alignItems = 'center';
+
+  const amountColor = isDeposit ? '#15803d' : '#dc2626';
+  const amountPrefix = isDeposit ? '+ R ' : '- R ';
+
+  // Inject the specific transaction data into the list item
+  li.innerHTML = `
+    <div>
+      <strong style="color: #374151; font-size: 15px;">${categoryName}</strong>
+      <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">Just now</div>
+    </div>
+    <div style="font-weight: bold; color: ${amountColor};">
+      ${amountPrefix}${amount.toLocaleString()}
+    </div>
+  `;
+
+  // Add the new item to the top of the list!
+  transactionList.prepend(li);
+
+  // Clear the input field for the next entry
   amountInput.value = '';
 });
 
@@ -151,16 +218,13 @@ const simDisplay = document.getElementById('sim-display');
 
 simBtn.addEventListener('click', () => {
   const monthlyContribution = parseFloat(simAmountInput.value);
-  
   if (isNaN(monthlyContribution) || monthlyContribution <= 0) {
     alert("Enter a valid monthly contribution.");
     return;
   }
 
-  // Compound interest formula for monthly contributions over 5 years (60 months) at 8% annual
   const monthlyRate = 0.08 / 12;
   const months = 60;
-  
   const futureValue = monthlyContribution * (((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate));
 
   simDisplay.textContent = 'R ' + futureValue.toLocaleString(undefined, { maximumFractionDigits: 2 });
