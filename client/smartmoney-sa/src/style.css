@@ -1,5 +1,4 @@
 /* =========================
-   SmartMoney-SA
    Global Styles
    ========================= */
 
@@ -13,11 +12,8 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   background: #f4f7f5;
   color: #1f2937;
+  transition: background 0.3s ease, color 0.3s ease;
 }
-
-/* =========================
-   Main Container
-   ========================= */
 
 .container {
   width: 100%;
@@ -72,6 +68,7 @@ body {
   border-radius: 14px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   margin-bottom: 20px;
+  transition: background 0.3s ease;
 }
 
 .card h2 {
@@ -225,21 +222,7 @@ button.secondary {
 .points {
   font-size: 32px;
   font-weight: bold;
-  color: #14532d;
-}
-
-.badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.badge {
-  background: #ecfdf5;
-  color: #14532d;
-  padding: 10px 14px;
-  border-radius: 20px;
-  font-weight: bold;
+  color: #ffffff;
 }
 
 /* =========================
@@ -274,31 +257,60 @@ button.secondary {
 }
 
 /* =========================
-   Alerts
+   Dark Mode Styles
    ========================= */
-
-.success {
-  background: #dcfce7;
-  color: #166534;
-  padding: 12px;
-  border-radius: 8px;
-  margin-top: 10px;
+body.dark-mode {
+  background: #111827;
+  color: #f9fafb;
 }
 
-.warning {
-  background: #fef3c7;
-  color: #92400e;
-  padding: 12px;
-  border-radius: 8px;
-  margin-top: 10px;
+body.dark-mode .card,
+body.dark-mode .stat {
+  background: #1f2937;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-.error {
-  background: #fee2e2;
-  color: #991b1b;
-  padding: 12px;
-  border-radius: 8px;
-  margin-top: 10px;
+body.dark-mode .card h2,
+body.dark-mode .card h3,
+body.dark-mode .stat h3,
+body.dark-mode .stat p,
+body.dark-mode label {
+  color: #f9fafb;
+}
+
+body.dark-mode input,
+body.dark-mode select {
+  background: #374151;
+  border-color: #4b5563;
+  color: white;
+}
+
+body.dark-mode .goal {
+  border-color: #4b5563;
+}
+
+body.dark-mode .progress-container {
+  background: #4b5563;
+}
+
+body.dark-mode .progress-text {
+  color: #9ca3af;
+}
+
+body.dark-mode .simulator-result {
+  background: #064e3b;
+}
+
+body.dark-mode li {
+  border-bottom: 1px solid #374151 !important;
+}
+
+body.dark-mode li strong {
+  color: #f9fafb !important;
+}
+
+body.dark-mode #empty-state {
+  color: #9ca3af !important;
 }
 
 /* =========================
