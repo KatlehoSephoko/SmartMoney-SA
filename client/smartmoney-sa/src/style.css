@@ -23,28 +23,53 @@ body {
 }
 
 /* =========================
+   Top Bar & Theme Toggle
+   ========================= */
+
+.top-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+}
+
+.theme-btn {
+  background: #e5e7eb;
+  color: #374151;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* =========================
    Navigation
    ========================= */
 
 .navbar {
   background: #14532d;
   color: white;
-  padding: 18px 25px;
+  padding: 22px 25px;
   border-radius: 12px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column; /* This stacks the text and points */
+  justify-content: center;
+  align-items: center; /* This centers everything horizontally */
+  text-align: center;
+  gap: 12px;
   margin-bottom: 25px;
 }
 
 .navbar h1 {
   margin: 0;
-  font-size: 24px;
+  font-size: 26px;
 }
 
 .navbar p {
   margin: 4px 0 0;
-  font-size: 14px;
+  font-size: 15px;
   opacity: 0.9;
 }
 
@@ -264,6 +289,11 @@ body.dark-mode {
   color: #f9fafb;
 }
 
+body.dark-mode .theme-btn {
+  background: #374151;
+  color: #f9fafb;
+}
+
 body.dark-mode .card,
 body.dark-mode .stat {
   background: #1f2937;
@@ -320,12 +350,6 @@ body.dark-mode #empty-state {
 @media (max-width: 768px) {
   .container {
     padding: 15px;
-  }
-
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
   }
 
   .dashboard-grid {
