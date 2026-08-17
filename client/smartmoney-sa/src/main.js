@@ -2,16 +2,19 @@ import './style.css'
 
 document.querySelector('#app').innerHTML = `
   <div class="container">
-    <!-- Navigation -->
+    
+    <!-- Top Controls (Dark Mode) -->
+    <div class="top-controls">
+      <button id="theme-toggle" class="theme-btn">🌙 Dark Mode</button>
+    </div>
+
+    <!-- Navigation (Centered) -->
     <div class="navbar">
       <div>
         <h1>SmartMoney-SA</h1>
         <p>Your Personal Finance Dashboard</p>
       </div>
-      <div style="display: flex; align-items: center; gap: 15px;">
-        <button id="theme-toggle" style="background: transparent; border: 1px solid rgba(255,255,255,0.5); padding: 6px 12px; border-radius: 8px; color: white; font-size: 14px;">🌙 Dark</button>
-        <div class="points" id="user-points" style="font-size: 20px;">1,250 pts</div>
-      </div>
+      <div class="points" id="user-points">1,250 pts</div>
     </div>
 
     <!-- Statistics -->
@@ -135,9 +138,9 @@ const themeToggleBtn = document.getElementById('theme-toggle');
 themeToggleBtn.addEventListener('click', () => {
   document.body.classList.toggle('dark-mode');
   if (document.body.classList.contains('dark-mode')) {
-    themeToggleBtn.textContent = '☀️ Light';
+    themeToggleBtn.textContent = '☀️ Light Mode';
   } else {
-    themeToggleBtn.textContent = '🌙 Dark';
+    themeToggleBtn.textContent = '🌙 Dark Mode';
   }
 });
 
