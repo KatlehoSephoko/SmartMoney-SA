@@ -8,7 +8,10 @@ document.querySelector('#app').innerHTML = `
         <h1>SmartMoney-SA</h1>
         <p>Your Personal Finance Dashboard</p>
       </div>
-      <div class="points" id="user-points">1,250 pts</div>
+      <div style="display: flex; align-items: center; gap: 15px;">
+        <button id="theme-toggle" style="background: transparent; border: 1px solid rgba(255,255,255,0.5); padding: 6px 12px; border-radius: 8px; color: white; font-size: 14px;">🌙 Dark</button>
+        <div class="points" id="user-points" style="font-size: 20px;">1,250 pts</div>
+      </div>
     </div>
 
     <!-- Statistics -->
@@ -19,7 +22,7 @@ document.querySelector('#app').innerHTML = `
       </div>
       <div class="stat">
         <h3>Gamification Level</h3>
-        <p id="user-level" style="font-weight: bold; color: #374151;">Novice Saver</p>
+        <p id="user-level" style="font-weight: bold; color: #374151; font-size: 20px;">Novice Saver</p>
       </div>
       <div class="stat">
         <h3>Active Goals</h3>
@@ -110,13 +113,11 @@ document.querySelector('#app').innerHTML = `
    JAVASCRIPT LOGIC
    ========================================== */
 
-// Initial State
 let currentBalance = 15400;
 let points = 1250;
 let goalTarget = 20000;
 let transactionCount = 0;
 
-// Elements
 const balanceDisplay = document.getElementById('total-balance');
 const amountInput = document.getElementById('transaction-amount');
 const typeSelect = document.getElementById('transaction-type');
@@ -128,8 +129,19 @@ const goalBar = document.getElementById('goal-bar');
 const goalText = document.getElementById('goal-text');
 const transactionList = document.getElementById('transaction-list');
 const emptyState = document.getElementById('empty-state');
+const themeToggleBtn = document.getElementById('theme-toggle');
 
-// 1. Main Dashboard Logic
+// Dark Mode Toggle
+themeToggleBtn.addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+  if (document.body.classList.contains('dark-mode')) {
+    themeToggleBtn.textContent = '☀️ Light';
+  } else {
+    themeToggleBtn.textContent = '🌙 Dark';
+  }
+});
+
+// Main Dashboard & Gamification Logic
 addBtn.addEventListener('click', () => {
   const amount = parseFloat(amountInput.value);
 
@@ -148,12 +160,11 @@ addBtn.addEventListener('click', () => {
     currentBalance -= amount;
   }
 
-  // Update Balance UI
   balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString();
   balanceDisplay.className = currentBalance >= 0 ? 'balance positive' : 'balance negative';
 
-  // Update Points & Levels UI
   pointsDisplay.textContent = points.toLocaleString() + ' pts';
+  
   if (points >= 2000) {
     levelDisplay.textContent = "Financial Guru 👑";
     levelDisplay.style.color = "#8b5cf6"; 
@@ -166,22 +177,22 @@ addBtn.addEventListener('click', () => {
   } else if (points >= 1400) {
     levelDisplay.textContent = "Dedicated Saver ⭐";
     levelDisplay.style.color = "#d97706"; 
+  } else {
+    levelDisplay.textContent = "Novice Saver";
+    levelDisplay.style.color = "#374151";
   }
 
-  // Update Savings Goal UI
   let goalPercentage = (currentBalance / goalTarget) * 100;
   if (currentBalance <= 0) goalPercentage = 0;
   if (goalPercentage > 100) goalPercentage = 100;
   goalBar.style.width = goalPercentage + '%';
   goalText.textContent = Math.round(goalPercentage) + '% Reached';
 
-  // --- NEW: Add to Transaction List ---
   if (transactionCount === 0 && emptyState) {
-    emptyState.remove(); // Remove the "No transactions yet" text
+    emptyState.remove(); 
   }
   transactionCount++;
 
-  // Create a new list item using JavaScript
   const li = document.createElement('li');
   li.style.padding = '12px 0';
   li.style.borderBottom = '1px solid #e5e7eb';
@@ -192,7 +203,6 @@ addBtn.addEventListener('click', () => {
   const amountColor = isDeposit ? '#15803d' : '#dc2626';
   const amountPrefix = isDeposit ? '+ R ' : '- R ';
 
-  // Inject the specific transaction data into the list item
   li.innerHTML = `
     <div>
       <strong style="color: #374151; font-size: 15px;">${categoryName}</strong>
@@ -203,14 +213,11 @@ addBtn.addEventListener('click', () => {
     </div>
   `;
 
-  // Add the new item to the top of the list!
   transactionList.prepend(li);
-
-  // Clear the input field for the next entry
   amountInput.value = '';
 });
 
-// 2. Financial Simulator Logic
+// Financial Simulator Logic
 const simBtn = document.getElementById('simulate-btn');
 const simAmountInput = document.getElementById('sim-amount');
 const simResult = document.getElementById('sim-result');
