@@ -20,10 +20,10 @@ document.querySelector('#app').innerHTML = `
     <button id="enter-app-btn" class="enter-btn">Open Dashboard</button>
   </div>
 
-  <!-- Main Dashboard (Hidden initially) -->
+  <!-- Main Dashboard -->
   <div id="dashboard" class="container" style="display: none; opacity: 0; transition: opacity 0.4s ease;">
     
-    <!-- Top Controls (Toggle Switch) -->
+    <!-- Top Controls -->
     <div class="top-controls">
       <div class="theme-switch-wrapper">
         <span id="theme-label">Light Mode</span>
@@ -34,20 +34,20 @@ document.querySelector('#app').innerHTML = `
       </div>
     </div>
 
-    <!-- Navigation (Centered) -->
+    <!-- Navigation -->
     <div class="navbar">
       <div>
         <h1>SmartMoney-SA</h1>
         <p>Your Personal Finance Dashboard</p>
       </div>
-      <div class="points" id="user-points">1,250 pts</div>
+      <div class="points" id="user-points">0 pts</div>
     </div>
 
     <!-- Statistics -->
     <div class="stats-grid">
       <div class="stat">
         <h3>Total Balance</h3>
-        <p class="balance positive" id="total-balance">R 15,400</p>
+        <p class="balance positive" id="total-balance">R 0</p>
       </div>
       <div class="stat">
         <h3>Gamification Level</h3>
@@ -60,7 +60,8 @@ document.querySelector('#app').innerHTML = `
     </div>
 
     <div class="dashboard-grid">
-      <!-- Budget Planner / Quick Add -->
+      
+      <!-- Budget Planner -->
       <div class="card">
         <h2>Budget Planner</h2>
         <p style="font-size: 13px; color: #6b7280; margin-bottom: 15px;">Add deposits to earn points!</p>
@@ -97,14 +98,36 @@ document.querySelector('#app').innerHTML = `
       <!-- Savings Goals -->
       <div class="card">
         <h2>Savings Goals</h2>
+        
+        <!-- Custom Goal Setter Form -->
+        <div class="border-divider">
+          <div class="form-group">
+            <label>Goal Name</label>
+            <input type="text" id="goal-name-input" placeholder="e.g. Dream Vacation" />
+          </div>
+          <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label>Target (ZAR)</label>
+              <input type="number" id="goal-target-input" placeholder="e.g. 50000" />
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label>Duration (Months)</label>
+              <input type="number" id="goal-duration-input" placeholder="e.g. 12" />
+            </div>
+          </div>
+          <button id="set-goal-btn" class="secondary" style="width: 100%;">Set New Goal</button>
+        </div>
+
+        <!-- Goal Progress Display -->
         <div class="goal">
           <div class="goal-header">
-            <h3>Emergency Fund (R 20,000)</h3>
+            <h3 id="goal-title-display">Emergency Fund (R 20,000)</h3>
           </div>
+          <p style="font-size: 13px; color: #6b7280; margin-top: 5px; margin-bottom: 0;" id="goal-duration-display">Duration: Not set</p>
           <div class="progress-container">
-            <div class="progress-bar" id="goal-bar" style="width: 77%;"></div>
+            <div class="progress-bar" id="goal-bar" style="width: 0%;"></div>
           </div>
-          <div class="progress-text" id="goal-text">77% Reached</div>
+          <div class="progress-text" id="goal-text">0% Reached</div>
         </div>
       </div>
     </div>
@@ -119,18 +142,44 @@ document.querySelector('#app').innerHTML = `
       </ul>
     </div>
 
-    <!-- Financial Simulator -->
+    <!-- Custom Financial Simulator -->
     <div class="card" style="margin-top: 20px;">
       <h2>Investment Simulator</h2>
-      <p style="font-size: 14px; color: #374151;">See how your money grows over 5 years at an estimated 8% annual return.</p>
-      <div class="form-group" style="margin-top: 15px;">
-        <label>Monthly Contribution (ZAR)</label>
-        <input type="number" id="sim-amount" placeholder="e.g. 500" />
+      <p style="font-size: 14px; color: #374151; margin-bottom: 20px;">Calculate how your money compounds over time.</p>
+      
+      <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Contribution (ZAR)</label>
+          <input type="number" id="sim-amount" placeholder="e.g. 500" />
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Frequency</label>
+          <select id="sim-frequency">
+            <option value="12">Monthly</option>
+            <option value="4">Quarterly</option>
+            <option value="1">Annually</option>
+          </select>
+        </div>
       </div>
-      <button class="secondary" id="simulate-btn" style="width: 100%;">Run Simulation</button>
+
+      <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Interest Rate (%)</label>
+          <input type="number" id="sim-rate" placeholder="e.g. 8" />
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Duration (Years)</label>
+          <input type="number" id="sim-years" placeholder="e.g. 5" />
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 5px;">
+        <button class="secondary" id="simulate-btn" style="flex: 2;">Run Simulation</button>
+        <button class="danger" id="sim-clear-btn" style="flex: 1;">Clear</button>
+      </div>
       
       <div class="simulator-result" id="sim-result" style="display: none;">
-        <h3>Future Value in 5 Years:</h3>
+        <h3>Estimated Future Value:</h3>
         <p class="amount positive" id="sim-display">R 0</p>
       </div>
     </div>
@@ -149,35 +198,25 @@ const splashScreen = document.getElementById('splash-screen');
 const dashboard = document.getElementById('dashboard');
 
 enterBtn.addEventListener('click', () => {
-  // 1. Slide the bank card to the direct center of the screen
   bankCard.style.left = '50%';
   bankCard.style.transform = 'translate(-50%, -50%)';
   
-  // 2. Wait for the card to arrive at the center (0.7s), then fade out splash screen
   setTimeout(() => {
     splashScreen.style.opacity = '0';
-    
-    // 3. Once splash screen fades out, hide it completely and show dashboard
     setTimeout(() => {
       splashScreen.style.display = 'none';
       dashboard.style.display = 'block';
-      
-      // Small delay to let dashboard fade in
       setTimeout(() => {
         dashboard.style.opacity = '1';
-        
-        // 4. Slide the bank card the rest of the way off the screen to the right
         bankCard.style.left = '150%';
-        
       }, 50);
-    }, 400); // 0.4s fade out duration
-    
-  }, 700); // 0.7s slide duration
+    }, 400); 
+  }, 700); 
 });
 
 // --- Dashboard Logic ---
-let currentBalance = 15400;
-let points = 1250;
+let currentBalance = 0; // Starts at R0
+let points = 0;
 let goalTarget = 20000;
 let transactionCount = 0;
 
@@ -188,12 +227,20 @@ const categorySelect = document.getElementById('transaction-category');
 const addBtn = document.getElementById('add-transaction-btn');
 const pointsDisplay = document.getElementById('user-points');
 const levelDisplay = document.getElementById('user-level');
-const goalBar = document.getElementById('goal-bar');
-const goalText = document.getElementById('goal-text');
 const transactionList = document.getElementById('transaction-list');
 const emptyState = document.getElementById('empty-state');
 
-// Toggle Switch Logic
+// Goal Elements
+const setGoalBtn = document.getElementById('set-goal-btn');
+const goalNameInput = document.getElementById('goal-name-input');
+const goalTargetInput = document.getElementById('goal-target-input');
+const goalDurationInput = document.getElementById('goal-duration-input');
+const goalTitleDisplay = document.getElementById('goal-title-display');
+const goalDurationDisplay = document.getElementById('goal-duration-display');
+const goalBar = document.getElementById('goal-bar');
+const goalText = document.getElementById('goal-text');
+
+// Theme Elements
 const themeToggle = document.getElementById('theme-toggle');
 const themeLabel = document.getElementById('theme-label');
 
@@ -205,6 +252,37 @@ themeToggle.addEventListener('change', (e) => {
     document.body.classList.remove('dark-mode');
     themeLabel.textContent = 'Light Mode';
   }
+});
+
+// Function to calculate and update the progress bar
+function updateGoalProgress() {
+  let goalPercentage = (currentBalance / goalTarget) * 100;
+  if (currentBalance <= 0) goalPercentage = 0;
+  if (goalPercentage > 100) goalPercentage = 100;
+  goalBar.style.width = goalPercentage + '%';
+  goalText.textContent = Math.round(goalPercentage) + '% Reached';
+}
+
+// Set Custom Goal Logic
+setGoalBtn.addEventListener('click', () => {
+  const target = parseFloat(goalTargetInput.value);
+  const name = goalNameInput.value || 'Custom Goal';
+  const duration = goalDurationInput.value || '0';
+
+  if (isNaN(target) || target <= 0) {
+    alert('Please enter a valid target amount.');
+    return;
+  }
+
+  goalTarget = target;
+  goalTitleDisplay.textContent = `${name} (R ${target.toLocaleString()})`;
+  goalDurationDisplay.textContent = `Duration: ${duration} Months`;
+
+  updateGoalProgress(); 
+  
+  goalNameInput.value = '';
+  goalTargetInput.value = '';
+  goalDurationInput.value = '';
 });
 
 // Budget Planner & Gamification
@@ -248,11 +326,7 @@ addBtn.addEventListener('click', () => {
     levelDisplay.style.color = "#374151";
   }
 
-  let goalPercentage = (currentBalance / goalTarget) * 100;
-  if (currentBalance <= 0) goalPercentage = 0;
-  if (goalPercentage > 100) goalPercentage = 100;
-  goalBar.style.width = goalPercentage + '%';
-  goalText.textContent = Math.round(goalPercentage) + '% Reached';
+  updateGoalProgress();
 
   if (transactionCount === 0 && emptyState) {
     emptyState.remove(); 
@@ -285,21 +359,38 @@ addBtn.addEventListener('click', () => {
 
 // Financial Simulator Logic
 const simBtn = document.getElementById('simulate-btn');
+const simClearBtn = document.getElementById('sim-clear-btn');
 const simAmountInput = document.getElementById('sim-amount');
+const simFreqInput = document.getElementById('sim-frequency');
+const simRateInput = document.getElementById('sim-rate');
+const simYearsInput = document.getElementById('sim-years');
 const simResult = document.getElementById('sim-result');
 const simDisplay = document.getElementById('sim-display');
 
 simBtn.addEventListener('click', () => {
-  const monthlyContribution = parseFloat(simAmountInput.value);
-  if (isNaN(monthlyContribution) || monthlyContribution <= 0) {
-    alert("Enter a valid monthly contribution.");
+  const contribution = parseFloat(simAmountInput.value);
+  const frequency = parseInt(simFreqInput.value); 
+  const rate = parseFloat(simRateInput.value);
+  const years = parseFloat(simYearsInput.value);
+
+  if (isNaN(contribution) || contribution <= 0 || isNaN(rate) || rate <= 0 || isNaN(years) || years <= 0) {
+    alert("Please ensure all simulation fields have valid numbers.");
     return;
   }
 
-  const monthlyRate = 0.08 / 12;
-  const months = 60;
-  const futureValue = monthlyContribution * (((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate));
+  const periodRate = (rate / 100) / frequency;
+  const totalPeriods = years * frequency;
+  
+  const futureValue = contribution * (((Math.pow(1 + periodRate, totalPeriods) - 1) / periodRate));
 
   simDisplay.textContent = 'R ' + futureValue.toLocaleString(undefined, { maximumFractionDigits: 2 });
   simResult.style.display = 'block';
+});
+
+simClearBtn.addEventListener('click', () => {
+  simAmountInput.value = '';
+  simFreqInput.value = '12';
+  simRateInput.value = '';
+  simYearsInput.value = '';
+  simResult.style.display = 'none';
 });
