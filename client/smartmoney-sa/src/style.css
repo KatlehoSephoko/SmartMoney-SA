@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+
 /* =========================
    Global Styles
    ========================= */
@@ -13,6 +15,7 @@ body {
   background: #f4f7f5;
   color: #1f2937;
   transition: background 0.3s ease, color 0.3s ease;
+  overflow-x: hidden; /* Prevents scrolling during animation */
 }
 
 .container {
@@ -20,6 +23,87 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 30px 20px;
+}
+
+/* =========================
+   Landing / Splash Screen
+   ========================= */
+
+#splash-screen {
+  position: fixed;
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%;
+  background: #f4f7f5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  transition: background 0.3s ease;
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.title-smart {
+  font-family: 'Dancing Script', cursive;
+  color: #16a34a;
+  font-size: 64px;
+  padding-right: 2px;
+}
+
+.title-money {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #000000;
+  font-size: 50px;
+  font-weight: bold;
+  letter-spacing: -1px;
+}
+
+.slogan {
+  color: #16a34a;
+  font-size: 16px;
+  margin-top: -10px;
+  letter-spacing: 0.5px;
+  font-weight: bold;
+}
+
+.enter-btn {
+  background: #14532d;
+  color: white;
+  padding: 14px 35px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(20, 83, 45, 0.3);
+}
+
+/* =========================
+   Swipe Animation Card
+   ========================= */
+
+#swipe-card {
+  position: fixed;
+  top: 0;
+  left: -100%; /* Hidden off-screen to the left */
+  width: 100%;
+  height: 100%;
+  background: #14532d; /* Solid green wipe */
+  z-index: 999;
+  transition: left 0.6s cubic-bezier(0.77, 0, 0.175, 1); /* Smooth acceleration */
+}
+
+/* Classes added by JavaScript to trigger the swipe */
+.swipe-in {
+  left: 0 !important;
+}
+
+.swipe-out {
+  left: 100% !important;
 }
 
 /* =========================
@@ -42,6 +126,7 @@ body {
   font-size: 14px;
   cursor: pointer;
   transition: background 0.3s ease, color 0.3s ease;
+  box-shadow: none;
 }
 
 /* =========================
@@ -54,9 +139,9 @@ body {
   padding: 22px 25px;
   border-radius: 12px;
   display: flex;
-  flex-direction: column; /* This stacks the text and points */
+  flex-direction: column;
   justify-content: center;
-  align-items: center; /* This centers everything horizontally */
+  align-items: center;
   text-align: center;
   gap: 12px;
   margin-bottom: 25px;
@@ -74,7 +159,7 @@ body {
 }
 
 /* =========================
-   Dashboard
+   Dashboard Elements
    ========================= */
 
 .dashboard-grid {
@@ -82,10 +167,6 @@ body {
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
-
-/* =========================
-   Cards
-   ========================= */
 
 .card {
   background: white;
@@ -104,10 +185,6 @@ body {
 .card h3 {
   color: #374151;
 }
-
-/* =========================
-   Forms
-   ========================= */
 
 .form-group {
   margin-bottom: 15px;
@@ -134,10 +211,6 @@ select:focus {
   border-color: #14532d;
 }
 
-/* =========================
-   Buttons
-   ========================= */
-
 button {
   padding: 11px 18px;
   border: none;
@@ -157,11 +230,8 @@ button:hover {
 button.secondary {
   background: #d1fae5;
   color: #14532d;
+  box-shadow: none;
 }
-
-/* =========================
-   Budget
-   ========================= */
 
 .balance {
   font-size: 24px;
@@ -176,10 +246,6 @@ button.secondary {
 .balance.negative {
   color: #dc2626;
 }
-
-/* =========================
-   Savings Goals
-   ========================= */
 
 .goal {
   border: 1px solid #e5e7eb;
@@ -219,10 +285,6 @@ button.secondary {
   color: #6b7280;
 }
 
-/* =========================
-   Financial Simulator
-   ========================= */
-
 .simulator-result {
   background: #ecfdf5;
   padding: 18px;
@@ -240,19 +302,11 @@ button.secondary {
   font-weight: bold;
 }
 
-/* =========================
-   Gamification
-   ========================= */
-
 .points {
   font-size: 32px;
   font-weight: bold;
   color: #ffffff;
 }
-
-/* =========================
-   Statistics
-   ========================= */
 
 .stats-grid {
   display: grid;
@@ -287,6 +341,14 @@ button.secondary {
 body.dark-mode {
   background: #111827;
   color: #f9fafb;
+}
+
+body.dark-mode #splash-screen {
+  background: #111827;
+}
+
+body.dark-mode .title-money {
+  color: #ffffff;
 }
 
 body.dark-mode .theme-btn {
