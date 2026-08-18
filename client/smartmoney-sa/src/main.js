@@ -38,7 +38,6 @@ document.querySelector('#app').innerHTML = `
     <div class="modal-content">
       <div class="modal-header">
         <h2>Corporate Partner Rewards</h2>
-        <!-- Secondary class applies the light-green inverse colors -->
         <button id="close-modal-btn" class="secondary" style="padding: 8px 16px; font-size: 14px;">Close</button>
       </div>
       <p style="font-size: 13px; color: #64748b; margin-top: 0; margin-bottom: 15px;">Redeem your points for retail vouchers. 1 Point = R0.25</p>
@@ -134,7 +133,7 @@ document.querySelector('#app').innerHTML = `
           ${icons.trending}
           <h2>Transaction Log</h2>
         </div>
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Deposit money here first before funding portfolios.</p>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Deposit money here first to earn 50 points, then fund your portfolios.</p>
         
         <div class="form-group">
           <label>Amount (ZAR)</label>
@@ -182,7 +181,6 @@ document.querySelector('#app').innerHTML = `
               <input type="number" id="gig-amount-input" placeholder="0.00" />
             </div>
           </div>
-          <!-- Log Invoice is now Primary Green -->
           <button id="add-gig-btn" style="width: 100%;">Log Invoice</button>
         </div>
 
@@ -201,7 +199,7 @@ document.querySelector('#app').innerHTML = `
     <!-- Savings Goals -->
     <div class="card" style="margin-top: 20px;">
       <h2>Savings Portfolios</h2>
-      <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Create a portfolio and actively deposit funds from your main balance into it.</p>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Earn up to 100 points for depositing your minimum target. You can also withdraw funds back to your main balance if needed.</p>
       
       <div class="border-divider">
         <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
@@ -220,7 +218,6 @@ document.querySelector('#app').innerHTML = `
             </div>
           </div>
         </div>
-        <!-- Create Portfolio is now Primary Green -->
         <button id="set-goal-btn" style="width: 100%; max-width: 200px;">Create Portfolio</button>
       </div>
 
@@ -264,9 +261,7 @@ document.querySelector('#app').innerHTML = `
       </div>
 
       <div style="display: flex; gap: 10px; margin-top: 5px;">
-        <!-- Run Bank Simulation is now Primary Green -->
         <button id="simulate-btn" style="flex: 2;">Run Bank Simulation</button>
-        <!-- Clear is now Secondary (Inverse Light Green) -->
         <button class="secondary" id="sim-clear-btn" style="flex: 1;">Clear</button>
       </div>
       
@@ -384,7 +379,6 @@ function renderGoals() {
     const goalElement = document.createElement('div');
     goalElement.className = 'goal';
     
-    // Classes applied here ensure proper dark mode text inversion
     goalElement.innerHTML = `
       <div style="padding-right: 35px;">
         <h3 class="goal-name-text">${goal.name} (R ${goal.target.toLocaleString()})</h3>
@@ -402,10 +396,11 @@ function renderGoals() {
         <div class="progress-text">${Math.round(goalPercentage)}% Reached</div>
       </div>
       
-      <!-- Direct Goal Deposit Area -->
+      <!-- Direct Goal Deposit & Withdraw Area -->
       <div class="goal-funding">
-        <input type="number" id="fund-input-${goal.id}" placeholder="Amount..." style="flex: 1;" ${isReached ? 'disabled' : ''} />
-        <button class="fund-goal-btn" data-id="${goal.id}" style="width: auto;" ${isReached ? 'disabled' : ''}>Deposit</button>
+        <input type="number" id="fund-input-${goal.id}" placeholder="Amount..." style="flex: 1;" />
+        <button class="fund-goal-btn" data-id="${goal.id}" style="width: auto;">Deposit</button>
+        <button class="withdraw-goal-btn danger" data-id="${goal.id}" style="width: auto;">Withdraw</button>
       </div>
 
       <button class="open-store-btn" style="width: 100%; margin-top: 15px; background: ${isReached ? '#16a34a' : '#9ca3af'};" ${isReached ? '' : 'disabled'}>
@@ -416,7 +411,7 @@ function renderGoals() {
     goalsContainer.appendChild(goalElement);
   });
 
-  // Goal Funding Restriction Logic
+  // Goal Deposit Logic
   document.querySelectorAll('.fund-goal-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = parseInt(e.target.getAttribute('data-id'));
@@ -428,7 +423,6 @@ function renderGoals() {
         return;
       }
 
-      // STRICT CHECK: Does the user have enough money in their main balance?
       if (amount > currentBalance) {
         alert(`Insufficient funds! You only have R ${currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2})} available in your main balance. Add funds via the Transaction Log first.`);
         return;
@@ -436,14 +430,63 @@ function renderGoals() {
 
       const goal = goals.find(g => g.id === id);
       if (goal) {
-        // Move money from main balance to the goal
+        // Check if goal was already reached before this deposit
+        const wasReached = goal.saved >= goal.target;
+        
         goal.saved += amount;
         currentBalance -= amount;
         
+        // Calculate points based on strict rules
+        const monthlyMin = goal.duration > 0 ? (goal.target / goal.duration) : 0;
+        let pointsEarned = 0;
+        
+        if (wasReached) {
+          pointsEarned = 25;
+        } else if (monthlyMin > 0 && amount >= monthlyMin) {
+          pointsEarned = 100;
+        } else {
+          pointsEarned = 50; 
+        }
+
+        points += pointsEarned;
         balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
         
-        // Log the transfer using a distinct blue color
-        logTransaction(amount, false, `Transfer to Portfolio: ${goal.name}`, '#0284c7');
+        logTransaction(amount, false, `Portfolio Deposit: ${goal.name} (+${pointsEarned} pts)`, '#0284c7');
+        updateHeaderPoints();
+        input.value = '';
+        renderGoals(); 
+      }
+    });
+  });
+
+  // Goal Withdrawal Logic
+  document.querySelectorAll('.withdraw-goal-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = parseInt(e.target.getAttribute('data-id'));
+      const input = document.getElementById(`fund-input-${id}`);
+      const amount = parseFloat(input.value);
+
+      if (isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid withdrawal amount.");
+        return;
+      }
+
+      const goal = goals.find(g => g.id === id);
+      if (goal) {
+        if (amount > goal.saved) {
+          alert(`You only have R ${goal.saved.toLocaleString(undefined, {minimumFractionDigits: 2})} saved in this portfolio.`);
+          return;
+        }
+        
+        goal.saved -= amount;
+        currentBalance += amount;
+        
+        points -= 50;
+        if (points < 0) points = 0;
+        
+        balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
+        logTransaction(amount, true, `Portfolio Withdrawal: ${goal.name}`, '#0284c7');
+        updateHeaderPoints();
         input.value = '';
         renderGoals(); 
       }
@@ -456,7 +499,6 @@ function renderGoals() {
       const id = parseInt(e.target.getAttribute('data-id'));
       const goalToCancel = goals.find(g => g.id === id);
       
-      // If the goal had money in it, refund it back to the main balance
       if (goalToCancel && goalToCancel.saved > 0) {
         currentBalance += goalToCancel.saved;
         balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
@@ -469,7 +511,6 @@ function renderGoals() {
     });
   });
 
-  // Open Rewards Store Modal
   document.querySelectorAll('.open-store-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       rewardsModal.classList.add('active');
@@ -512,7 +553,6 @@ claimStoreBtns.forEach(btn => {
 claimCashBtn.addEventListener('click', () => {
   const rewardCash = points * 0.25;
   if (rewardCash > 0) {
-    // Treat as an income deposit without earning points on the reward itself
     currentBalance += rewardCash;
     balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
     balanceDisplay.className = currentBalance >= 0 ? 'balance positive' : 'balance negative';
@@ -572,7 +612,7 @@ function logTransaction(amount, isDeposit, categoryName, customColor = null) {
   transactionList.prepend(li);
 }
 
-// Normal budget planner logic (affects points)
+// 50 Points for standard main balance deposits
 addBtn.addEventListener('click', () => {
   const amount = parseFloat(amountInput.value);
   const isDeposit = typeSelect.value === 'Deposit';
@@ -583,7 +623,6 @@ addBtn.addEventListener('click', () => {
     return;
   }
 
-  // Prevent overdrawing if it's an expense
   if (!isDeposit && amount > currentBalance) {
     alert(`Insufficient funds! You only have R ${currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2})} available.`);
     return;
@@ -594,7 +633,7 @@ addBtn.addEventListener('click', () => {
     points += 50; 
   } else {
     currentBalance -= amount;
-    points -= 100; // Penalty for standard expense withdrawal
+    points -= 100; 
     if (points < 0) points = 0; 
   }
 
@@ -646,7 +685,6 @@ addGigBtn.addEventListener('click', () => {
   gigCount++;
 
   const li = document.createElement('li');
-  // Replaced inline styles with a class for perfect dark mode support
   li.className = 'gig-item';
 
   li.innerHTML = `
@@ -658,13 +696,12 @@ addGigBtn.addEventListener('click', () => {
   `;
 
   li.querySelector('.mark-paid-btn').addEventListener('click', () => {
-    // Treat cleared invoices as standard deposits
     currentBalance += gigAmount;
     balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
     balanceDisplay.className = currentBalance >= 0 ? 'balance positive' : 'balance negative';
     
     logTransaction(gigAmount, true, `Invoice Cleared: ${gigName}`);
-    points += 100; // Bonus points for side hustle completion
+    points += 100; 
     updateHeaderPoints();
 
     li.remove();
