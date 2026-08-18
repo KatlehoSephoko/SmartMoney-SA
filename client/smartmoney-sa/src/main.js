@@ -43,7 +43,10 @@ document.querySelector('#app').innerHTML = `
         <h1>SmartMoney-SA</h1>
         <p>Your Personal Finance Dashboard</p>
       </div>
-      <div class="points" id="user-points">0 pts</div>
+      <div style="text-align: right;">
+        <div class="points" id="user-points">0 pts</div>
+        <div id="reward-value" style="font-size: 14px; color: #a7f3d0; margin-top: 4px; font-weight: bold;">Reward Value: R 0.00</div>
+      </div>
     </div>
 
     <!-- Statistics -->
@@ -67,7 +70,7 @@ document.querySelector('#app').innerHTML = `
       <!-- Budget Planner -->
       <div class="card">
         <h2>Budget Planner</h2>
-        <p style="font-size: 13px; color: #6b7280; margin-bottom: 15px;">Add deposits to earn points!</p>
+        <p style="font-size: 13px; color: #6b7280; margin-bottom: 15px;">Log deposits to earn points, but withdrawing costs points!</p>
         
         <div class="form-group">
           <label>Amount (ZAR)</label>
@@ -78,7 +81,7 @@ document.querySelector('#app').innerHTML = `
           <label>Type</label>
           <select id="transaction-type">
             <option value="Deposit">Income / Deposit (+)</option>
-            <option value="Expense">Expense (-)</option>
+            <option value="Expense">Expense / Withdrawal (-)</option>
           </select>
         </div>
 
@@ -98,38 +101,76 @@ document.querySelector('#app').innerHTML = `
         <button id="add-transaction-btn" style="width: 100%; margin-top: 5px;">Add Transaction</button>
       </div>
 
-      <!-- Savings Goals -->
+      <!-- Side-Hustle & Gig Tracker -->
       <div class="card">
-        <h2>Savings Goals</h2>
+        <h2>Side-Hustle Hub 🚀</h2>
+        <p style="font-size: 13px; color: #6b7280; margin-bottom: 15px;">Track pending freelance gigs, repairs, and commissions before they pay out.</p>
         
         <div class="border-divider">
-          <div class="form-group">
-            <label>Goal Name</label>
-            <input type="text" id="goal-name-input" placeholder="e.g. Dream Vacation" />
-          </div>
           <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
             <div class="form-group" style="margin-bottom: 0;">
-              <label>Target (ZAR)</label>
-              <input type="number" id="goal-target-input" placeholder="e.g. 50000" />
+              <label>Gig Name</label>
+              <input type="text" id="gig-name-input" placeholder="e.g. Screen Repair" />
             </div>
             <div class="form-group" style="margin-bottom: 0;">
-              <label>Duration (Months)</label>
-              <input type="number" id="goal-duration-input" placeholder="e.g. 12" />
+              <label>Expected Payout</label>
+              <input type="number" id="gig-amount-input" placeholder="e.g. 1500" />
             </div>
           </div>
-          <button id="set-goal-btn" class="secondary" style="width: 100%;">Set New Goal</button>
+          <button id="add-gig-btn" class="secondary" style="width: 100%;">Log Pending Gig</button>
         </div>
 
-        <div class="goal">
-          <div class="goal-header">
-            <h3 id="goal-title-display">Emergency Fund (R 20,000)</h3>
+        <div>
+          <h3 style="font-size: 15px; margin-bottom: 10px;">Pending Payouts</h3>
+          <ul id="gig-list" style="list-style: none; padding: 0; margin: 0;">
+            <li id="gig-empty-state" style="padding: 10px 0; color: #9ca3af; font-size: 13px; font-style: italic;">
+              No pending gigs. Go secure the bag!
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Savings Goals -->
+    <div class="card" style="margin-top: 20px;">
+      <h2>Savings Goals & Rewards</h2>
+      
+      <div class="border-divider">
+        <div class="form-group">
+          <label>Goal Name</label>
+          <input type="text" id="goal-name-input" placeholder="e.g. Dream Vacation" />
+        </div>
+        <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label>Target (ZAR)</label>
+            <input type="number" id="goal-target-input" placeholder="e.g. 10000" />
           </div>
-          <p style="font-size: 13px; color: #6b7280; margin-top: 5px; margin-bottom: 0;" id="goal-duration-display">Duration: Not set</p>
-          <div class="progress-container">
-            <div class="progress-bar" id="goal-bar" style="width: 0%;"></div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label>Duration (Months)</label>
+            <input type="number" id="goal-duration-input" placeholder="e.g. 12" />
           </div>
+        </div>
+        <button id="set-goal-btn" class="secondary" style="width: 100%;">Set New Goal</button>
+      </div>
+
+      <div class="goal">
+        <div class="goal-header">
+          <h3 id="goal-title-display">Emergency Fund (R 20,000)</h3>
+        </div>
+        <p style="font-size: 13px; color: #6b7280; margin-top: 5px; margin-bottom: 0;" id="goal-duration-display">Duration: Not set</p>
+        <p style="font-size: 14px; font-weight: bold; color: #15803d; margin-top: 4px; margin-bottom: 0;" id="goal-monthly-display">Minimum Monthly Deposit: R 0.00</p>
+        
+        <div class="progress-container">
+          <div class="progress-bar" id="goal-bar" style="width: 0%;"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
           <div class="progress-text" id="goal-text">0% Reached</div>
         </div>
+        
+        <button id="claim-reward-btn" style="width: 100%; margin-top: 15px; background: #9ca3af; cursor: not-allowed;" disabled>
+          🔒 Claim Reward (Goal Not Reached)
+        </button>
       </div>
     </div>
 
@@ -219,101 +260,50 @@ enterBtn.addEventListener('click', () => {
   }, 700); 
 });
 
-// --- Dashboard Logic ---
+// --- Dashboard State ---
 let currentBalance = 0;
 let points = 0;
 let goalTarget = 20000;
 let transactionCount = 0;
+let gigCount = 0;
 
+// Elements
 const balanceDisplay = document.getElementById('total-balance');
 const amountInput = document.getElementById('transaction-amount');
 const typeSelect = document.getElementById('transaction-type');
 const categorySelect = document.getElementById('transaction-category');
 const addBtn = document.getElementById('add-transaction-btn');
 const pointsDisplay = document.getElementById('user-points');
+const rewardDisplay = document.getElementById('reward-value');
 const levelDisplay = document.getElementById('user-level');
 const transactionList = document.getElementById('transaction-list');
 const emptyState = document.getElementById('empty-state');
-
-// Goal Elements
-const setGoalBtn = document.getElementById('set-goal-btn');
-const goalNameInput = document.getElementById('goal-name-input');
-const goalTargetInput = document.getElementById('goal-target-input');
-const goalDurationInput = document.getElementById('goal-duration-input');
-const goalTitleDisplay = document.getElementById('goal-title-display');
-const goalDurationDisplay = document.getElementById('goal-duration-display');
 const goalBar = document.getElementById('goal-bar');
 const goalText = document.getElementById('goal-text');
+const claimRewardBtn = document.getElementById('claim-reward-btn');
 
-// Theme Elements
-const themeToggle = document.getElementById('theme-toggle');
-const themeLabel = document.getElementById('theme-label');
-
-themeToggle.addEventListener('change', (e) => {
-  if(e.target.checked) {
-    document.body.classList.add('dark-mode');
-    themeLabel.textContent = 'Dark Mode';
-  } else {
-    document.body.classList.remove('dark-mode');
-    themeLabel.textContent = 'Light Mode';
-  }
-});
-
-// Goal Progress Function
-function updateGoalProgress() {
-  let goalPercentage = (currentBalance / goalTarget) * 100;
-  if (currentBalance <= 0) goalPercentage = 0;
-  if (goalPercentage > 100) goalPercentage = 100;
-  goalBar.style.width = goalPercentage + '%';
-  goalText.textContent = Math.round(goalPercentage) + '% Reached';
-}
-
-// Set Custom Goal
-setGoalBtn.addEventListener('click', () => {
-  const target = parseFloat(goalTargetInput.value);
-  const name = goalNameInput.value || 'Custom Goal';
-  const duration = goalDurationInput.value || '0';
-
-  if (isNaN(target) || target <= 0) {
-    alert('Please enter a valid target amount.');
-    return;
-  }
-
-  goalTarget = target;
-  goalTitleDisplay.textContent = `${name} (R ${target.toLocaleString()})`;
-  goalDurationDisplay.textContent = `Duration: ${duration} Months`;
-
-  updateGoalProgress(); 
-  
-  goalNameInput.value = '';
-  goalTargetInput.value = '';
-  goalDurationInput.value = '';
-});
-
-// Budget Planner
-addBtn.addEventListener('click', () => {
-  const amount = parseFloat(amountInput.value);
-
-  if (isNaN(amount) || amount <= 0) {
-    alert("Please enter a valid amount!");
-    return;
-  }
-
-  const isDeposit = typeSelect.value === 'Deposit';
-  const categoryName = categorySelect.value;
-
+// Core Gamification & Balance Update Function
+function processTransaction(amount, isDeposit, categoryName) {
   if (isDeposit) {
     currentBalance += amount;
     points += 50; 
   } else {
     currentBalance -= amount;
+    // Penalty: Deduct 100 points for withdrawing money
+    points -= 100;
+    if (points < 0) points = 0; 
   }
 
+  // Update Balance
   balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString();
   balanceDisplay.className = currentBalance >= 0 ? 'balance positive' : 'balance negative';
 
+  // Update Points & Reward Value (1 Point = R0.25)
+  const rewardCash = points * 0.25;
   pointsDisplay.textContent = points.toLocaleString() + ' pts';
-  
+  rewardDisplay.textContent = 'Reward Value: R ' + rewardCash.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  // Update Rank
   if (points >= 2000) {
     levelDisplay.textContent = "Financial Guru 👑";
     levelDisplay.style.color = "#8b5cf6"; 
@@ -331,11 +321,11 @@ addBtn.addEventListener('click', () => {
     levelDisplay.style.color = "#374151";
   }
 
+  // Update Progress Goal
   updateGoalProgress();
 
-  if (transactionCount === 0 && emptyState) {
-    emptyState.remove(); 
-  }
+  // Add to Recent Transactions List
+  if (transactionCount === 0 && emptyState) emptyState.remove(); 
   transactionCount++;
 
   const li = document.createElement('li');
@@ -357,12 +347,157 @@ addBtn.addEventListener('click', () => {
       ${amountPrefix}${amount.toLocaleString()}
     </div>
   `;
-
   transactionList.prepend(li);
+}
+
+// Budget Planner Manual Submit
+addBtn.addEventListener('click', () => {
+  const amount = parseFloat(amountInput.value);
+  if (isNaN(amount) || amount <= 0) {
+    alert("Please enter a valid amount!");
+    return;
+  }
+  processTransaction(amount, typeSelect.value === 'Deposit', categorySelect.value);
   amountInput.value = '';
 });
 
-// Bank Simulator Logic (Compound Interest)
+// Side-Hustle Tracker Logic
+const addGigBtn = document.getElementById('add-gig-btn');
+const gigNameInput = document.getElementById('gig-name-input');
+const gigAmountInput = document.getElementById('gig-amount-input');
+const gigList = document.getElementById('gig-list');
+const gigEmptyState = document.getElementById('gig-empty-state');
+
+addGigBtn.addEventListener('click', () => {
+  const gigName = gigNameInput.value || 'Side Hustle';
+  const gigAmount = parseFloat(gigAmountInput.value);
+
+  if (isNaN(gigAmount) || gigAmount <= 0) {
+    alert('Please enter a valid expected payout.');
+    return;
+  }
+
+  if (gigCount === 0 && gigEmptyState) gigEmptyState.remove();
+  gigCount++;
+
+  const li = document.createElement('li');
+  li.style.padding = '12px';
+  li.style.background = '#fef3c7'; 
+  li.style.borderRadius = '8px';
+  li.style.marginBottom = '10px';
+  li.style.display = 'flex';
+  li.style.justifyContent = 'space-between';
+  li.style.alignItems = 'center';
+
+  li.innerHTML = `
+    <div>
+      <strong style="color: #92400e; font-size: 14px;">⏳ ${gigName}</strong>
+      <div style="font-weight: bold; color: #b45309; margin-top: 4px;">R ${gigAmount.toLocaleString()}</div>
+    </div>
+    <button class="mark-paid-btn" style="background: #15803d; font-size: 12px; padding: 8px 12px;">Mark Paid</button>
+  `;
+
+  li.querySelector('.mark-paid-btn').addEventListener('click', () => {
+    processTransaction(gigAmount, true, `Gig Payout: ${gigName}`);
+    points += 100;
+    const rewardCash = points * 0.25;
+    pointsDisplay.textContent = points.toLocaleString() + ' pts';
+    rewardDisplay.textContent = 'Reward Value: R ' + rewardCash.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    
+    li.remove();
+    gigCount--;
+    if (gigCount === 0) gigList.appendChild(gigEmptyState);
+  });
+
+  gigList.prepend(li);
+  gigNameInput.value = '';
+  gigAmountInput.value = '';
+});
+
+// Theme Elements
+const themeToggle = document.getElementById('theme-toggle');
+const themeLabel = document.getElementById('theme-label');
+
+themeToggle.addEventListener('change', (e) => {
+  if(e.target.checked) {
+    document.body.classList.add('dark-mode');
+    themeLabel.textContent = 'Dark Mode';
+  } else {
+    document.body.classList.remove('dark-mode');
+    themeLabel.textContent = 'Light Mode';
+  }
+});
+
+// Goal Progress Function & Reward Logic
+function updateGoalProgress() {
+  let goalPercentage = (currentBalance / goalTarget) * 100;
+  if (currentBalance <= 0) goalPercentage = 0;
+  if (goalPercentage > 100) goalPercentage = 100;
+  
+  goalBar.style.width = goalPercentage + '%';
+  goalText.textContent = Math.round(goalPercentage) + '% Reached';
+
+  // Unlock Claim Reward Button if goal is reached
+  if (goalPercentage >= 100) {
+    const rewardCash = points * 0.25;
+    claimRewardBtn.disabled = false;
+    claimRewardBtn.style.background = '#16a34a'; // Green unlock color
+    claimRewardBtn.style.cursor = 'pointer';
+    claimRewardBtn.innerHTML = `🎁 Claim R ${rewardCash.toLocaleString(undefined, {minimumFractionDigits: 2})} Reward!`;
+  } else {
+    claimRewardBtn.disabled = true;
+    claimRewardBtn.style.background = '#9ca3af'; // Locked gray color
+    claimRewardBtn.style.cursor = 'not-allowed';
+    claimRewardBtn.innerHTML = `🔒 Claim Reward (Goal Not Reached)`;
+  }
+}
+
+// Claim Reward Button Logic
+claimRewardBtn.addEventListener('click', () => {
+  const rewardCash = points * 0.25;
+  if (rewardCash > 0) {
+    // Treat the reward as a normal income deposit
+    processTransaction(rewardCash, true, '🏆 Goal Reward Payout');
+    
+    // Reset points after claiming
+    points = 0;
+    pointsDisplay.textContent = '0 pts';
+    rewardDisplay.textContent = 'Reward Value: R 0.00';
+    
+    alert(`Congratulations! You achieved your goal and claimed R ${rewardCash.toLocaleString(undefined, {minimumFractionDigits: 2})} in rewards!`);
+    updateGoalProgress(); // Re-evaluate button state
+  } else {
+    alert("You don't have any points to claim yet!");
+  }
+});
+
+// Set Custom Goal
+document.getElementById('set-goal-btn').addEventListener('click', () => {
+  const goalTargetInput = document.getElementById('goal-target-input');
+  const target = parseFloat(goalTargetInput.value);
+  const name = document.getElementById('goal-name-input').value || 'Custom Goal';
+  const duration = parseFloat(document.getElementById('goal-duration-input').value) || 0;
+
+  if (isNaN(target) || target <= 0 || isNaN(duration) || duration <= 0) {
+    alert('Please enter a valid target amount and duration (months).');
+    return;
+  }
+
+  goalTarget = target;
+  const monthlyMin = target / duration;
+
+  document.getElementById('goal-title-display').textContent = `${name} (R ${target.toLocaleString()})`;
+  document.getElementById('goal-duration-display').textContent = `Duration: ${duration} Months`;
+  document.getElementById('goal-monthly-display').textContent = `Minimum Monthly Deposit: R ${monthlyMin.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+  updateGoalProgress(); 
+  
+  document.getElementById('goal-name-input').value = '';
+  goalTargetInput.value = '';
+  document.getElementById('goal-duration-input').value = '';
+});
+
+// Bank Simulator Logic
 const simBtn = document.getElementById('simulate-btn');
 const simClearBtn = document.getElementById('sim-clear-btn');
 const simAccountType = document.getElementById('sim-account-type');
@@ -387,10 +522,8 @@ simBtn.addEventListener('click', () => {
   const months = years * 12;
   const monthlyRate = annualRate / 12;
   
-  // 1. Compound interest on the Initial Deposit
   const principalCompound = initialDeposit * Math.pow(1 + monthlyRate, months);
   
-  // 2. Compound interest on the Monthly Contributions
   let contributionCompound = 0;
   if (monthlyDeposit > 0) {
     contributionCompound = monthlyDeposit * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
@@ -398,7 +531,6 @@ simBtn.addEventListener('click', () => {
   
   const futureValue = principalCompound + contributionCompound;
   
-  // Breakdown Data
   const totalInvested = initialDeposit + (monthlyDeposit * months);
   const totalInterest = futureValue - totalInvested;
 
@@ -406,7 +538,7 @@ simBtn.addEventListener('click', () => {
   
   simBreakdown.innerHTML = `
     <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-      <span>Total Invested (Out of Pocket):</span>
+      <span>Total Invested:</span>
       <strong>R ${totalInvested.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>
     </div>
     <div style="display: flex; justify-content: space-between; color: #15803d;">
