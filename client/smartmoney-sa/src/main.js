@@ -13,7 +13,7 @@ document.querySelector('#app').innerHTML = `
   <div id="splash-screen">
     <div class="logo-container">
       <!-- Injected Splash Screen Logo -->
-      <img src="./logo.png" alt="SmartMoney Logo" class="splash-logo" />
+      <img src="./logo.PNG" alt="SmartMoney Logo" class="splash-logo" />
       <div>
         <span class="title-smart">Smart</span><span class="title-money">Money</span>
       </div>
@@ -40,7 +40,7 @@ document.querySelector('#app').innerHTML = `
     <div class="navbar">
       <div class="nav-header">
         <!-- Injected Top-Left Navbar Logo -->
-        <img src="./logo.png" alt="App Logo" class="nav-logo" />
+        <img src="./logo.PNG" alt="App Logo" class="nav-logo" />
         <div>
           <h1>SmartMoney-SA</h1>
           <p>Your Personal Finance Dashboard</p>
