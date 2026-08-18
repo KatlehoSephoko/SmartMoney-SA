@@ -12,7 +12,7 @@ document.querySelector('#app').innerHTML = `
   <!-- Landing / Splash Screen -->
   <div id="splash-screen">
     <div class="logo-container">
-      <!-- Injected Splash Screen Logo -->
+      <!-- Your Custom Logo -->
       <img src="https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG" alt="SmartMoney Logo" class="splash-logo" />
       <div>
         <span class="title-smart">Smart</span><span class="title-money">Money</span>
@@ -25,8 +25,11 @@ document.querySelector('#app').innerHTML = `
   <!-- Main Dashboard -->
   <div id="dashboard" class="container" style="display: none; opacity: 0; transition: opacity 0.4s ease;">
     
-    <!-- Top Controls -->
+    <!-- Top Controls: Logo on Left, Toggle on Right -->
     <div class="top-controls">
+      <!-- Your Custom Logo -->
+      <img src="https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG" alt="App Logo" class="top-logo" />
+
       <div class="theme-switch-wrapper">
         <span id="theme-label">Light Mode</span>
         <label class="switch">
@@ -38,12 +41,9 @@ document.querySelector('#app').innerHTML = `
 
     <!-- Navigation -->
     <div class="navbar">
-      <div class="nav-header">
-        <!-- Injected Top-Left Navbar Logo -->
-        <div>
-          <h1>SmartMoney-SA</h1>
-          <p>Your Personal Finance Dashboard</p>
-        </div>
+      <div>
+        <h1>SmartMoney-SA</h1>
+        <p>Your Personal Finance Dashboard</p>
       </div>
       <div class="points" id="user-points">0 pts</div>
     </div>
