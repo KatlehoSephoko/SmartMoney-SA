@@ -148,14 +148,24 @@ body {
 }
 
 /* =========================
-   Theme Toggle Switch
+   Top Controls & Logo
    ========================= */
 
 .top-controls {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between; /* Spreads logo left, toggle right */
   align-items: center;
   margin-bottom: 15px;
+}
+
+.top-logo {
+  width: 55px;
+  height: 55px;
+  border-radius: 14px;
+  object-fit: cover;
+  background: white;
+  padding: 2px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
 .theme-switch-wrapper {
@@ -234,30 +244,17 @@ input:checked + .slider:before {
   margin-bottom: 25px;
 }
 
-.nav-header {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.nav-logo {
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
-  object-fit: cover;
-  background: white;
-  padding: 2px;
-}
-
 .navbar h1 {
   margin: 0;
   font-size: 24px;
+  text-align: left;
 }
 
 .navbar p {
   margin: 4px 0 0;
   font-size: 14px;
   opacity: 0.9;
+  text-align: left;
 }
 
 /* =========================
@@ -466,6 +463,11 @@ body.dark-mode .title-money {
 
 body.dark-mode #theme-label {
   color: #f9fafb;
+}
+
+body.dark-mode .top-logo {
+  background: #1f2937;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
 body.dark-mode .card,
