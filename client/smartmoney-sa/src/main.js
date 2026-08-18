@@ -8,7 +8,8 @@ const icons = {
   briefcase: `<svg class="icon-corporate" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>`,
   sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`,
   moon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`,
-  trending: `<svg class="icon-corporate" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>`
+  trending: `<svg class="icon-corporate" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>`,
+  gift: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>`
 };
 
 document.querySelector('#app').innerHTML = `
@@ -32,7 +33,7 @@ document.querySelector('#app').innerHTML = `
     <button id="enter-app-btn" class="enter-btn">${icons.lock} Access Dashboard</button>
   </div>
 
-  <!-- Rewards Store Modal (Hidden by default) -->
+  <!-- Rewards Store Modal -->
   <div id="rewards-modal" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
@@ -95,16 +96,17 @@ document.querySelector('#app').innerHTML = `
       </div>
     </div>
 
-    <!-- Navigation -->
+    <!-- Centered Navigation -->
     <div class="navbar">
       <div>
         <h1>SmartMoney-SA</h1>
         <p>Personal Finance Management</p>
       </div>
-      <div style="text-align: right;">
+      <div class="points-container">
         <div class="points" id="user-points">0 pts</div>
-        <div id="reward-value" style="font-size: 13px; color: #a7f3d0; margin-top: 4px; font-weight: 600;">Reward Value: R 0.00</div>
+        <div id="reward-value">Reward Value: R 0.00</div>
       </div>
+      <button id="nav-open-rewards-btn" style="background: #10b981; color: white; margin-top: 10px;">${icons.gift} Open Rewards Store</button>
     </div>
 
     <!-- Statistics -->
@@ -131,7 +133,7 @@ document.querySelector('#app').innerHTML = `
           ${icons.trending}
           <h2>Transaction Log</h2>
         </div>
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Log deposits to earn loyalty points.</p>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Log general deposits to earn loyalty points.</p>
         
         <div class="form-group">
           <label>Amount (ZAR)</label>
@@ -149,7 +151,7 @@ document.querySelector('#app').innerHTML = `
         <div class="form-group">
           <label>Category</label>
           <select id="transaction-category">
-            <option value="Salary / Savings">Salary / Savings</option>
+            <option value="Salary / General">Salary / General</option>
             <option value="Transportation">Transportation</option>
             <option value="Accommodation & Rent">Accommodation & Rent</option>
             <option value="Food & Dining">Food & Dining</option>
@@ -197,6 +199,7 @@ document.querySelector('#app').innerHTML = `
     <!-- Savings Goals -->
     <div class="card" style="margin-top: 20px;">
       <h2>Savings Portfolios</h2>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Create a portfolio and actively deposit funds into it to reach your goal.</p>
       
       <div class="border-divider">
         <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
@@ -218,7 +221,57 @@ document.querySelector('#app').innerHTML = `
         <button id="set-goal-btn" class="secondary" style="width: 100%; max-width: 200px;">Create Portfolio</button>
       </div>
 
+      <!-- Container for goals with active funding -->
       <div id="goals-container"></div>
+    </div>
+
+    <!-- Real-World Bank Savings Simulator -->
+    <div class="card" style="margin-top: 20px;">
+      <div class="card-header">
+        ${icons.trending}
+        <h2>Bank Savings Simulator</h2>
+      </div>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Calculate exact monthly compound interest based on real banking plans.</p>
+      
+      <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Account Type</label>
+          <select id="sim-account-type">
+            <option value="6.00">Access (Up to 6.00%)</option>
+            <option value="7.25">Notice Deposit (Up to 7.25%)</option>
+            <option value="7.00">Tax-free (Up to 7.00%)</option>
+            <option value="8.25" selected>Fixed-term (Up to 8.25%)</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Duration (Years)</label>
+          <input type="number" id="sim-years" placeholder="e.g. 2" />
+        </div>
+      </div>
+
+      <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Initial Deposit (ZAR)</label>
+          <input type="number" id="sim-initial" placeholder="e.g. 5000" />
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Monthly Addition (Optional)</label>
+          <input type="number" id="sim-monthly" placeholder="e.g. 500" />
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 5px;">
+        <button class="secondary" id="simulate-btn" style="flex: 2;">Run Bank Simulation</button>
+        <button class="danger" id="sim-clear-btn" style="flex: 1;">Clear</button>
+      </div>
+      
+      <div class="simulator-result" id="sim-result" style="display: none;">
+        <h3>Estimated Future Value:</h3>
+        <p class="balance positive" id="sim-display" style="margin-top: 5px; font-size: 24px;">R 0</p>
+        <div id="sim-breakdown" style="font-size: 13px; color: #4b5563; margin-top: 10px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px;">
+          <!-- Breakdown injected here -->
+        </div>
+      </div>
     </div>
 
     <!-- Recent Transactions List -->
@@ -245,28 +298,20 @@ const splashScreen = document.getElementById('splash-screen');
 const dashboard = document.getElementById('dashboard');
 
 enterBtn.addEventListener('click', () => {
-  // 1. Move card to center
   bankCard.style.left = '50%';
   bankCard.style.transform = 'translate(-50%, -50%)';
   
-  // 2. Wait for card to settle, then begin smooth cinematic exit
   setTimeout(() => {
-    bankCard.style.left = '150%'; // Card exits right
-    
-    // Apply background blur to splash screen as it fades
+    bankCard.style.left = '150%'; 
     splashScreen.style.backdropFilter = 'blur(12px)';
     splashScreen.style.webkitBackdropFilter = 'blur(12px)';
     splashScreen.style.backgroundColor = 'rgba(244, 247, 245, 0.3)';
     
-    // Trigger smooth fade out
     setTimeout(() => {
       splashScreen.style.opacity = '0';
-      
-      // Remove splash completely and show dashboard
       setTimeout(() => {
         splashScreen.style.display = 'none';
         dashboard.style.display = 'block';
-        
         setTimeout(() => {
           dashboard.style.opacity = '1';
         }, 50);
@@ -282,12 +327,14 @@ let points = 0;
 let transactionCount = 0;
 let gigCount = 0;
 
+// Notice the new "saved" property for isolated goal tracking
 let goals = [
   {
     id: Date.now(),
     name: 'Emergency Fund',
     target: 20000,
-    duration: 12
+    duration: 12,
+    saved: 0 
   }
 ];
 
@@ -310,6 +357,8 @@ const rewardsModal = document.getElementById('rewards-modal');
 const closeModalBtn = document.getElementById('close-modal-btn');
 const claimStoreBtns = document.querySelectorAll('.claim-store-btn');
 const claimCashBtn = document.querySelector('.claim-cash-btn');
+const navOpenRewardsBtn = document.getElementById('nav-open-rewards-btn');
+
 
 // --- Goals Rendering Logic ---
 function renderGoals() {
@@ -322,8 +371,8 @@ function renderGoals() {
   }
 
   goals.forEach(goal => {
-    let goalPercentage = (currentBalance / goal.target) * 100;
-    if (currentBalance <= 0) goalPercentage = 0;
+    // Progress is now tracked by money specifically deposited into THIS goal
+    let goalPercentage = (goal.saved / goal.target) * 100;
     if (goalPercentage > 100) goalPercentage = 100;
     
     const monthlyMin = goal.duration > 0 ? (goal.target / goal.duration) : 0;
@@ -343,15 +392,45 @@ function renderGoals() {
         <div class="progress-bar" style="width: ${goalPercentage}%;"></div>
       </div>
       <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="progress-text">Saved: R ${goal.saved.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
         <div class="progress-text">${Math.round(goalPercentage)}% Reached</div>
       </div>
       
-      <button class="open-store-btn" data-id="${goal.id}" style="width: 100%; margin-top: 15px; background: ${isReached ? '#16a34a' : '#9ca3af'};" ${isReached ? '' : 'disabled'}>
-        ${isReached ? icons.unlock + ' Access Rewards Store' : icons.lock + ' Goal Locked'}
+      <!-- Direct Goal Deposit Area -->
+      <div class="goal-funding">
+        <input type="number" id="fund-input-${goal.id}" placeholder="Amount..." style="flex: 1;" ${isReached ? 'disabled' : ''} />
+        <button class="fund-goal-btn" data-id="${goal.id}" style="width: auto;" ${isReached ? 'disabled' : ''}>Deposit</button>
+      </div>
+
+      <button class="open-store-btn" style="width: 100%; margin-top: 15px; background: ${isReached ? '#16a34a' : '#9ca3af'};" ${isReached ? '' : 'disabled'}>
+        ${isReached ? icons.unlock + ' Goal Complete! Open Rewards' : icons.lock + ' Reward Locked'}
       </button>
     `;
 
     goalsContainer.appendChild(goalElement);
+  });
+
+  // Handle funding a specific goal
+  document.querySelectorAll('.fund-goal-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = parseInt(e.target.getAttribute('data-id'));
+      const input = document.getElementById(`fund-input-${id}`);
+      const amount = parseFloat(input.value);
+
+      if (isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid deposit amount.");
+        return;
+      }
+
+      const goal = goals.find(g => g.id === id);
+      if (goal) {
+        goal.saved += amount;
+        // Also increase the user's total net worth balance
+        processTransaction(amount, true, `Portfolio Deposit: ${goal.name}`);
+        input.value = '';
+        renderGoals(); // Re-render to update the progress bar
+      }
+    });
   });
 
   // Goal Deletion
@@ -377,11 +456,14 @@ renderGoals();
 
 // --- Rewards Store Logic ---
 
+navOpenRewardsBtn.addEventListener('click', () => {
+  rewardsModal.classList.add('active');
+});
+
 closeModalBtn.addEventListener('click', () => {
   rewardsModal.classList.remove('active');
 });
 
-// Retail Voucher Purchases
 claimStoreBtns.forEach(btn => {
   btn.addEventListener('click', (e) => {
     const cost = parseInt(e.target.getAttribute('data-cost'));
@@ -392,19 +474,14 @@ claimStoreBtns.forEach(btn => {
       points -= cost;
       updateHeaderPoints();
       rewardsModal.classList.remove('active');
-      
-      // Log it in transaction history as a reward redemption (doesn't change cash balance)
       logTransaction(0, true, `Redeemed: ${name}`, `#1d4ed8`);
-      
       alert(`Success! Check your email for your R${value} ${name}. Remaining points: ${points}`);
-      renderGoals();
     } else {
       alert(`Insufficient Points. You need ${cost} points, but only have ${points}.`);
     }
   });
 });
 
-// Direct Cash Out Logic
 claimCashBtn.addEventListener('click', () => {
   const rewardCash = points * 0.25;
   if (rewardCash > 0) {
@@ -436,7 +513,6 @@ function updateHeaderPoints() {
     levelDisplay.textContent = "Standard";
     levelDisplay.style.color = "#334155";
   }
-  renderGoals();
 }
 
 // --- Core Transaction & Logging Logic ---
@@ -505,7 +581,7 @@ document.getElementById('set-goal-btn').addEventListener('click', () => {
     return;
   }
 
-  goals.push({ id: Date.now(), name: name, target: target, duration: duration });
+  goals.push({ id: Date.now(), name: name, target: target, duration: duration, saved: 0 });
   renderGoals(); 
   
   if (goalsContainer.lastElementChild) {
@@ -566,7 +642,67 @@ addGigBtn.addEventListener('click', () => {
   gigAmountInput.value = '';
 });
 
-// Theme Switcher (Updates SVG icon)
+// Bank Simulator Logic
+const simBtn = document.getElementById('simulate-btn');
+const simClearBtn = document.getElementById('sim-clear-btn');
+const simAccountType = document.getElementById('sim-account-type');
+const simInitialInput = document.getElementById('sim-initial');
+const simMonthlyInput = document.getElementById('sim-monthly');
+const simYearsInput = document.getElementById('sim-years');
+const simResult = document.getElementById('sim-result');
+const simDisplay = document.getElementById('sim-display');
+const simBreakdown = document.getElementById('sim-breakdown');
+
+simBtn.addEventListener('click', () => {
+  const annualRate = parseFloat(simAccountType.value) / 100;
+  const initialDeposit = parseFloat(simInitialInput.value) || 0;
+  const monthlyDeposit = parseFloat(simMonthlyInput.value) || 0;
+  const years = parseFloat(simYearsInput.value);
+
+  if ((initialDeposit <= 0 && monthlyDeposit <= 0) || isNaN(years) || years <= 0) {
+    alert("Please ensure you enter a valid duration and at least one deposit amount.");
+    return;
+  }
+
+  const months = years * 12;
+  const monthlyRate = annualRate / 12;
+  
+  const principalCompound = initialDeposit * Math.pow(1 + monthlyRate, months);
+  
+  let contributionCompound = 0;
+  if (monthlyDeposit > 0) {
+    contributionCompound = monthlyDeposit * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+  }
+  
+  const futureValue = principalCompound + contributionCompound;
+  
+  const totalInvested = initialDeposit + (monthlyDeposit * months);
+  const totalInterest = futureValue - totalInvested;
+
+  simDisplay.textContent = 'R ' + futureValue.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+  
+  simBreakdown.innerHTML = `
+    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+      <span>Total Invested:</span>
+      <strong>R ${totalInvested.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>
+    </div>
+    <div style="display: flex; justify-content: space-between; color: #15803d;">
+      <span>Total Interest Earned:</span>
+      <strong>+ R ${totalInterest.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>
+    </div>
+  `;
+  
+  simResult.style.display = 'block';
+});
+
+simClearBtn.addEventListener('click', () => {
+  simInitialInput.value = '';
+  simMonthlyInput.value = '';
+  simYearsInput.value = '';
+  simResult.style.display = 'none';
+});
+
+// Theme Switcher
 const themeToggle = document.getElementById('theme-toggle');
 const themeLabel = document.getElementById('theme-label');
 const themeIcon = document.getElementById('theme-icon');
