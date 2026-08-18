@@ -61,7 +61,7 @@ document.querySelector('#app').innerHTML = `
       </div>
       <div class="stat">
         <h3>Active Goals</h3>
-        <p>1</p>
+        <p id="active-goals-count">1</p>
       </div>
     </div>
 
@@ -132,7 +132,7 @@ document.querySelector('#app').innerHTML = `
 
     </div>
 
-    <!-- Savings Goals -->
+    <!-- Savings Goals (Multiple Goals Support) -->
     <div class="card" style="margin-top: 20px;">
       <h2>Savings Goals & Rewards</h2>
       
@@ -151,27 +151,12 @@ document.querySelector('#app').innerHTML = `
             <input type="number" id="goal-duration-input" placeholder="e.g. 12" />
           </div>
         </div>
-        <button id="set-goal-btn" class="secondary" style="width: 100%;">Set New Goal</button>
+        <button id="set-goal-btn" class="secondary" style="width: 100%;">Add New Goal</button>
       </div>
 
-      <div class="goal">
-        <div class="goal-header">
-          <h3 id="goal-title-display">Emergency Fund (R 20,000)</h3>
-        </div>
-        <p style="font-size: 13px; color: #6b7280; margin-top: 5px; margin-bottom: 0;" id="goal-duration-display">Duration: Not set</p>
-        <p style="font-size: 14px; font-weight: bold; color: #15803d; margin-top: 4px; margin-bottom: 0;" id="goal-monthly-display">Minimum Monthly Deposit: R 0.00</p>
-        
-        <div class="progress-container">
-          <div class="progress-bar" id="goal-bar" style="width: 0%;"></div>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div class="progress-text" id="goal-text">0% Reached</div>
-        </div>
-        
-        <button id="claim-reward-btn" style="width: 100%; margin-top: 15px; background: #9ca3af; cursor: not-allowed;" disabled>
-          🔒 Claim Reward (Goal Not Reached)
-        </button>
-      </div>
+      <!-- Container for all dynamically generated goals -->
+      <div id="goals-container"></div>
+
     </div>
 
     <!-- Recent Transactions List -->
@@ -263,9 +248,18 @@ enterBtn.addEventListener('click', () => {
 // --- Dashboard State ---
 let currentBalance = 0;
 let points = 0;
-let goalTarget = 20000;
 let transactionCount = 0;
 let gigCount = 0;
+
+// Array to hold multiple goals
+let goals = [
+  {
+    id: Date.now(),
+    name: 'Emergency Fund',
+    target: 20000,
+    duration: 0
+  }
+];
 
 // Elements
 const balanceDisplay = document.getElementById('total-balance');
@@ -278,11 +272,87 @@ const rewardDisplay = document.getElementById('reward-value');
 const levelDisplay = document.getElementById('user-level');
 const transactionList = document.getElementById('transaction-list');
 const emptyState = document.getElementById('empty-state');
-const goalBar = document.getElementById('goal-bar');
-const goalText = document.getElementById('goal-text');
-const claimRewardBtn = document.getElementById('claim-reward-btn');
+const goalsContainer = document.getElementById('goals-container');
+const activeGoalsCount = document.getElementById('active-goals-count');
 
-// Core Gamification & Balance Update Function
+
+// --- Goals Rendering Logic ---
+function renderGoals() {
+  goalsContainer.innerHTML = ''; // Clear container
+  activeGoalsCount.textContent = goals.length;
+
+  if (goals.length === 0) {
+    goalsContainer.innerHTML = '<p style="color: #6b7280; font-size: 14px; text-align: center; font-style: italic;">No active goals. Add one above to start earning rewards!</p>';
+    return;
+  }
+
+  goals.forEach(goal => {
+    let goalPercentage = (currentBalance / goal.target) * 100;
+    if (currentBalance <= 0) goalPercentage = 0;
+    if (goalPercentage > 100) goalPercentage = 100;
+    
+    const monthlyMin = goal.duration > 0 ? (goal.target / goal.duration) : 0;
+    const isReached = goalPercentage >= 100;
+    const rewardCash = points * 0.25;
+
+    const goalElement = document.createElement('div');
+    goalElement.className = 'goal';
+    goalElement.innerHTML = `
+      <div class="goal-header">
+        <h3>${goal.name} (R ${goal.target.toLocaleString()})</h3>
+        <button class="delete-goal-btn" data-id="${goal.id}" style="background: transparent; color: #ef4444; font-size: 20px; padding: 0; box-shadow: none;">&times;</button>
+      </div>
+      <p style="font-size: 13px; color: #6b7280; margin-top: 5px; margin-bottom: 0;">${goal.duration > 0 ? `Duration: ${goal.duration} Months` : 'Duration: Not set'}</p>
+      ${monthlyMin > 0 ? `<p style="font-size: 14px; font-weight: bold; color: #15803d; margin-top: 4px; margin-bottom: 0;">Minimum Monthly Deposit: R ${monthlyMin.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>` : ''}
+      
+      <div class="progress-container">
+        <div class="progress-bar" style="width: ${goalPercentage}%;"></div>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="progress-text">${Math.round(goalPercentage)}% Reached</div>
+      </div>
+      
+      <button class="claim-reward-btn" data-id="${goal.id}" style="width: 100%; margin-top: 15px; background: ${isReached ? '#16a34a' : '#9ca3af'}; cursor: ${isReached ? 'pointer' : 'not-allowed'};" ${isReached ? '' : 'disabled'}>
+        ${isReached ? `🎁 Claim R ${rewardCash.toLocaleString(undefined, {minimumFractionDigits: 2})} Reward!` : '🔒 Claim Reward (Goal Not Reached)'}
+      </button>
+    `;
+
+    goalsContainer.appendChild(goalElement);
+  });
+
+  // Attach Event Listeners to the newly created buttons
+  document.querySelectorAll('.delete-goal-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = parseInt(e.target.getAttribute('data-id'));
+      goals = goals.filter(g => g.id !== id);
+      renderGoals();
+    });
+  });
+
+  document.querySelectorAll('.claim-reward-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const rewardCash = points * 0.25;
+      if (rewardCash > 0) {
+        processTransaction(rewardCash, true, '🏆 Goal Reward Payout');
+        
+        points = 0;
+        pointsDisplay.textContent = '0 pts';
+        rewardDisplay.textContent = 'Reward Value: R 0.00';
+        
+        alert(\`Congratulations! You achieved a goal and claimed R \${rewardCash.toLocaleString(undefined, {minimumFractionDigits: 2})} in rewards!\`);
+        renderGoals(); // Refresh goals to lock buttons again if balance drops or to reset reward text
+      } else {
+        alert("You don't have any points to claim yet!");
+      }
+    });
+  });
+}
+
+// Initial Render
+renderGoals();
+
+
+// --- Core Gamification & Balance Update Function ---
 function processTransaction(amount, isDeposit, categoryName) {
   if (isDeposit) {
     currentBalance += amount;
@@ -321,8 +391,8 @@ function processTransaction(amount, isDeposit, categoryName) {
     levelDisplay.style.color = "#374151";
   }
 
-  // Update Progress Goal
-  updateGoalProgress();
+  // Update all Progress Goals
+  renderGoals();
 
   // Add to Recent Transactions List
   if (transactionCount === 0 && emptyState) emptyState.remove(); 
@@ -359,6 +429,34 @@ addBtn.addEventListener('click', () => {
   }
   processTransaction(amount, typeSelect.value === 'Deposit', categorySelect.value);
   amountInput.value = '';
+});
+
+// Set Custom Goal (Pushing to Array)
+document.getElementById('set-goal-btn').addEventListener('click', () => {
+  const goalTargetInput = document.getElementById('goal-target-input');
+  const target = parseFloat(goalTargetInput.value);
+  const name = document.getElementById('goal-name-input').value || 'Custom Goal';
+  const duration = parseFloat(document.getElementById('goal-duration-input').value) || 0;
+
+  if (isNaN(target) || target <= 0) {
+    alert('Please enter a valid target amount.');
+    return;
+  }
+
+  // Add the new goal to the beginning of the list
+  goals.unshift({
+    id: Date.now(),
+    name: name,
+    target: target,
+    duration: duration
+  });
+
+  renderGoals(); 
+  
+  // Clear the form
+  document.getElementById('goal-name-input').value = '';
+  goalTargetInput.value = '';
+  document.getElementById('goal-duration-input').value = '';
 });
 
 // Side-Hustle Tracker Logic
@@ -404,6 +502,9 @@ addGigBtn.addEventListener('click', () => {
     pointsDisplay.textContent = points.toLocaleString() + ' pts';
     rewardDisplay.textContent = 'Reward Value: R ' + rewardCash.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     
+    // Update goal button states since points changed
+    renderGoals();
+
     li.remove();
     gigCount--;
     if (gigCount === 0) gigList.appendChild(gigEmptyState);
@@ -428,74 +529,6 @@ themeToggle.addEventListener('change', (e) => {
   }
 });
 
-// Goal Progress Function & Reward Logic
-function updateGoalProgress() {
-  let goalPercentage = (currentBalance / goalTarget) * 100;
-  if (currentBalance <= 0) goalPercentage = 0;
-  if (goalPercentage > 100) goalPercentage = 100;
-  
-  goalBar.style.width = goalPercentage + '%';
-  goalText.textContent = Math.round(goalPercentage) + '% Reached';
-
-  // Unlock Claim Reward Button if goal is reached
-  if (goalPercentage >= 100) {
-    const rewardCash = points * 0.25;
-    claimRewardBtn.disabled = false;
-    claimRewardBtn.style.background = '#16a34a'; // Green unlock color
-    claimRewardBtn.style.cursor = 'pointer';
-    claimRewardBtn.innerHTML = `🎁 Claim R ${rewardCash.toLocaleString(undefined, {minimumFractionDigits: 2})} Reward!`;
-  } else {
-    claimRewardBtn.disabled = true;
-    claimRewardBtn.style.background = '#9ca3af'; // Locked gray color
-    claimRewardBtn.style.cursor = 'not-allowed';
-    claimRewardBtn.innerHTML = `🔒 Claim Reward (Goal Not Reached)`;
-  }
-}
-
-// Claim Reward Button Logic
-claimRewardBtn.addEventListener('click', () => {
-  const rewardCash = points * 0.25;
-  if (rewardCash > 0) {
-    // Treat the reward as a normal income deposit
-    processTransaction(rewardCash, true, '🏆 Goal Reward Payout');
-    
-    // Reset points after claiming
-    points = 0;
-    pointsDisplay.textContent = '0 pts';
-    rewardDisplay.textContent = 'Reward Value: R 0.00';
-    
-    alert(`Congratulations! You achieved your goal and claimed R ${rewardCash.toLocaleString(undefined, {minimumFractionDigits: 2})} in rewards!`);
-    updateGoalProgress(); // Re-evaluate button state
-  } else {
-    alert("You don't have any points to claim yet!");
-  }
-});
-
-// Set Custom Goal
-document.getElementById('set-goal-btn').addEventListener('click', () => {
-  const goalTargetInput = document.getElementById('goal-target-input');
-  const target = parseFloat(goalTargetInput.value);
-  const name = document.getElementById('goal-name-input').value || 'Custom Goal';
-  const duration = parseFloat(document.getElementById('goal-duration-input').value) || 0;
-
-  if (isNaN(target) || target <= 0 || isNaN(duration) || duration <= 0) {
-    alert('Please enter a valid target amount and duration (months).');
-    return;
-  }
-
-  goalTarget = target;
-  const monthlyMin = target / duration;
-
-  document.getElementById('goal-title-display').textContent = `${name} (R ${target.toLocaleString()})`;
-  document.getElementById('goal-duration-display').textContent = `Duration: ${duration} Months`;
-  document.getElementById('goal-monthly-display').textContent = `Minimum Monthly Deposit: R ${monthlyMin.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-
-  updateGoalProgress(); 
-  
-  document.getElementById('goal-name-input').value = '';
-  goalTargetInput.value = '';
-  document.getElementById('goal-duration-input').value = '';
-});
 
 // Bank Simulator Logic
 const simBtn = document.getElementById('simulate-btn');
