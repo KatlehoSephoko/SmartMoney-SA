@@ -40,7 +40,6 @@ document.querySelector('#app').innerHTML = `
     <div class="navbar">
       <div class="nav-header">
         <!-- Injected Top-Left Navbar Logo -->
-        <img src="https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG" alt="App Logo" class="nav-logo" />
         <div>
           <h1>SmartMoney-SA</h1>
           <p>Your Personal Finance Dashboard</p>
