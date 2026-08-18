@@ -38,7 +38,8 @@ document.querySelector('#app').innerHTML = `
     <div class="modal-content">
       <div class="modal-header">
         <h2>Corporate Partner Rewards</h2>
-        <button id="close-modal-btn" class="close-modal">&times;</button>
+        <!-- Secondary class applies the light-green inverse colors -->
+        <button id="close-modal-btn" class="secondary" style="padding: 8px 16px; font-size: 14px;">Close</button>
       </div>
       <p style="font-size: 13px; color: #64748b; margin-top: 0; margin-bottom: 15px;">Redeem your points for retail vouchers. 1 Point = R0.25</p>
       
@@ -72,7 +73,7 @@ document.querySelector('#app').innerHTML = `
             <h4>Direct Cash Deposit</h4>
             <p>Convert all available points to ZAR</p>
           </div>
-          <button class="claim-cash-btn" style="width: auto; background: #064e3b;">Cash Out</button>
+          <button class="claim-cash-btn" style="width: auto; background: #064e3b; color: white;">Cash Out</button>
         </div>
       </div>
     </div>
@@ -181,11 +182,12 @@ document.querySelector('#app').innerHTML = `
               <input type="number" id="gig-amount-input" placeholder="0.00" />
             </div>
           </div>
-          <button id="add-gig-btn" class="secondary" style="width: 100%;">Log Invoice</button>
+          <!-- Log Invoice is now Primary Green -->
+          <button id="add-gig-btn" style="width: 100%;">Log Invoice</button>
         </div>
 
         <div>
-          <h3 style="font-size: 14px; margin-bottom: 10px; color: #111827;">Outstanding Receivables</h3>
+          <h3 class="section-subtitle">Outstanding Receivables</h3>
           <ul id="gig-list" style="list-style: none; padding: 0; margin: 0;">
             <li id="gig-empty-state" style="padding: 10px 0; color: #94a3b8; font-size: 13px; font-style: italic;">
               No pending invoices.
@@ -218,7 +220,8 @@ document.querySelector('#app').innerHTML = `
             </div>
           </div>
         </div>
-        <button id="set-goal-btn" class="secondary" style="width: 100%; max-width: 200px;">Create Portfolio</button>
+        <!-- Create Portfolio is now Primary Green -->
+        <button id="set-goal-btn" style="width: 100%; max-width: 200px;">Create Portfolio</button>
       </div>
 
       <!-- Container for goals with active funding -->
@@ -261,8 +264,10 @@ document.querySelector('#app').innerHTML = `
       </div>
 
       <div style="display: flex; gap: 10px; margin-top: 5px;">
-        <button class="secondary" id="simulate-btn" style="flex: 2;">Run Bank Simulation</button>
-        <button class="danger" id="sim-clear-btn" style="flex: 1;">Clear</button>
+        <!-- Run Bank Simulation is now Primary Green -->
+        <button id="simulate-btn" style="flex: 2;">Run Bank Simulation</button>
+        <!-- Clear is now Secondary (Inverse Light Green) -->
+        <button class="secondary" id="sim-clear-btn" style="flex: 1;">Clear</button>
       </div>
       
       <div class="simulator-result" id="sim-result" style="display: none;">
@@ -379,10 +384,10 @@ function renderGoals() {
     const goalElement = document.createElement('div');
     goalElement.className = 'goal';
     
-    // Notice the close button is absolute positioned here (styled via CSS)
+    // Classes applied here ensure proper dark mode text inversion
     goalElement.innerHTML = `
       <div style="padding-right: 35px;">
-        <h3 style="margin: 0; font-size: 16px; color: #111827;">${goal.name} (R ${goal.target.toLocaleString()})</h3>
+        <h3 class="goal-name-text">${goal.name} (R ${goal.target.toLocaleString()})</h3>
       </div>
       <button class="delete-goal-btn" data-id="${goal.id}">&times;</button>
       
@@ -393,7 +398,7 @@ function renderGoals() {
         <div class="progress-bar" style="width: ${goalPercentage}%;"></div>
       </div>
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div class="progress-text" style="color: #111827;">Saved: R ${goal.saved.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
+        <div class="progress-text goal-saved-text">Saved: R ${goal.saved.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
         <div class="progress-text">${Math.round(goalPercentage)}% Reached</div>
       </div>
       
@@ -550,11 +555,7 @@ function logTransaction(amount, isDeposit, categoryName, customColor = null) {
   transactionCount++;
 
   const li = document.createElement('li');
-  li.style.padding = '14px 0';
-  li.style.borderBottom = '1px solid #e2e8f0';
-  li.style.display = 'flex';
-  li.style.justifyContent = 'space-between';
-  li.style.alignItems = 'center';
+  li.className = 'transaction-item';
 
   const amountColor = customColor ? customColor : (isDeposit ? '#15803d' : '#b91c1c');
   const amountPrefix = amount === 0 ? '' : (isDeposit ? '+ R ' : '- R ');
@@ -645,19 +646,13 @@ addGigBtn.addEventListener('click', () => {
   gigCount++;
 
   const li = document.createElement('li');
-  li.style.padding = '14px';
-  li.style.background = '#f1f5f9'; 
-  li.style.border = '1px solid #e2e8f0';
-  li.style.borderRadius = '8px';
-  li.style.marginBottom = '10px';
-  li.style.display = 'flex';
-  li.style.justifyContent = 'space-between';
-  li.style.alignItems = 'center';
+  // Replaced inline styles with a class for perfect dark mode support
+  li.className = 'gig-item';
 
   li.innerHTML = `
     <div>
-      <strong style="color: #475569; font-size: 14px;">Pending: ${gigName}</strong>
-      <div style="font-weight: 600; color: #0f172a; margin-top: 4px;">R ${gigAmount.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
+      <strong class="gig-title-text">Pending: ${gigName}</strong>
+      <div class="gig-amount-text">R ${gigAmount.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
     </div>
     <button class="mark-paid-btn" style="background: #15803d; font-size: 12px; padding: 8px 12px;">${icons.check} Cleared</button>
   `;
