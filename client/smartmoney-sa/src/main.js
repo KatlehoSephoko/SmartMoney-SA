@@ -443,8 +443,8 @@ document.getElementById('set-goal-btn').addEventListener('click', () => {
     return;
   }
 
-  // Add the new goal to the beginning of the list
-  goals.unshift({
+  // Add the new goal to the BOTTOM of the list
+  goals.push({
     id: Date.now(),
     name: name,
     target: target,
@@ -452,6 +452,11 @@ document.getElementById('set-goal-btn').addEventListener('click', () => {
   });
 
   renderGoals(); 
+  
+  // Smooth scroll to the newly added goal at the bottom
+  if (goalsContainer.lastElementChild) {
+    goalsContainer.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
   
   // Clear the form
   document.getElementById('goal-name-input').value = '';
