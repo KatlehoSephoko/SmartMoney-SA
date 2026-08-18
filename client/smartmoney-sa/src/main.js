@@ -12,6 +12,8 @@ document.querySelector('#app').innerHTML = `
   <!-- Landing / Splash Screen -->
   <div id="splash-screen">
     <div class="logo-container">
+      <!-- Injected Splash Screen Logo -->
+      <img src="./logo.png" alt="SmartMoney Logo" class="splash-logo" />
       <div>
         <span class="title-smart">Smart</span><span class="title-money">Money</span>
       </div>
@@ -36,9 +38,13 @@ document.querySelector('#app').innerHTML = `
 
     <!-- Navigation -->
     <div class="navbar">
-      <div>
-        <h1>SmartMoney-SA</h1>
-        <p>Your Personal Finance Dashboard</p>
+      <div class="nav-header">
+        <!-- Injected Top-Left Navbar Logo -->
+        <img src="./logo.png" alt="App Logo" class="nav-logo" />
+        <div>
+          <h1>SmartMoney-SA</h1>
+          <p>Your Personal Finance Dashboard</p>
+        </div>
       </div>
       <div class="points" id="user-points">0 pts</div>
     </div>
@@ -215,7 +221,7 @@ enterBtn.addEventListener('click', () => {
 });
 
 // --- Dashboard Logic ---
-let currentBalance = 0; // Starts at R0
+let currentBalance = 0;
 let points = 0;
 let goalTarget = 20000;
 let transactionCount = 0;
