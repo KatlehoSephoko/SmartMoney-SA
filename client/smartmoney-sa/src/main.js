@@ -150,21 +150,11 @@ document.querySelector('#app').innerHTML = `
     <!-- Custom Financial Simulator -->
     <div class="card" style="margin-top: 20px;">
       <h2>Investment Simulator</h2>
-      <p style="font-size: 14px; color: #374151; margin-bottom: 20px;">Calculate how your money grows over time.</p>
+      <p style="font-size: 14px; color: #374151; margin-bottom: 20px;">Calculate the simple interest on a one-time deposit.</p>
       
-      <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
-        <div class="form-group" style="margin-bottom: 0;">
-          <label>Contribution (ZAR)</label>
-          <input type="number" id="sim-amount" placeholder="e.g. 500" />
-        </div>
-        <div class="form-group" style="margin-bottom: 0;">
-          <label>Frequency</label>
-          <select id="sim-frequency">
-            <option value="12">Monthly</option>
-            <option value="4">Quarterly</option>
-            <option value="1">Annually</option>
-          </select>
-        </div>
+      <div class="form-group" style="margin-bottom: 15px;">
+        <label>Principal Deposit (ZAR)</label>
+        <input type="number" id="sim-amount" placeholder="e.g. 5000" />
       </div>
 
       <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
@@ -174,7 +164,7 @@ document.querySelector('#app').innerHTML = `
         </div>
         <div class="form-group" style="margin-bottom: 0;">
           <label>Duration (Years)</label>
-          <input type="number" id="sim-years" placeholder="e.g. 5" />
+          <input type="number" id="sim-years" placeholder="e.g. 2" />
         </div>
       </div>
 
@@ -362,37 +352,28 @@ addBtn.addEventListener('click', () => {
   amountInput.value = '';
 });
 
-// Financial Simulator Logic (Updated to Simple Interest)
+// Financial Simulator Logic (Updated to Standard Simple Interest)
 const simBtn = document.getElementById('simulate-btn');
 const simClearBtn = document.getElementById('sim-clear-btn');
 const simAmountInput = document.getElementById('sim-amount');
-const simFreqInput = document.getElementById('sim-frequency');
 const simRateInput = document.getElementById('sim-rate');
 const simYearsInput = document.getElementById('sim-years');
 const simResult = document.getElementById('sim-result');
 const simDisplay = document.getElementById('sim-display');
 
 simBtn.addEventListener('click', () => {
-  const contribution = parseFloat(simAmountInput.value);
-  const frequency = parseInt(simFreqInput.value); 
+  const principal = parseFloat(simAmountInput.value);
   const rate = parseFloat(simRateInput.value);
   const years = parseFloat(simYearsInput.value);
 
-  if (isNaN(contribution) || contribution <= 0 || isNaN(rate) || rate <= 0 || isNaN(years) || years <= 0) {
+  if (isNaN(principal) || principal <= 0 || isNaN(rate) || rate <= 0 || isNaN(years) || years <= 0) {
     alert("Please ensure all simulation fields have valid numbers.");
     return;
   }
 
-  const totalPeriods = years * frequency;
-  const periodRate = (rate / 100) / frequency;
-  
-  // Total principal deposited out of pocket
-  const totalPrincipal = contribution * totalPeriods;
-  
-  // Simple interest earned on all recurring contributions
-  const totalInterest = contribution * periodRate * ((totalPeriods * (totalPeriods + 1)) / 2);
-  
-  const futureValue = totalPrincipal + totalInterest;
+  // Standard Simple Interest Formula: A = P(1 + rt)
+  const r = rate / 100;
+  const futureValue = principal * (1 + (r * years));
 
   simDisplay.textContent = 'R ' + futureValue.toLocaleString(undefined, { maximumFractionDigits: 2 });
   simResult.style.display = 'block';
@@ -400,7 +381,6 @@ simBtn.addEventListener('click', () => {
 
 simClearBtn.addEventListener('click', () => {
   simAmountInput.value = '';
-  simFreqInput.value = '12';
   simRateInput.value = '';
   simYearsInput.value = '';
   simResult.style.display = 'none';
