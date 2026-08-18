@@ -353,6 +353,8 @@ input:checked + .slider .slider-icon {
   margin: 0;
   color: #111827;
   font-size: 18px;
+  display: flex;
+  align-items: center;
 }
 
 .icon-corporate {
@@ -361,6 +363,62 @@ input:checked + .slider .slider-icon {
   stroke: #15803d;
   stroke-width: 2;
   fill: none;
+}
+
+/* INFO TOOLTIP SYSTEM */
+.info-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-left: 10px;
+  cursor: help;
+  color: #94a3b8;
+  transition: color 0.2s;
+}
+
+.info-wrapper:hover {
+  color: #15803d;
+}
+
+.info-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1f2937;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 400;
+  white-space: normal;
+  width: max-content;
+  max-width: 220px;
+  text-align: center;
+  z-index: 10;
+  transition: all 0.2s ease;
+  line-height: 1.4;
+  pointer-events: none;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.info-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: #1f2937 transparent transparent transparent;
+}
+
+.info-wrapper:hover .info-tooltip {
+  visibility: visible;
+  opacity: 1;
+  bottom: 150%;
 }
 
 .form-group {
@@ -701,6 +759,16 @@ body.dark-mode .gig-amount-text {
 
 body.dark-mode .gig-title-text {
   color: #cbd5e1 !important;
+}
+
+/* Info Tooltip Dark Mode */
+body.dark-mode .info-tooltip {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+body.dark-mode .info-tooltip::after {
+  border-color: #f8fafc transparent transparent transparent;
 }
 
 body.dark-mode input,
