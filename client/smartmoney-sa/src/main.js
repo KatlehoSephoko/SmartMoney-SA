@@ -9,7 +9,8 @@ const icons = {
   sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`,
   moon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`,
   trending: `<svg class="icon-corporate" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>`,
-  gift: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>`
+  gift: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>`,
+  info: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`
 };
 
 document.querySelector('#app').innerHTML = `
@@ -131,11 +132,15 @@ document.querySelector('#app').innerHTML = `
       <div class="card">
         <div class="card-header">
           ${icons.trending}
-          <h2>Transaction Log</h2>
+          <h2>Transaction Log
+            <div class="info-wrapper">
+              ${icons.info}
+              <span class="info-tooltip">Deposit your actual cash here to earn 50 base points. You must have an Available Balance before you can fund your portfolios.</span>
+            </div>
+          </h2>
         </div>
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Deposit money here first to earn 50 points, then fund your portfolios.</p>
         
-        <div class="form-group">
+        <div class="form-group" style="margin-top: 15px;">
           <label>Amount (ZAR)</label>
           <input type="number" id="transaction-amount" placeholder="0.00" />
         </div>
@@ -166,11 +171,15 @@ document.querySelector('#app').innerHTML = `
       <div class="card">
         <div class="card-header">
           ${icons.briefcase}
-          <h2>Pending Invoices</h2>
+          <h2>Pending Invoices
+            <div class="info-wrapper">
+              ${icons.info}
+              <span class="info-tooltip">Track gig economy money owed to you. Once marked 'Cleared', it moves directly into your Available Balance.</span>
+            </div>
+          </h2>
         </div>
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Track outstanding gig economy payouts.</p>
         
-        <div class="border-divider">
+        <div class="border-divider" style="margin-top: 15px;">
           <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
             <div class="form-group" style="margin-bottom: 0;">
               <label>Client / Gig Name</label>
@@ -198,10 +207,16 @@ document.querySelector('#app').innerHTML = `
 
     <!-- Savings Goals -->
     <div class="card" style="margin-top: 20px;">
-      <h2>Savings Portfolios</h2>
-      <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Earn up to 100 points for depositing your minimum target. You can also withdraw funds back to your main balance if needed.</p>
+      <div class="card-header">
+        <h2 style="margin: 0; font-size: 20px;">Savings Portfolios
+          <div class="info-wrapper">
+            ${icons.info}
+            <span class="info-tooltip">Deposit multiples of your minimum target to scale your points fast! Hit 100% to earn a 50pt completion bonus. You can withdraw funds back to main balance if needed.</span>
+          </div>
+        </h2>
+      </div>
       
-      <div class="border-divider">
+      <div class="border-divider" style="margin-top: 15px;">
         <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
           <div class="form-group" style="margin-bottom: 0;">
             <label>Portfolio Name</label>
@@ -229,11 +244,15 @@ document.querySelector('#app').innerHTML = `
     <div class="card" style="margin-top: 20px;">
       <div class="card-header">
         ${icons.trending}
-        <h2>Bank Savings Simulator</h2>
+        <h2>Bank Savings Simulator
+          <div class="info-wrapper">
+            ${icons.info}
+            <span class="info-tooltip">Calculate exactly how your money would grow in real-world South African bank accounts using compound interest formulas.</span>
+          </div>
+        </h2>
       </div>
-      <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Calculate exact monthly compound interest based on real banking plans.</p>
       
-      <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
+      <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px; margin-top: 15px;">
         <div class="form-group" style="margin-bottom: 0;">
           <label>Account Type</label>
           <select id="sim-account-type">
@@ -411,7 +430,7 @@ function renderGoals() {
     goalsContainer.appendChild(goalElement);
   });
 
-  // Goal Deposit Logic
+  // Sophisticated Goal Deposit Logic
   document.querySelectorAll('.fund-goal-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = parseInt(e.target.getAttribute('data-id'));
@@ -430,22 +449,35 @@ function renderGoals() {
 
       const goal = goals.find(g => g.id === id);
       if (goal) {
-        // Check if goal was already reached before this deposit
+        // Track states for points calculation
         const wasReached = goal.saved >= goal.target;
         
         goal.saved += amount;
         currentBalance -= amount;
         
-        // Calculate points based on strict rules
+        const isReachedNow = goal.saved >= goal.target;
         const monthlyMin = goal.duration > 0 ? (goal.target / goal.duration) : 0;
+        
         let pointsEarned = 0;
         
         if (wasReached) {
+          // If already hit 100% previously, deposits earn standard over-save points
           pointsEarned = 25;
-        } else if (monthlyMin > 0 && amount >= monthlyMin) {
-          pointsEarned = 100;
         } else {
-          pointsEarned = 50; 
+          // Calculate how many times they hit the minimum deposit requirement in this transaction
+          if (monthlyMin > 0 && amount >= monthlyMin) {
+            // Adds 0.1 to avoid floating point division bugs for exact full amounts
+            const multiples = Math.floor((amount + 0.1) / monthlyMin);
+            pointsEarned = multiples * 100;
+          } else {
+            // Base points for a small deposit under the minimum target
+            pointsEarned = 50; 
+          }
+
+          // Did this exact transaction push them across the 100% finish line?
+          if (isReachedNow) {
+            pointsEarned += 50; // Bonus completion reward!
+          }
         }
 
         points += pointsEarned;
