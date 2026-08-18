@@ -130,6 +130,14 @@ button.secondary:hover {
   background: #a7f3d0;
 }
 
+button.danger {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+button.danger:hover {
+  background: #fee2e2;
+}
+
 /* =========================
    Bank Card Swipe Animation
    ========================= */
@@ -436,8 +444,8 @@ select:focus {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: #fee2e2;
-  color: #ef4444;
+  background: #d1fae5;
+  color: #065f46;
   border-radius: 50%;
   width: 28px;
   height: 28px;
@@ -452,7 +460,7 @@ select:focus {
   box-shadow: none;
 }
 .delete-goal-btn:hover {
-  background: #fca5a5;
+  background: #a7f3d0;
   transform: none;
 }
 
@@ -480,7 +488,7 @@ select:focus {
 
 .goal-funding {
   display: flex; 
-  gap: 10px; 
+  gap: 8px; 
   margin-top: 15px;
   border-top: 1px solid #e2e8f0;
   padding-top: 15px;
@@ -716,8 +724,8 @@ body.dark-mode .reward-item {
 }
 
 body.dark-mode .delete-goal-btn {
-  background: #7f1d1d;
-  color: #fca5a5;
+  background: #064e3b;
+  color: #a7f3d0;
 }
 
 body.dark-mode .progress-container {
