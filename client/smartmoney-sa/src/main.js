@@ -1,7 +1,23 @@
 import './style.css'
 
 document.querySelector('#app').innerHTML = `
-  <div class="container">
+  
+  <!-- Swipe Transition Card -->
+  <div id="swipe-card"></div>
+
+  <!-- Landing / Splash Screen -->
+  <div id="splash-screen">
+    <div class="logo-container">
+      <div>
+        <span class="title-smart">Smart</span><span class="title-money">Money</span>
+      </div>
+      <p class="slogan">Making Smart Money Moves</p>
+    </div>
+    <button id="enter-app-btn" class="enter-btn">Open Dashboard</button>
+  </div>
+
+  <!-- Main Dashboard (Hidden initially) -->
+  <div id="dashboard" class="container" style="display: none; opacity: 0; transition: opacity 0.3s ease;">
     
     <!-- Top Controls (Dark Mode) -->
     <div class="top-controls">
@@ -116,6 +132,40 @@ document.querySelector('#app').innerHTML = `
    JAVASCRIPT LOGIC
    ========================================== */
 
+// --- Landing Page Swipe Logic ---
+const enterBtn = document.getElementById('enter-app-btn');
+const swipeCard = document.getElementById('swipe-card');
+const splashScreen = document.getElementById('splash-screen');
+const dashboard = document.getElementById('dashboard');
+
+enterBtn.addEventListener('click', () => {
+  // 1. Swipe the green card in from the left
+  swipeCard.classList.add('swipe-in');
+  
+  // 2. Wait exactly 0.6s (the CSS transition time) for the card to cover the screen
+  setTimeout(() => {
+    // Hide landing page, show dashboard
+    splashScreen.style.display = 'none';
+    dashboard.style.display = 'block';
+    
+    // Slight delay to trigger a smooth fade-in for the dashboard
+    setTimeout(() => {
+      dashboard.style.opacity = '1';
+    }, 50);
+
+    // 3. Swipe the green card out to the right
+    swipeCard.classList.remove('swipe-in');
+    swipeCard.classList.add('swipe-out');
+    
+    // 4. Remove the card completely after it slides away
+    setTimeout(() => {
+      swipeCard.style.display = 'none';
+    }, 600);
+    
+  }, 600);
+});
+
+// --- Dashboard Logic ---
 let currentBalance = 15400;
 let points = 1250;
 let goalTarget = 20000;
@@ -144,7 +194,7 @@ themeToggleBtn.addEventListener('click', () => {
   }
 });
 
-// Main Dashboard & Gamification Logic
+// Budget Planner & Gamification
 addBtn.addEventListener('click', () => {
   const amount = parseFloat(amountInput.value);
 
