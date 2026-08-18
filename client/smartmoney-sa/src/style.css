@@ -90,12 +90,14 @@ body {
   text-transform: uppercase;
 }
 
-/* Corporate Buttons */
+/* =========================
+   Corporate Buttons
+   ========================= */
 button {
   padding: 12px 20px;
   border: none;
   border-radius: 8px;
-  background: #14532d;
+  background: #14532d; /* Primary App Green */
   color: white;
   font-size: 14px;
   font-weight: 600;
@@ -119,20 +121,13 @@ button:disabled {
   box-shadow: none;
 }
 
+/* Inverse/Secondary Buttons (Light Green) */
 button.secondary {
   background: #d1fae5;
   color: #065f46;
 }
 button.secondary:hover {
   background: #a7f3d0;
-}
-
-button.danger {
-  background: #fef2f2;
-  color: #b91c1c;
-}
-button.danger:hover {
-  background: #fee2e2;
 }
 
 /* =========================
@@ -399,9 +394,37 @@ select:focus {
 .balance.positive { color: #15803d; }
 .balance.negative { color: #b91c1c; }
 
+/* Dynamic Text Classes for Dark Mode Support */
+.section-subtitle {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+.goal-name-text {
+  margin: 0;
+  font-size: 16px;
+  color: #111827;
+}
+
+.goal-saved-text {
+  color: #111827;
+}
+
+.gig-title-text {
+  font-size: 14px;
+  color: #475569;
+}
+
+.gig-amount-text {
+  font-weight: 600;
+  margin-top: 4px;
+  color: #0f172a;
+}
+
 /* Portfolio / Goal Styles */
 .goal {
-  position: relative; /* Allows absolute positioning for close button */
+  position: relative; 
   border: 1px solid #e2e8f0;
   padding: 20px;
   border-radius: 8px;
@@ -500,6 +523,26 @@ select:focus {
   margin: 0;
 }
 
+/* List Items */
+.gig-item {
+  padding: 14px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transaction-item {
+  padding: 14px 0;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 /* =========================
    Rewards Modal Styles
    ========================= */
@@ -552,15 +595,6 @@ select:focus {
   margin: 0;
   font-size: 18px;
   color: #111827;
-}
-
-.close-modal {
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: #64748b;
-  cursor: pointer;
-  padding: 0;
 }
 
 .rewards-grid {
@@ -649,6 +683,18 @@ body.dark-mode .reward-info h4 {
   color: #f8fafc;
 }
 
+/* Dynamic Dark Mode Text Overrides */
+body.dark-mode .section-subtitle,
+body.dark-mode .goal-name-text,
+body.dark-mode .goal-saved-text,
+body.dark-mode .gig-amount-text {
+  color: #f8fafc !important;
+}
+
+body.dark-mode .gig-title-text {
+  color: #cbd5e1 !important;
+}
+
 body.dark-mode input,
 body.dark-mode select {
   background: #0f172a;
@@ -678,15 +724,20 @@ body.dark-mode .progress-container {
   background: #334155;
 }
 
+body.dark-mode .gig-item {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+body.dark-mode .transaction-item {
+  border-color: #334155;
+}
+
 body.dark-mode .simulator-result {
   background: #064e3b;
 }
 body.dark-mode .simulator-result h3 {
   color: #a7f3d0;
-}
-
-body.dark-mode li {
-  border-bottom: 1px solid #334155 !important;
 }
 
 /* =========================
