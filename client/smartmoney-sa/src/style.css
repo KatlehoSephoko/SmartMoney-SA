@@ -15,7 +15,7 @@ body {
   background: #f4f7f5;
   color: #1f2937;
   transition: background 0.3s ease, color 0.3s ease;
-  overflow-x: hidden; /* Prevents scrolling during animation */
+  overflow-x: hidden; 
 }
 
 .container {
@@ -26,7 +26,7 @@ body {
 }
 
 /* =========================
-   Landing / Splash Screen
+   Landing / Splash Screen (With Fade-In)
    ========================= */
 
 #splash-screen {
@@ -41,7 +41,16 @@ body {
   justify-content: center;
   align-items: center;
   z-index: 100;
-  transition: background 0.3s ease;
+  transition: opacity 0.4s ease, background 0.3s ease;
+  
+  /* Fade in animation on load */
+  animation: splashFadeIn 1.2s ease-out forwards;
+  opacity: 0; 
+}
+
+@keyframes splashFadeIn {
+  0% { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 .logo-container {
@@ -83,50 +92,123 @@ body {
 }
 
 /* =========================
-   Swipe Animation Card
+   Bank Card Swipe Animation
    ========================= */
 
-#swipe-card {
+#bank-card-transition {
   position: fixed;
-  top: 0;
-  left: -100%; /* Hidden off-screen to the left */
-  width: 100%;
-  height: 100%;
-  background: #14532d; /* Solid green wipe */
-  z-index: 999;
-  transition: left 0.6s cubic-bezier(0.77, 0, 0.175, 1); /* Smooth acceleration */
+  top: 50%;
+  left: -150%; /* Hidden far left */
+  transform: translateY(-50%);
+  width: 320px;
+  height: 200px;
+  background: linear-gradient(135deg, #14532d, #16a34a);
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 25px;
+  color: white;
+  transition: left 0.7s cubic-bezier(0.25, 1, 0.5, 1); /* Smooth sliding physics */
+  pointer-events: none; /* Prevents blocking taps */
 }
 
-/* Classes added by JavaScript to trigger the swipe */
-.swipe-in {
-  left: 0 !important;
+/* Designing the card details */
+.card-chip {
+  width: 45px;
+  height: 35px;
+  background: linear-gradient(135deg, #fbbf24, #d97706);
+  border-radius: 6px;
+  margin-bottom: 25px;
 }
 
-.swipe-out {
-  left: 100% !important;
+.card-number {
+  font-family: monospace;
+  font-size: 22px;
+  letter-spacing: 3px;
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.card-name {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 /* =========================
-   Top Bar & Theme Toggle
+   Theme Toggle Switch
    ========================= */
 
 .top-controls {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   margin-bottom: 15px;
 }
 
-.theme-btn {
-  background: #e5e7eb;
-  color: #374151;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-weight: bold;
+.theme-switch-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#theme-label {
   font-size: 14px;
+  font-weight: bold;
+  color: #374151;
+  transition: color 0.3s;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 54px;
+  height: 30px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
   cursor: pointer;
-  transition: background 0.3s ease, color 0.3s ease;
-  box-shadow: none;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #d1d5db;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "☀️";
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+input:checked + .slider {
+  background-color: #14532d;
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+  content: "🌙";
 }
 
 /* =========================
@@ -351,8 +433,7 @@ body.dark-mode .title-money {
   color: #ffffff;
 }
 
-body.dark-mode .theme-btn {
-  background: #374151;
+body.dark-mode #theme-label {
   color: #f9fafb;
 }
 
@@ -433,5 +514,10 @@ body.dark-mode #empty-state {
 
   button {
     width: 100%;
+  }
+
+  #bank-card-transition {
+    width: 280px;
+    height: 180px;
   }
 }
