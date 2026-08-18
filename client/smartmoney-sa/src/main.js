@@ -12,7 +12,6 @@ document.querySelector('#app').innerHTML = `
   <!-- Landing / Splash Screen -->
   <div id="splash-screen">
     <div class="logo-container">
-      <!-- Your Custom Logo -->
       <img src="https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG" alt="SmartMoney Logo" class="splash-logo" />
       <div>
         <span class="title-smart">Smart</span><span class="title-money">Money</span>
@@ -25,9 +24,8 @@ document.querySelector('#app').innerHTML = `
   <!-- Main Dashboard -->
   <div id="dashboard" class="container" style="display: none; opacity: 0; transition: opacity 0.4s ease;">
     
-    <!-- Top Controls: Logo on Left, Toggle on Right -->
+    <!-- Top Controls -->
     <div class="top-controls">
-      <!-- Your Custom Logo -->
       <img src="https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG" alt="App Logo" class="top-logo" />
 
       <div class="theme-switch-wrapper">
@@ -104,7 +102,6 @@ document.querySelector('#app').innerHTML = `
       <div class="card">
         <h2>Savings Goals</h2>
         
-        <!-- Custom Goal Setter Form -->
         <div class="border-divider">
           <div class="form-group">
             <label>Goal Name</label>
@@ -123,7 +120,6 @@ document.querySelector('#app').innerHTML = `
           <button id="set-goal-btn" class="secondary" style="width: 100%;">Set New Goal</button>
         </div>
 
-        <!-- Goal Progress Display -->
         <div class="goal">
           <div class="goal-header">
             <h3 id="goal-title-display">Emergency Fund (R 20,000)</h3>
@@ -147,20 +143,20 @@ document.querySelector('#app').innerHTML = `
       </ul>
     </div>
 
-    <!-- Custom Financial Simulator -->
+    <!-- Real-World Bank Savings Simulator -->
     <div class="card" style="margin-top: 20px;">
-      <h2>Investment Simulator</h2>
-      <p style="font-size: 14px; color: #374151; margin-bottom: 20px;">Calculate the simple interest on a one-time deposit.</p>
+      <h2>Bank Savings Simulator</h2>
+      <p style="font-size: 14px; color: #374151; margin-bottom: 20px;">Calculate exact monthly compound interest based on real banking plans.</p>
       
-      <div class="form-group" style="margin-bottom: 15px;">
-        <label>Principal Deposit (ZAR)</label>
-        <input type="number" id="sim-amount" placeholder="e.g. 5000" />
-      </div>
-
       <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
         <div class="form-group" style="margin-bottom: 0;">
-          <label>Interest Rate (%)</label>
-          <input type="number" id="sim-rate" placeholder="e.g. 8" />
+          <label>Account Type</label>
+          <select id="sim-account-type">
+            <option value="6.00">Access (Up to 6.00%)</option>
+            <option value="7.25">Notice Deposit (Up to 7.25%)</option>
+            <option value="7.00">Tax-free (Up to 7.00%)</option>
+            <option value="8.25" selected>Fixed-term (Up to 8.25%)</option>
+          </select>
         </div>
         <div class="form-group" style="margin-bottom: 0;">
           <label>Duration (Years)</label>
@@ -168,14 +164,28 @@ document.querySelector('#app').innerHTML = `
         </div>
       </div>
 
+      <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Initial Deposit (ZAR)</label>
+          <input type="number" id="sim-initial" placeholder="e.g. 5000" />
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Monthly Addition (Optional)</label>
+          <input type="number" id="sim-monthly" placeholder="e.g. 500" />
+        </div>
+      </div>
+
       <div style="display: flex; gap: 10px; margin-top: 5px;">
-        <button class="secondary" id="simulate-btn" style="flex: 2;">Run Simulation</button>
+        <button class="secondary" id="simulate-btn" style="flex: 2;">Run Bank Simulation</button>
         <button class="danger" id="sim-clear-btn" style="flex: 1;">Clear</button>
       </div>
       
       <div class="simulator-result" id="sim-result" style="display: none;">
         <h3>Estimated Future Value:</h3>
         <p class="amount positive" id="sim-display">R 0</p>
+        <div id="sim-breakdown" style="font-size: 14px; color: #374151; margin-top: 10px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px;">
+          <!-- Breakdown injected here -->
+        </div>
       </div>
     </div>
 
@@ -249,7 +259,7 @@ themeToggle.addEventListener('change', (e) => {
   }
 });
 
-// Function to calculate and update the progress bar
+// Goal Progress Function
 function updateGoalProgress() {
   let goalPercentage = (currentBalance / goalTarget) * 100;
   if (currentBalance <= 0) goalPercentage = 0;
@@ -258,7 +268,7 @@ function updateGoalProgress() {
   goalText.textContent = Math.round(goalPercentage) + '% Reached';
 }
 
-// Set Custom Goal Logic
+// Set Custom Goal
 setGoalBtn.addEventListener('click', () => {
   const target = parseFloat(goalTargetInput.value);
   const name = goalNameInput.value || 'Custom Goal';
@@ -280,7 +290,7 @@ setGoalBtn.addEventListener('click', () => {
   goalDurationInput.value = '';
 });
 
-// Budget Planner & Gamification
+// Budget Planner
 addBtn.addEventListener('click', () => {
   const amount = parseFloat(amountInput.value);
 
@@ -352,36 +362,65 @@ addBtn.addEventListener('click', () => {
   amountInput.value = '';
 });
 
-// Financial Simulator Logic (Updated to Standard Simple Interest)
+// Bank Simulator Logic (Compound Interest)
 const simBtn = document.getElementById('simulate-btn');
 const simClearBtn = document.getElementById('sim-clear-btn');
-const simAmountInput = document.getElementById('sim-amount');
-const simRateInput = document.getElementById('sim-rate');
+const simAccountType = document.getElementById('sim-account-type');
+const simInitialInput = document.getElementById('sim-initial');
+const simMonthlyInput = document.getElementById('sim-monthly');
 const simYearsInput = document.getElementById('sim-years');
 const simResult = document.getElementById('sim-result');
 const simDisplay = document.getElementById('sim-display');
+const simBreakdown = document.getElementById('sim-breakdown');
 
 simBtn.addEventListener('click', () => {
-  const principal = parseFloat(simAmountInput.value);
-  const rate = parseFloat(simRateInput.value);
+  const annualRate = parseFloat(simAccountType.value) / 100;
+  const initialDeposit = parseFloat(simInitialInput.value) || 0;
+  const monthlyDeposit = parseFloat(simMonthlyInput.value) || 0;
   const years = parseFloat(simYearsInput.value);
 
-  if (isNaN(principal) || principal <= 0 || isNaN(rate) || rate <= 0 || isNaN(years) || years <= 0) {
-    alert("Please ensure all simulation fields have valid numbers.");
+  if ((initialDeposit <= 0 && monthlyDeposit <= 0) || isNaN(years) || years <= 0) {
+    alert("Please ensure you enter a valid duration and at least one deposit amount.");
     return;
   }
 
-  // Standard Simple Interest Formula: A = P(1 + rt)
-  const r = rate / 100;
-  const futureValue = principal * (1 + (r * years));
+  const months = years * 12;
+  const monthlyRate = annualRate / 12;
+  
+  // 1. Compound interest on the Initial Deposit
+  const principalCompound = initialDeposit * Math.pow(1 + monthlyRate, months);
+  
+  // 2. Compound interest on the Monthly Contributions
+  let contributionCompound = 0;
+  if (monthlyDeposit > 0) {
+    contributionCompound = monthlyDeposit * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+  }
+  
+  const futureValue = principalCompound + contributionCompound;
+  
+  // Breakdown Data
+  const totalInvested = initialDeposit + (monthlyDeposit * months);
+  const totalInterest = futureValue - totalInvested;
 
-  simDisplay.textContent = 'R ' + futureValue.toLocaleString(undefined, { maximumFractionDigits: 2 });
+  simDisplay.textContent = 'R ' + futureValue.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+  
+  simBreakdown.innerHTML = `
+    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+      <span>Total Invested (Out of Pocket):</span>
+      <strong>R ${totalInvested.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>
+    </div>
+    <div style="display: flex; justify-content: space-between; color: #15803d;">
+      <span>Total Interest Earned:</span>
+      <strong>+ R ${totalInterest.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>
+    </div>
+  `;
+  
   simResult.style.display = 'block';
 });
 
 simClearBtn.addEventListener('click', () => {
-  simAmountInput.value = '';
-  simRateInput.value = '';
+  simInitialInput.value = '';
+  simMonthlyInput.value = '';
   simYearsInput.value = '';
   simResult.style.display = 'none';
 });
