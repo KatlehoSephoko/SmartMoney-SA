@@ -2,8 +2,12 @@ import './style.css'
 
 document.querySelector('#app').innerHTML = `
   
-  <!-- Swipe Transition Card -->
-  <div id="swipe-card"></div>
+  <!-- Bank Card Transition Element -->
+  <div id="bank-card-transition">
+    <div class="card-chip"></div>
+    <div class="card-number">**** **** **** 1250</div>
+    <div class="card-name">SMARTMONEY SA</div>
+  </div>
 
   <!-- Landing / Splash Screen -->
   <div id="splash-screen">
@@ -17,11 +21,17 @@ document.querySelector('#app').innerHTML = `
   </div>
 
   <!-- Main Dashboard (Hidden initially) -->
-  <div id="dashboard" class="container" style="display: none; opacity: 0; transition: opacity 0.3s ease;">
+  <div id="dashboard" class="container" style="display: none; opacity: 0; transition: opacity 0.4s ease;">
     
-    <!-- Top Controls (Dark Mode) -->
+    <!-- Top Controls (Toggle Switch) -->
     <div class="top-controls">
-      <button id="theme-toggle" class="theme-btn">🌙 Dark Mode</button>
+      <div class="theme-switch-wrapper">
+        <span id="theme-label">Light Mode</span>
+        <label class="switch">
+          <input type="checkbox" id="theme-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
     </div>
 
     <!-- Navigation (Centered) -->
@@ -132,37 +142,37 @@ document.querySelector('#app').innerHTML = `
    JAVASCRIPT LOGIC
    ========================================== */
 
-// --- Landing Page Swipe Logic ---
+// --- Landing Page Bank Card Swipe Logic ---
 const enterBtn = document.getElementById('enter-app-btn');
-const swipeCard = document.getElementById('swipe-card');
+const bankCard = document.getElementById('bank-card-transition');
 const splashScreen = document.getElementById('splash-screen');
 const dashboard = document.getElementById('dashboard');
 
 enterBtn.addEventListener('click', () => {
-  // 1. Swipe the green card in from the left
-  swipeCard.classList.add('swipe-in');
+  // 1. Slide the bank card to the direct center of the screen
+  bankCard.style.left = '50%';
+  bankCard.style.transform = 'translate(-50%, -50%)';
   
-  // 2. Wait exactly 0.6s (the CSS transition time) for the card to cover the screen
+  // 2. Wait for the card to arrive at the center (0.7s), then fade out splash screen
   setTimeout(() => {
-    // Hide landing page, show dashboard
-    splashScreen.style.display = 'none';
-    dashboard.style.display = 'block';
+    splashScreen.style.opacity = '0';
     
-    // Slight delay to trigger a smooth fade-in for the dashboard
+    // 3. Once splash screen fades out, hide it completely and show dashboard
     setTimeout(() => {
-      dashboard.style.opacity = '1';
-    }, 50);
-
-    // 3. Swipe the green card out to the right
-    swipeCard.classList.remove('swipe-in');
-    swipeCard.classList.add('swipe-out');
+      splashScreen.style.display = 'none';
+      dashboard.style.display = 'block';
+      
+      // Small delay to let dashboard fade in
+      setTimeout(() => {
+        dashboard.style.opacity = '1';
+        
+        // 4. Slide the bank card the rest of the way off the screen to the right
+        bankCard.style.left = '150%';
+        
+      }, 50);
+    }, 400); // 0.4s fade out duration
     
-    // 4. Remove the card completely after it slides away
-    setTimeout(() => {
-      swipeCard.style.display = 'none';
-    }, 600);
-    
-  }, 600);
+  }, 700); // 0.7s slide duration
 });
 
 // --- Dashboard Logic ---
@@ -182,15 +192,18 @@ const goalBar = document.getElementById('goal-bar');
 const goalText = document.getElementById('goal-text');
 const transactionList = document.getElementById('transaction-list');
 const emptyState = document.getElementById('empty-state');
-const themeToggleBtn = document.getElementById('theme-toggle');
 
-// Dark Mode Toggle
-themeToggleBtn.addEventListener('click', () => {
-  document.body.classList.toggle('dark-mode');
-  if (document.body.classList.contains('dark-mode')) {
-    themeToggleBtn.textContent = '☀️ Light Mode';
+// Toggle Switch Logic
+const themeToggle = document.getElementById('theme-toggle');
+const themeLabel = document.getElementById('theme-label');
+
+themeToggle.addEventListener('change', (e) => {
+  if(e.target.checked) {
+    document.body.classList.add('dark-mode');
+    themeLabel.textContent = 'Dark Mode';
   } else {
-    themeToggleBtn.textContent = '🌙 Dark Mode';
+    document.body.classList.remove('dark-mode');
+    themeLabel.textContent = 'Light Mode';
   }
 });
 
