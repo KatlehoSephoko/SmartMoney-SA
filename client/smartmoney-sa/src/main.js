@@ -150,7 +150,7 @@ document.querySelector('#app').innerHTML = `
     <!-- Custom Financial Simulator -->
     <div class="card" style="margin-top: 20px;">
       <h2>Investment Simulator</h2>
-      <p style="font-size: 14px; color: #374151; margin-bottom: 20px;">Calculate how your money compounds over time.</p>
+      <p style="font-size: 14px; color: #374151; margin-bottom: 20px;">Calculate how your money grows over time.</p>
       
       <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
         <div class="form-group" style="margin-bottom: 0;">
@@ -362,7 +362,7 @@ addBtn.addEventListener('click', () => {
   amountInput.value = '';
 });
 
-// Financial Simulator Logic
+// Financial Simulator Logic (Updated to Simple Interest)
 const simBtn = document.getElementById('simulate-btn');
 const simClearBtn = document.getElementById('sim-clear-btn');
 const simAmountInput = document.getElementById('sim-amount');
@@ -383,10 +383,16 @@ simBtn.addEventListener('click', () => {
     return;
   }
 
-  const periodRate = (rate / 100) / frequency;
   const totalPeriods = years * frequency;
+  const periodRate = (rate / 100) / frequency;
   
-  const futureValue = contribution * (((Math.pow(1 + periodRate, totalPeriods) - 1) / periodRate));
+  // Total principal deposited out of pocket
+  const totalPrincipal = contribution * totalPeriods;
+  
+  // Simple interest earned on all recurring contributions
+  const totalInterest = contribution * periodRate * ((totalPeriods * (totalPeriods + 1)) / 2);
+  
+  const futureValue = totalPrincipal + totalInterest;
 
   simDisplay.textContent = 'R ' + futureValue.toLocaleString(undefined, { maximumFractionDigits: 2 });
   simResult.style.display = 'block';
