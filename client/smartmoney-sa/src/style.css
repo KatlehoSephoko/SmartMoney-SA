@@ -26,7 +26,7 @@ body {
 }
 
 /* =========================
-   Landing / Splash Screen (With Fade-In)
+   Landing / Splash Screen
    ========================= */
 
 #splash-screen {
@@ -42,8 +42,6 @@ body {
   align-items: center;
   z-index: 100;
   transition: opacity 0.4s ease, background 0.3s ease;
-  
-  /* Fade in animation on load */
   animation: splashFadeIn 1.2s ease-out forwards;
   opacity: 0; 
 }
@@ -98,7 +96,7 @@ body {
 #bank-card-transition {
   position: fixed;
   top: 50%;
-  left: -150%; /* Hidden far left */
+  left: -150%; 
   transform: translateY(-50%);
   width: 320px;
   height: 200px;
@@ -111,11 +109,10 @@ body {
   justify-content: center;
   padding: 25px;
   color: white;
-  transition: left 0.7s cubic-bezier(0.25, 1, 0.5, 1); /* Smooth sliding physics */
-  pointer-events: none; /* Prevents blocking taps */
+  transition: left 0.7s cubic-bezier(0.25, 1, 0.5, 1); 
+  pointer-events: none; 
 }
 
-/* Designing the card details */
 .card-chip {
   width: 45px;
   height: 35px;
@@ -315,6 +312,11 @@ button.secondary {
   box-shadow: none;
 }
 
+button.danger {
+  background: #ef4444;
+  color: white;
+}
+
 .balance {
   font-size: 24px;
   font-weight: bold;
@@ -365,6 +367,12 @@ button.secondary {
 .progress-text {
   font-size: 14px;
   color: #6b7280;
+}
+
+.border-divider {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .simulator-result {
@@ -458,7 +466,8 @@ body.dark-mode select {
   color: white;
 }
 
-body.dark-mode .goal {
+body.dark-mode .goal,
+body.dark-mode .border-divider {
   border-color: #4b5563;
 }
 
