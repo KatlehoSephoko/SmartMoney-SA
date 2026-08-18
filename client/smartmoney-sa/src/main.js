@@ -112,7 +112,7 @@ document.querySelector('#app').innerHTML = `
     <!-- Statistics -->
     <div class="stats-grid">
       <div class="stat">
-        <h3>Total Balance</h3>
+        <h3>Available Balance</h3>
         <p class="balance positive" id="total-balance">R 0</p>
       </div>
       <div class="stat">
@@ -133,7 +133,7 @@ document.querySelector('#app').innerHTML = `
           ${icons.trending}
           <h2>Transaction Log</h2>
         </div>
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Log general deposits to earn loyalty points.</p>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Deposit money here first before funding portfolios.</p>
         
         <div class="form-group">
           <label>Amount (ZAR)</label>
@@ -199,7 +199,7 @@ document.querySelector('#app').innerHTML = `
     <!-- Savings Goals -->
     <div class="card" style="margin-top: 20px;">
       <h2>Savings Portfolios</h2>
-      <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Create a portfolio and actively deposit funds into it to reach your goal.</p>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Create a portfolio and actively deposit funds from your main balance into it.</p>
       
       <div class="border-divider">
         <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
@@ -327,7 +327,6 @@ let points = 0;
 let transactionCount = 0;
 let gigCount = 0;
 
-// Notice the new "saved" property for isolated goal tracking
 let goals = [
   {
     id: Date.now(),
@@ -360,7 +359,7 @@ const claimCashBtn = document.querySelector('.claim-cash-btn');
 const navOpenRewardsBtn = document.getElementById('nav-open-rewards-btn');
 
 
-// --- Goals Rendering Logic ---
+// --- Goals Rendering & Funding Logic ---
 function renderGoals() {
   goalsContainer.innerHTML = ''; 
   activeGoalsCount.textContent = goals.length;
@@ -371,7 +370,6 @@ function renderGoals() {
   }
 
   goals.forEach(goal => {
-    // Progress is now tracked by money specifically deposited into THIS goal
     let goalPercentage = (goal.saved / goal.target) * 100;
     if (goalPercentage > 100) goalPercentage = 100;
     
@@ -380,11 +378,14 @@ function renderGoals() {
 
     const goalElement = document.createElement('div');
     goalElement.className = 'goal';
+    
+    // Notice the close button is absolute positioned here (styled via CSS)
     goalElement.innerHTML = `
-      <div class="goal-header">
-        <h3>${goal.name} (R ${goal.target.toLocaleString()})</h3>
-        <button class="delete-goal-btn" data-id="${goal.id}" style="background: transparent; color: #ef4444; padding: 0;">&times;</button>
+      <div style="padding-right: 35px;">
+        <h3 style="margin: 0; font-size: 16px; color: #111827;">${goal.name} (R ${goal.target.toLocaleString()})</h3>
       </div>
+      <button class="delete-goal-btn" data-id="${goal.id}">&times;</button>
+      
       <p style="font-size: 13px; color: #64748b; margin-top: 5px; margin-bottom: 0;">${goal.duration > 0 ? `Term: ${goal.duration} Months` : 'Term: Open'}</p>
       ${monthlyMin > 0 ? `<p style="font-size: 13px; font-weight: 600; color: #15803d; margin-top: 4px; margin-bottom: 0;">Min. Deposit: R ${monthlyMin.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>` : ''}
       
@@ -392,7 +393,7 @@ function renderGoals() {
         <div class="progress-bar" style="width: ${goalPercentage}%;"></div>
       </div>
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div class="progress-text">Saved: R ${goal.saved.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
+        <div class="progress-text" style="color: #111827;">Saved: R ${goal.saved.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
         <div class="progress-text">${Math.round(goalPercentage)}% Reached</div>
       </div>
       
@@ -410,7 +411,7 @@ function renderGoals() {
     goalsContainer.appendChild(goalElement);
   });
 
-  // Handle funding a specific goal
+  // Goal Funding Restriction Logic
   document.querySelectorAll('.fund-goal-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = parseInt(e.target.getAttribute('data-id'));
@@ -422,21 +423,42 @@ function renderGoals() {
         return;
       }
 
+      // STRICT CHECK: Does the user have enough money in their main balance?
+      if (amount > currentBalance) {
+        alert(`Insufficient funds! You only have R ${currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2})} available in your main balance. Add funds via the Transaction Log first.`);
+        return;
+      }
+
       const goal = goals.find(g => g.id === id);
       if (goal) {
+        // Move money from main balance to the goal
         goal.saved += amount;
-        // Also increase the user's total net worth balance
-        processTransaction(amount, true, `Portfolio Deposit: ${goal.name}`);
+        currentBalance -= amount;
+        
+        balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
+        
+        // Log the transfer using a distinct blue color
+        logTransaction(amount, false, `Transfer to Portfolio: ${goal.name}`, '#0284c7');
         input.value = '';
-        renderGoals(); // Re-render to update the progress bar
+        renderGoals(); 
       }
     });
   });
 
-  // Goal Deletion
+  // Goal Deletion with Refund Logic
   document.querySelectorAll('.delete-goal-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = parseInt(e.target.getAttribute('data-id'));
+      const goalToCancel = goals.find(g => g.id === id);
+      
+      // If the goal had money in it, refund it back to the main balance
+      if (goalToCancel && goalToCancel.saved > 0) {
+        currentBalance += goalToCancel.saved;
+        balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
+        logTransaction(goalToCancel.saved, true, `Refund from deleted portfolio: ${goalToCancel.name}`, '#0284c7');
+        alert(`R ${goalToCancel.saved.toLocaleString()} was safely returned to your available balance.`);
+      }
+      
       goals = goals.filter(g => g.id !== id);
       renderGoals();
     });
@@ -485,7 +507,13 @@ claimStoreBtns.forEach(btn => {
 claimCashBtn.addEventListener('click', () => {
   const rewardCash = points * 0.25;
   if (rewardCash > 0) {
-    processTransaction(rewardCash, true, 'Cash Reward Payout');
+    // Treat as an income deposit without earning points on the reward itself
+    currentBalance += rewardCash;
+    balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
+    balanceDisplay.className = currentBalance >= 0 ? 'balance positive' : 'balance negative';
+    
+    logTransaction(rewardCash, true, 'Cash Reward Payout');
+    
     points = 0;
     updateHeaderPoints();
     rewardsModal.classList.remove('active');
@@ -543,13 +571,29 @@ function logTransaction(amount, isDeposit, categoryName, customColor = null) {
   transactionList.prepend(li);
 }
 
-function processTransaction(amount, isDeposit, categoryName) {
+// Normal budget planner logic (affects points)
+addBtn.addEventListener('click', () => {
+  const amount = parseFloat(amountInput.value);
+  const isDeposit = typeSelect.value === 'Deposit';
+  const categoryName = categorySelect.value;
+  
+  if (isNaN(amount) || amount <= 0) {
+    alert("Please enter a valid amount.");
+    return;
+  }
+
+  // Prevent overdrawing if it's an expense
+  if (!isDeposit && amount > currentBalance) {
+    alert(`Insufficient funds! You only have R ${currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2})} available.`);
+    return;
+  }
+
   if (isDeposit) {
     currentBalance += amount;
     points += 50; 
   } else {
     currentBalance -= amount;
-    points -= 100;
+    points -= 100; // Penalty for standard expense withdrawal
     if (points < 0) points = 0; 
   }
 
@@ -558,15 +602,6 @@ function processTransaction(amount, isDeposit, categoryName) {
 
   updateHeaderPoints();
   logTransaction(amount, isDeposit, categoryName);
-}
-
-addBtn.addEventListener('click', () => {
-  const amount = parseFloat(amountInput.value);
-  if (isNaN(amount) || amount <= 0) {
-    alert("Please enter a valid amount.");
-    return;
-  }
-  processTransaction(amount, typeSelect.value === 'Deposit', categorySelect.value);
   amountInput.value = '';
 });
 
@@ -628,8 +663,13 @@ addGigBtn.addEventListener('click', () => {
   `;
 
   li.querySelector('.mark-paid-btn').addEventListener('click', () => {
-    processTransaction(gigAmount, true, `Invoice Cleared: ${gigName}`);
-    points += 100;
+    // Treat cleared invoices as standard deposits
+    currentBalance += gigAmount;
+    balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
+    balanceDisplay.className = currentBalance >= 0 ? 'balance positive' : 'balance negative';
+    
+    logTransaction(gigAmount, true, `Invoice Cleared: ${gigName}`);
+    points += 100; // Bonus points for side hustle completion
     updateHeaderPoints();
 
     li.remove();
