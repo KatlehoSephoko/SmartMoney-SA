@@ -453,6 +453,18 @@ select:focus {
   color: #0f172a;
 }
 
+.transaction-title-text {
+  color: #1e293b;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.transaction-date-text {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
 /* Portfolio / Goal Styles */
 .goal {
   position: relative; 
@@ -729,11 +741,13 @@ body.dark-mode .success-tick svg {
 body.dark-mode .section-subtitle,
 body.dark-mode .goal-name-text,
 body.dark-mode .goal-saved-text,
-body.dark-mode .gig-amount-text {
+body.dark-mode .gig-amount-text,
+body.dark-mode .transaction-title-text {
   color: #f8fafc !important;
 }
 
-body.dark-mode .gig-title-text {
+body.dark-mode .gig-title-text,
+body.dark-mode .transaction-date-text {
   color: #cbd5e1 !important;
 }
 
