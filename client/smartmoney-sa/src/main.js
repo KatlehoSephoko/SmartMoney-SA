@@ -23,14 +23,24 @@ document.querySelector('#app').innerHTML = `
 
   <!-- Landing / Splash Screen -->
   <div id="splash-screen">
-    <div class="logo-container">
+    <div class="logo-container" id="logo-container">
       <img src="https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG" alt="SmartMoney Logo" class="splash-logo" />
       <div>
         <span class="title-smart">Smart</span><span class="title-money">Money</span>
       </div>
       <p class="slogan">Making Smart Money Moves</p>
     </div>
-    <button id="enter-app-btn" class="enter-btn">${icons.lock} Access Dashboard</button>
+    
+    <!-- Auth Status Container (Hidden initially) -->
+    <div id="auth-status" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; flex-direction: column; align-items: center; z-index: 10000; opacity: 0; transition: opacity 0.3s ease;">
+       <div id="spinner" class="spinner"></div>
+       <div id="success-tick" class="success-tick" style="display: none;">
+         <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+       </div>
+       <p id="auth-text" style="color: #111827; font-weight: 600; margin-top: 15px; font-size: 16px;">Authenticating...</p>
+    </div>
+
+    <button id="enter-app-btn" class="enter-btn" style="transition: opacity 0.3s ease;">${icons.lock} Access Dashboard</button>
   </div>
 
   <!-- Rewards Store Modal -->
@@ -133,7 +143,7 @@ document.querySelector('#app').innerHTML = `
           ${icons.trending}
           <h2>Transaction Log</h2>
         </div>
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Deposit cash here first to earn 50 base points. You must have an Available Balance before you can fund portfolios.</p>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Deposit your actual cash here to earn 50 base points. You must have an Available Balance before you can fund your portfolios.</p>
         
         <div class="form-group">
           <label>Amount (ZAR)</label>
@@ -199,7 +209,7 @@ document.querySelector('#app').innerHTML = `
     <!-- Savings Goals -->
     <div class="card" style="margin-top: 20px;">
       <h2>Savings Portfolios</h2>
-      <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Deposit multiples of your target to scale points fast. Once you reach 100%, unlock reward vouchers. If you withdraw after claiming, redeposits earn no points.</p>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Deposit multiples of your target to scale points fast! Hit 100% to earn a 50pt completion bonus. You can withdraw funds back to main balance if needed.</p>
       
       <div class="border-divider">
         <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
@@ -231,7 +241,7 @@ document.querySelector('#app').innerHTML = `
         ${icons.trending}
         <h2>Bank Savings Simulator</h2>
       </div>
-      <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Calculate exact monthly compound interest based on real banking plans.</p>
+      <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Calculate exactly how your money would grow in real-world South African bank accounts using compound interest formulas.</p>
       
       <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
         <div class="form-group" style="margin-bottom: 0;">
@@ -298,26 +308,45 @@ const splashScreen = document.getElementById('splash-screen');
 const dashboard = document.getElementById('dashboard');
 
 enterBtn.addEventListener('click', () => {
+  // Step 1: Start card swipe and hide button
   bankCard.style.left = '50%';
   bankCard.style.transform = 'translate(-50%, -50%)';
+  enterBtn.style.opacity = '0';
+  enterBtn.style.pointerEvents = 'none';
   
   setTimeout(() => {
+    // Step 2: Card is in the middle. Hide Logo and Show Auth Spinner
+    document.getElementById('logo-container').style.opacity = '0';
+    
+    const authStatus = document.getElementById('auth-status');
+    authStatus.style.display = 'flex';
+    setTimeout(() => authStatus.style.opacity = '1', 50);
+
+    // Step 3: Card leaves screen, background blurs
     bankCard.style.left = '150%'; 
     splashScreen.style.backdropFilter = 'blur(12px)';
     splashScreen.style.webkitBackdropFilter = 'blur(12px)';
-    splashScreen.style.backgroundColor = 'rgba(244, 247, 245, 0.3)';
+    splashScreen.style.backgroundColor = 'rgba(244, 247, 245, 0.7)';
     
     setTimeout(() => {
-      splashScreen.style.opacity = '0';
+      // Step 4: Loading is complete. Show Tick.
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('success-tick').style.display = 'block';
+      document.getElementById('auth-text').textContent = 'Secure Connection Established';
+      
       setTimeout(() => {
-        splashScreen.style.display = 'none';
-        dashboard.style.display = 'block';
+        // Step 5: Fade out Splash and unveil Dashboard
+        splashScreen.style.opacity = '0';
         setTimeout(() => {
-          dashboard.style.opacity = '1';
-        }, 50);
+          splashScreen.style.display = 'none';
+          dashboard.style.display = 'block';
+          setTimeout(() => {
+            dashboard.style.opacity = '1';
+          }, 50);
+        }, 800); 
       }, 800); 
-    }, 400); 
-  }, 1000); 
+    }, 1200); 
+  }, 800); 
 });
 
 
@@ -380,6 +409,16 @@ function renderGoals() {
     const goalElement = document.createElement('div');
     goalElement.className = 'goal';
     
+    // Check if reward was claimed to grey out the button
+    let goalActionBtn = '';
+    if (goal.rewardClaimed) {
+      goalActionBtn = `<button disabled style="width: 100%; margin-top: 15px; background: #9ca3af; cursor: not-allowed;">${icons.check} Reward Claimed</button>`;
+    } else if (isReached) {
+      goalActionBtn = `<button class="open-store-btn" data-id="${goal.id}" style="width: 100%; margin-top: 15px; background: #16a34a;">${icons.unlock} Goal Complete! Open Rewards</button>`;
+    } else {
+      goalActionBtn = `<button disabled style="width: 100%; margin-top: 15px; background: #9ca3af; cursor: not-allowed;">${icons.lock} Reward Locked</button>`;
+    }
+
     goalElement.innerHTML = `
       <div style="padding-right: 35px;">
         <h3 class="goal-name-text">${goal.name} (R ${goal.target.toLocaleString()})</h3>
@@ -405,9 +444,7 @@ function renderGoals() {
         <button class="withdraw-goal-btn secondary" data-id="${goal.id}" style="width: auto;">Withdraw</button>
       </div>
 
-      <button class="open-store-btn" data-id="${goal.id}" style="width: 100%; margin-top: 15px; background: ${isReached ? '#16a34a' : '#9ca3af'};" ${isReached ? '' : 'disabled'}>
-        ${isReached ? icons.unlock + ' Goal Complete! Open Rewards' : icons.lock + ' Reward Locked'}
-      </button>
+      ${goalActionBtn}
     `;
 
     goalsContainer.appendChild(goalElement);
@@ -524,13 +561,9 @@ function renderGoals() {
     });
   });
 
+  // Open Rewards Store Modal
   document.querySelectorAll('.open-store-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const goalId = parseInt(e.target.getAttribute('data-id'));
-      const activeGoal = goals.find(g => g.id === goalId);
-      if (activeGoal) {
-        activeGoal.rewardClaimed = true; // Lock future deposits from points exploit
-      }
+    btn.addEventListener('click', () => {
       rewardsModal.classList.add('active');
     });
   });
@@ -559,7 +592,7 @@ claimStoreBtns.forEach(btn => {
     if (points >= cost) {
       points -= cost;
       
-      // Mark reached goals as rewardClaimed
+      // Mark reached goals as rewardClaimed to prevent exploits
       goals.forEach(g => {
         if (g.saved >= g.target) g.rewardClaimed = true;
       });
@@ -568,6 +601,7 @@ claimStoreBtns.forEach(btn => {
       rewardsModal.classList.remove('active');
       logTransaction(0, true, `Redeemed: ${name}`, `#1d4ed8`);
       alert(`Success! Check your email for your R${value} ${name}. Remaining points: ${points}`);
+      renderGoals(); // Re-render to show the greyed out buttons
     } else {
       alert(`Insufficient Points. You need ${cost} points, but only have ${points}.`);
     }
@@ -592,6 +626,7 @@ claimCashBtn.addEventListener('click', () => {
     updateHeaderPoints();
     rewardsModal.classList.remove('active');
     alert(`Success! R ${rewardCash.toLocaleString(undefined, {minimumFractionDigits: 2})} has been deposited into your balance.`);
+    renderGoals(); // Re-render to show the greyed out buttons
   } else {
     alert("You don't have any points to claim yet!");
   }
