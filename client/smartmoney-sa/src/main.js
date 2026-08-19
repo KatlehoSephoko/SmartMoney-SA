@@ -131,7 +131,7 @@ document.querySelector('#app').innerHTML = `
       </div>
       <div class="stat">
         <h3>Active Goals</h3>
-        <p id="active-goals-count">1</p>
+        <p id="active-goals-count">0</p>
       </div>
     </div>
 
@@ -356,16 +356,8 @@ let points = 0;
 let transactionCount = 0;
 let gigCount = 0;
 
-let goals = [
-  {
-    id: Date.now(),
-    name: 'Emergency Fund',
-    target: 20000,
-    duration: 12,
-    saved: 0,
-    rewardClaimed: false
-  }
-];
+// Initialize with an empty array. No portfolios on load.
+let goals = [];
 
 // Elements
 const balanceDisplay = document.getElementById('total-balance');
@@ -395,7 +387,7 @@ function renderGoals() {
   activeGoalsCount.textContent = goals.length;
 
   if (goals.length === 0) {
-    goalsContainer.innerHTML = '<p style="color: #64748b; font-size: 14px; text-align: center; font-style: italic;">No active portfolios.</p>';
+    goalsContainer.innerHTML = '<p style="color: #64748b; font-size: 14px; text-align: center; font-style: italic;">No active portfolios. Create one above to start saving!</p>';
     return;
   }
 
@@ -409,13 +401,18 @@ function renderGoals() {
     const goalElement = document.createElement('div');
     goalElement.className = 'goal';
     
-    // Check if reward was claimed to grey out the button
+    // Dynamic Button State based on zero points and completion
     let goalActionBtn = '';
-    if (goal.rewardClaimed) {
-      goalActionBtn = `<button disabled style="width: 100%; margin-top: 15px; background: #9ca3af; cursor: not-allowed;">${icons.check} Reward Claimed</button>`;
-    } else if (isReached) {
-      goalActionBtn = `<button class="open-store-btn" data-id="${goal.id}" style="width: 100%; margin-top: 15px; background: #16a34a;">${icons.unlock} Goal Complete! Open Rewards</button>`;
+    if (isReached) {
+      if (points === 0) {
+        // Points are drained, button greys out
+        goalActionBtn = `<button disabled style="width: 100%; margin-top: 15px; background: #9ca3af; cursor: not-allowed;">${icons.check} Reward Claimed (0 pts)</button>`;
+      } else {
+        // Goal reached, points available
+        goalActionBtn = `<button class="open-store-btn" data-id="${goal.id}" style="width: 100%; margin-top: 15px; background: #16a34a; cursor: pointer;">${icons.unlock} Goal Complete! Open Rewards</button>`;
+      }
     } else {
+      // Goal not reached
       goalActionBtn = `<button disabled style="width: 100%; margin-top: 15px; background: #9ca3af; cursor: not-allowed;">${icons.lock} Reward Locked</button>`;
     }
 
@@ -440,7 +437,6 @@ function renderGoals() {
       <div class="goal-funding">
         <input type="number" id="fund-input-${goal.id}" placeholder="Amount..." style="flex: 1;" />
         <button class="fund-goal-btn" data-id="${goal.id}" style="width: auto;">Deposit</button>
-        <!-- Withdraw uses .secondary class matching Clear button -->
         <button class="withdraw-goal-btn secondary" data-id="${goal.id}" style="width: auto;">Withdraw</button>
       </div>
 
@@ -479,7 +475,7 @@ function renderGoals() {
         
         let pointsEarned = 0;
         
-        // Anti-Exploit Check: If rewards were already claimed for this goal, re-deposits yield 0 points
+        // Anti-Exploit Check: If rewards were already claimed, re-deposits yield 0 points
         if (goal.rewardClaimed) {
           pointsEarned = 0;
         } else if (wasReached) {
@@ -561,7 +557,7 @@ function renderGoals() {
     });
   });
 
-  // Open Rewards Store Modal
+  // Open Rewards Store
   document.querySelectorAll('.open-store-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       rewardsModal.classList.add('active');
@@ -601,7 +597,7 @@ claimStoreBtns.forEach(btn => {
       rewardsModal.classList.remove('active');
       logTransaction(0, true, `Redeemed: ${name}`, `#1d4ed8`);
       alert(`Success! Check your email for your R${value} ${name}. Remaining points: ${points}`);
-      renderGoals(); // Re-render to show the greyed out buttons
+      renderGoals(); // Re-renders to grey out buttons if points hit 0
     } else {
       alert(`Insufficient Points. You need ${cost} points, but only have ${points}.`);
     }
@@ -626,7 +622,7 @@ claimCashBtn.addEventListener('click', () => {
     updateHeaderPoints();
     rewardsModal.classList.remove('active');
     alert(`Success! R ${rewardCash.toLocaleString(undefined, {minimumFractionDigits: 2})} has been deposited into your balance.`);
-    renderGoals(); // Re-render to show the greyed out buttons
+    renderGoals(); // Re-renders to grey out buttons since points are 0
   } else {
     alert("You don't have any points to claim yet!");
   }
@@ -707,6 +703,9 @@ addBtn.addEventListener('click', () => {
   updateHeaderPoints();
   logTransaction(amount, isDeposit, categoryName);
   amountInput.value = '';
+  
+  // Re-render goals to update "0 points" button states dynamically
+  renderGoals();
 });
 
 // Add Goal
@@ -771,6 +770,9 @@ addGigBtn.addEventListener('click', () => {
     li.remove();
     gigCount--;
     if (gigCount === 0) gigList.appendChild(gigEmptyState);
+    
+    // Unlock any goals if points were previously at 0
+    renderGoals();
   });
 
   gigList.prepend(li);
