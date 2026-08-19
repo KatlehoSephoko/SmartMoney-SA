@@ -14,7 +14,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background: #f4f7f5;
   color: #1f2937;
-  transition: background 0.3s ease, color 0.3s ease;
+  transition: background 0.3s ease, color 0.3s ease, font-size 0.3s ease;
   overflow-x: hidden; 
 }
 
@@ -23,6 +23,13 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 30px 20px;
+}
+
+/* Accessibility Strict Focus */
+*:focus-visible {
+  outline: 3px solid #10b981 !important;
+  outline-offset: 3px !important;
+  border-radius: 4px;
 }
 
 /* =========================
@@ -144,7 +151,6 @@ button:disabled {
   box-shadow: none;
 }
 
-/* Inverse/Secondary Buttons (Light Green) */
 button.secondary {
   background: #d1fae5;
   color: #065f46;
@@ -242,7 +248,6 @@ button.danger:hover {
   transition: color 0.3s;
 }
 
-/* Clean SVG Toggle Switch */
 .switch {
   position: relative;
   display: inline-block;
@@ -687,6 +692,91 @@ select:focus {
 }
 
 /* =========================
+   Accessibility Toolkit
+   ========================= */
+
+.a11y-fab {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: #064e3b;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+  z-index: 9999;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+  padding: 0;
+}
+
+.a11y-fab:hover {
+  transform: scale(1.05);
+  background: #14532d;
+}
+
+.a11y-menu {
+  position: fixed;
+  bottom: 90px;
+  right: 25px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  width: 250px;
+  z-index: 9998;
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  animation: slideUp 0.3s ease forwards;
+}
+
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.a11y-menu.active {
+  display: flex;
+}
+
+.a11y-menu h3 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  color: #111827;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 10px;
+}
+
+.a11y-btn {
+  background: #f8fafc;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  justify-content: flex-start;
+}
+
+.a11y-btn:hover {
+  background: #e2e8f0;
+}
+
+/* Accessibility Feature Classes */
+body.dyslexia-mode {
+  font-family: 'Comic Sans MS', 'Arial', sans-serif !important;
+  letter-spacing: 0.05em !important;
+  word-spacing: 0.1em !important;
+  line-height: 1.6 !important;
+}
+
+body.text-large { font-size: 110% !important; }
+body.text-xlarge { font-size: 125% !important; }
+
+/* =========================
    Dark Mode Styles
    ========================= */
 body.dark-mode {
@@ -712,7 +802,8 @@ body.dark-mode .top-logo {
 
 body.dark-mode .card,
 body.dark-mode .stat,
-body.dark-mode .modal-content {
+body.dark-mode .modal-content,
+body.dark-mode .a11y-menu {
   background: #1e293b;
   border-color: #334155;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
@@ -722,7 +813,8 @@ body.dark-mode .card h2,
 body.dark-mode .stat p,
 body.dark-mode label,
 body.dark-mode .modal-header h2,
-body.dark-mode .reward-info h4 {
+body.dark-mode .reward-info h4,
+body.dark-mode .a11y-menu h3 {
   color: #f8fafc;
 }
 
@@ -737,6 +829,15 @@ body.dark-mode .success-tick svg {
   stroke: #a7f3d0 !important;
 }
 
+body.dark-mode .a11y-btn {
+  background: #334155;
+  color: #f8fafc;
+  border-color: #475569;
+}
+body.dark-mode .a11y-btn:hover {
+  background: #475569;
+}
+
 /* Dynamic Dark Mode Text Overrides */
 body.dark-mode .section-subtitle,
 body.dark-mode .goal-name-text,
@@ -747,8 +848,9 @@ body.dark-mode .transaction-title-text {
 }
 
 body.dark-mode .gig-title-text,
-body.dark-mode .transaction-date-text {
-  color: #cbd5e1 !important;
+body.dark-mode .transaction-date-text,
+body.dark-mode .a11y-menu h3 {
+  border-color: #475569;
 }
 
 body.dark-mode input,
@@ -807,4 +909,6 @@ body.dark-mode .simulator-result h3 {
   .card { padding: 18px; }
   button { width: 100%; }
   #bank-card-transition { width: 280px; height: 180px; }
+  .a11y-fab { bottom: 15px; right: 15px; }
+  .a11y-menu { bottom: 80px; right: 15px; width: calc(100% - 30px); }
 }
