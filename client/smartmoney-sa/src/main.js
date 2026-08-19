@@ -9,7 +9,11 @@ const icons = {
   sun: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`,
   moon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`,
   trending: `<svg class="icon-corporate" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>`,
-  gift: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>`
+  gift: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>`,
+  accessibility: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"></circle><path d="m5 8 7-2 7 2"></path><path d="M12 14v7"></path><path d="M8 22l4-8 4 8"></path></svg>`,
+  speech: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>`,
+  text: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>`,
+  eye: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`
 };
 
 document.querySelector('#app').innerHTML = `
@@ -44,11 +48,11 @@ document.querySelector('#app').innerHTML = `
   </div>
 
   <!-- Rewards Store Modal -->
-  <div id="rewards-modal" class="modal-overlay">
+  <div id="rewards-modal" class="modal-overlay" aria-hidden="true" role="dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h2>Corporate Partner Rewards</h2>
-        <button id="close-modal-btn" class="secondary" style="padding: 8px 16px; font-size: 14px;">Close</button>
+        <button id="close-modal-btn" class="secondary" aria-label="Close Modal" style="padding: 8px 16px; font-size: 14px;">Close</button>
       </div>
       <p style="font-size: 13px; color: #64748b; margin-top: 0; margin-bottom: 15px;">Redeem your points for retail vouchers. 1 Point = R0.25</p>
       
@@ -98,7 +102,7 @@ document.querySelector('#app').innerHTML = `
       <div class="theme-switch-wrapper">
         <span id="theme-label">Light Mode</span>
         <label class="switch">
-          <input type="checkbox" id="theme-toggle">
+          <input type="checkbox" id="theme-toggle" aria-label="Toggle Dark Mode">
           <span class="slider">
             <span class="slider-icon" id="theme-icon">${icons.sun}</span>
           </span>
@@ -113,7 +117,7 @@ document.querySelector('#app').innerHTML = `
         <p>Personal Finance Management</p>
       </div>
       <div class="points-container">
-        <div class="points" id="user-points">0 pts</div>
+        <div class="points" id="user-points" aria-live="polite">0 pts</div>
         <div id="reward-value">Reward Value: R 0.00</div>
       </div>
       <button id="nav-open-rewards-btn" style="background: #10b981; color: white; margin-top: 10px;">${icons.gift} Open Rewards Store</button>
@@ -123,7 +127,7 @@ document.querySelector('#app').innerHTML = `
     <div class="stats-grid">
       <div class="stat">
         <h3>Available Balance</h3>
-        <p class="balance positive" id="total-balance">R 0</p>
+        <p class="balance positive" id="total-balance" aria-live="polite">R 0</p>
       </div>
       <div class="stat">
         <h3>User Tier</h3>
@@ -147,12 +151,12 @@ document.querySelector('#app').innerHTML = `
         
         <div class="form-group">
           <label>Amount (ZAR)</label>
-          <input type="number" id="transaction-amount" placeholder="0.00" />
+          <input type="number" id="transaction-amount" placeholder="0.00" aria-label="Transaction Amount" />
         </div>
         
         <div class="form-group">
           <label>Transaction Type</label>
-          <select id="transaction-type">
+          <select id="transaction-type" aria-label="Transaction Type">
             <option value="Deposit">Deposit (+)</option>
             <option value="Expense">Withdrawal (-)</option>
           </select>
@@ -160,7 +164,7 @@ document.querySelector('#app').innerHTML = `
 
         <div class="form-group">
           <label>Category</label>
-          <select id="transaction-category">
+          <select id="transaction-category" aria-label="Transaction Category">
             <option value="Salary / General">Salary / General</option>
             <option value="Transportation">Transportation</option>
             <option value="Accommodation & Rent">Accommodation & Rent</option>
@@ -184,11 +188,11 @@ document.querySelector('#app').innerHTML = `
           <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
             <div class="form-group" style="margin-bottom: 0;">
               <label>Client / Gig Name</label>
-              <input type="text" id="gig-name-input" placeholder="e.g. IT Repair" />
+              <input type="text" id="gig-name-input" placeholder="e.g. IT Repair" aria-label="Invoice Name" />
             </div>
             <div class="form-group" style="margin-bottom: 0;">
               <label>Expected ZAR</label>
-              <input type="number" id="gig-amount-input" placeholder="0.00" />
+              <input type="number" id="gig-amount-input" placeholder="0.00" aria-label="Expected Amount" />
             </div>
           </div>
           <button id="add-gig-btn" style="width: 100%;">Log Invoice</button>
@@ -215,16 +219,16 @@ document.querySelector('#app').innerHTML = `
         <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
           <div class="form-group" style="margin-bottom: 0;">
             <label>Portfolio Name</label>
-            <input type="text" id="goal-name-input" placeholder="e.g. Vehicle Fund" />
+            <input type="text" id="goal-name-input" placeholder="e.g. Vehicle Fund" aria-label="Portfolio Name" />
           </div>
           <div class="dashboard-grid" style="gap: 15px; margin-bottom: 0;">
             <div class="form-group" style="margin-bottom: 0;">
               <label>Target (ZAR)</label>
-              <input type="number" id="goal-target-input" placeholder="10000" />
+              <input type="number" id="goal-target-input" placeholder="10000" aria-label="Target Amount" />
             </div>
             <div class="form-group" style="margin-bottom: 0;">
               <label>Duration (Months)</label>
-              <input type="number" id="goal-duration-input" placeholder="12" />
+              <input type="number" id="goal-duration-input" placeholder="12" aria-label="Duration in months" />
             </div>
           </div>
         </div>
@@ -246,7 +250,7 @@ document.querySelector('#app').innerHTML = `
       <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
         <div class="form-group" style="margin-bottom: 0;">
           <label>Account Type</label>
-          <select id="sim-account-type">
+          <select id="sim-account-type" aria-label="Simulator Account Type">
             <option value="6.00">Access (Up to 6.00%)</option>
             <option value="7.25">Notice Deposit (Up to 7.25%)</option>
             <option value="7.00">Tax-free (Up to 7.00%)</option>
@@ -255,18 +259,18 @@ document.querySelector('#app').innerHTML = `
         </div>
         <div class="form-group" style="margin-bottom: 0;">
           <label>Duration (Years)</label>
-          <input type="number" id="sim-years" placeholder="e.g. 2" />
+          <input type="number" id="sim-years" placeholder="e.g. 2" aria-label="Simulator Years" />
         </div>
       </div>
 
       <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
         <div class="form-group" style="margin-bottom: 0;">
           <label>Initial Deposit (ZAR)</label>
-          <input type="number" id="sim-initial" placeholder="e.g. 5000" />
+          <input type="number" id="sim-initial" placeholder="e.g. 5000" aria-label="Simulator Initial Deposit" />
         </div>
         <div class="form-group" style="margin-bottom: 0;">
           <label>Monthly Addition (Optional)</label>
-          <input type="number" id="sim-monthly" placeholder="e.g. 500" />
+          <input type="number" id="sim-monthly" placeholder="e.g. 500" aria-label="Simulator Monthly Addition" />
         </div>
       </div>
 
@@ -287,13 +291,24 @@ document.querySelector('#app').innerHTML = `
     <!-- Recent Transactions List -->
     <div class="card" style="margin-top: 20px;">
       <h2>Account History</h2>
-      <ul id="transaction-list" style="list-style: none; padding: 0; margin: 0;">
+      <ul id="transaction-list" style="list-style: none; padding: 0; margin: 0;" aria-live="polite">
         <li id="empty-state" style="padding: 15px 0; color: #94a3b8; font-style: italic; text-align: center; font-size: 14px;">
           No recent activity.
         </li>
       </ul>
     </div>
 
+  </div>
+
+  <!-- Floating Accessibility Toolkit -->
+  <button id="a11y-fab" class="a11y-fab" aria-label="Open Accessibility Options">
+    ${icons.accessibility}
+  </button>
+  <div id="a11y-menu" class="a11y-menu" aria-label="Accessibility Menu" role="dialog">
+    <h3>Accessibility Tools</h3>
+    <button id="a11y-text-btn" class="a11y-btn">${icons.text} Text Magnifier</button>
+    <button id="a11y-dyslexia-btn" class="a11y-btn">${icons.eye} Dyslexia Font</button>
+    <button id="a11y-speech-btn" class="a11y-btn">${icons.speech} Read Dashboard Aloud</button>
   </div>
 `
 
@@ -344,15 +359,13 @@ enterBtn.addEventListener('click', () => {
   }, 800); 
 });
 
-
 // --- State Management ---
 let currentBalance = 0;
 let points = 0;
 let transactionCount = 0;
 let gigCount = 0;
 
-// Initialize with an empty array. No portfolios on load.
-let goals = [];
+let goals = []; // No default portfolio anymore
 
 // Elements
 const balanceDisplay = document.getElementById('total-balance');
@@ -375,6 +388,63 @@ const claimStoreBtns = document.querySelectorAll('.claim-store-btn');
 const claimCashBtn = document.querySelector('.claim-cash-btn');
 const navOpenRewardsBtn = document.getElementById('nav-open-rewards-btn');
 
+// --- Accessibility Toolkit Logic ---
+const a11yFab = document.getElementById('a11y-fab');
+const a11yMenu = document.getElementById('a11y-menu');
+const a11yTextBtn = document.getElementById('a11y-text-btn');
+const a11yDyslexiaBtn = document.getElementById('a11y-dyslexia-btn');
+const a11ySpeechBtn = document.getElementById('a11y-speech-btn');
+
+a11yFab.addEventListener('click', () => {
+  a11yMenu.classList.toggle('active');
+});
+
+// Text Magnifier Cycle
+let textSizeState = 0; // 0: Normal, 1: Large, 2: X-Large
+a11yTextBtn.addEventListener('click', () => {
+  textSizeState = (textSizeState + 1) % 3;
+  document.body.classList.remove('text-large', 'text-xlarge');
+  
+  if (textSizeState === 1) {
+    document.body.classList.add('text-large');
+    a11yTextBtn.innerHTML = `${icons.text} Text: Large`;
+  } else if (textSizeState === 2) {
+    document.body.classList.add('text-xlarge');
+    a11yTextBtn.innerHTML = `${icons.text} Text: Extra Large`;
+  } else {
+    a11yTextBtn.innerHTML = `${icons.text} Text Magnifier`;
+  }
+});
+
+// Dyslexia Font Toggle
+a11yDyslexiaBtn.addEventListener('click', () => {
+  document.body.classList.toggle('dyslexia-mode');
+});
+
+// Text-to-Speech Native API Integration
+a11ySpeechBtn.addEventListener('click', () => {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel(); // Stop any current speech
+    
+    // Construct the verbal string to read to the user
+    let speechText = `Smart Money Dashboard Summary. Your available balance is ${currentBalance} Rand. You have ${points} reward points. You currently have ${goals.length} active saving portfolios.`;
+    
+    if (goals.length > 0) {
+      speechText += " Your portfolios are: ";
+      goals.forEach(g => {
+        speechText += `${g.name}, with a target of ${g.target} Rand. You have saved ${g.saved} Rand so far. `;
+      });
+    }
+
+    const utterance = new SpeechSynthesisUtterance(speechText);
+    utterance.rate = 0.9; // Slightly slower for better comprehension
+    window.speechSynthesis.speak(utterance);
+    
+    a11yMenu.classList.remove('active'); // Close menu after activating
+  } else {
+    alert("Text-to-Speech is not fully supported in this browser.");
+  }
+});
 
 // --- Goals Rendering & Funding Logic ---
 function renderGoals() {
@@ -396,28 +466,27 @@ function renderGoals() {
     const goalElement = document.createElement('div');
     goalElement.className = 'goal';
     
-    // Dynamic Button State based on zero points and completion
     let goalActionBtn = '';
     if (isReached) {
       if (points === 0) {
-        goalActionBtn = `<button disabled style="width: 100%; margin-top: 15px; background: #9ca3af; cursor: not-allowed;">${icons.check} Reward Claimed (0 pts)</button>`;
+        goalActionBtn = `<button disabled aria-label="Reward Claimed" style="width: 100%; margin-top: 15px; background: #9ca3af; cursor: not-allowed;">${icons.check} Reward Claimed (0 pts)</button>`;
       } else {
-        goalActionBtn = `<button class="open-store-btn" data-id="${goal.id}" style="width: 100%; margin-top: 15px; background: #16a34a; cursor: pointer;">${icons.unlock} Goal Complete! Open Rewards</button>`;
+        goalActionBtn = `<button class="open-store-btn" data-id="${goal.id}" aria-label="Open Rewards Store" style="width: 100%; margin-top: 15px; background: #16a34a; cursor: pointer;">${icons.unlock} Goal Complete! Open Rewards</button>`;
       }
     } else {
-      goalActionBtn = `<button disabled style="width: 100%; margin-top: 15px; background: #9ca3af; cursor: not-allowed;">${icons.lock} Reward Locked</button>`;
+      goalActionBtn = `<button disabled aria-label="Reward Locked" style="width: 100%; margin-top: 15px; background: #9ca3af; cursor: not-allowed;">${icons.lock} Reward Locked</button>`;
     }
 
     goalElement.innerHTML = `
       <div style="padding-right: 35px;">
         <h3 class="goal-name-text">${goal.name} (R ${goal.target.toLocaleString()})</h3>
       </div>
-      <button class="delete-goal-btn" data-id="${goal.id}">&times;</button>
+      <button class="delete-goal-btn" data-id="${goal.id}" aria-label="Delete Portfolio">&times;</button>
       
       <p style="font-size: 13px; color: #64748b; margin-top: 5px; margin-bottom: 0;">${goal.duration > 0 ? `Term: ${goal.duration} Months` : 'Term: Open'}</p>
       ${monthlyMin > 0 ? `<p style="font-size: 13px; font-weight: 600; color: #15803d; margin-top: 4px; margin-bottom: 0;">Min. Deposit: R ${monthlyMin.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>` : ''}
       
-      <div class="progress-container">
+      <div class="progress-container" aria-hidden="true">
         <div class="progress-bar" style="width: ${goalPercentage}%;"></div>
       </div>
       <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -425,11 +494,10 @@ function renderGoals() {
         <div class="progress-text">${Math.round(goalPercentage)}% Reached</div>
       </div>
       
-      <!-- Direct Goal Deposit & Withdraw Area -->
       <div class="goal-funding">
-        <input type="number" id="fund-input-${goal.id}" placeholder="Amount..." style="flex: 1;" />
-        <button class="fund-goal-btn" data-id="${goal.id}" style="width: auto;">Deposit</button>
-        <button class="withdraw-goal-btn secondary" data-id="${goal.id}" style="width: auto;">Withdraw</button>
+        <input type="number" id="fund-input-${goal.id}" placeholder="Amount..." aria-label="Amount to Deposit or Withdraw" style="flex: 1;" />
+        <button class="fund-goal-btn" data-id="${goal.id}" aria-label="Deposit into Portfolio" style="width: auto;">Deposit</button>
+        <button class="withdraw-goal-btn secondary" data-id="${goal.id}" aria-label="Withdraw from Portfolio" style="width: auto;">Withdraw</button>
       </div>
 
       ${goalActionBtn}
@@ -438,7 +506,7 @@ function renderGoals() {
     goalsContainer.appendChild(goalElement);
   });
 
-  // Goal Deposit Logic (Anti-Exploit + Dynamic Multipliers)
+  // Deposit Logic
   document.querySelectorAll('.fund-goal-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = parseInt(e.target.getAttribute('data-id'));
@@ -467,18 +535,15 @@ function renderGoals() {
         
         let pointsEarned = 0;
         
-        // Anti-Exploit Check: If rewards were already claimed, re-deposits yield 0 points
         if (goal.rewardClaimed) {
           pointsEarned = 0;
         } else if (goal.previouslyReached) {
-          // If the goal was previously reached but they haven't claimed rewards yet
           if (wasReached) {
-            pointsEarned = 25; // Over-saving
+            pointsEarned = 25; 
           } else {
-            pointsEarned = 50; // Refilling a deficit, exactly matching the 50 points withdrawn
+            pointsEarned = 50; 
           }
         } else {
-          // Initial grind to 100%
           if (monthlyMin > 0 && amount >= monthlyMin) {
             const multiples = Math.floor((amount + 0.1) / monthlyMin);
             pointsEarned = multiples * 100;
@@ -487,8 +552,8 @@ function renderGoals() {
           }
 
           if (isReachedNow) {
-            pointsEarned += 50; // Goal completion bonus
-            goal.previouslyReached = true; // Lock in the milestone
+            pointsEarned += 50; 
+            goal.previouslyReached = true; 
           }
         }
 
@@ -504,7 +569,7 @@ function renderGoals() {
     });
   });
 
-  // Goal Withdrawal Logic
+  // Withdraw Logic
   document.querySelectorAll('.withdraw-goal-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = parseInt(e.target.getAttribute('data-id'));
@@ -538,7 +603,7 @@ function renderGoals() {
     });
   });
 
-  // Goal Deletion with Refund Logic
+  // Delete Logic
   document.querySelectorAll('.delete-goal-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = parseInt(e.target.getAttribute('data-id'));
@@ -556,7 +621,7 @@ function renderGoals() {
     });
   });
 
-  // Open Rewards Store
+  // Store Modal
   document.querySelectorAll('.open-store-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       rewardsModal.classList.add('active');
@@ -564,7 +629,6 @@ function renderGoals() {
   });
 }
 
-// Initial Render
 renderGoals();
 
 
@@ -587,7 +651,6 @@ claimStoreBtns.forEach(btn => {
     if (points >= cost) {
       points -= cost;
       
-      // Mark reached goals as rewardClaimed to prevent exploits
       goals.forEach(g => {
         if (g.saved >= g.target) g.rewardClaimed = true;
       });
@@ -596,7 +659,7 @@ claimStoreBtns.forEach(btn => {
       rewardsModal.classList.remove('active');
       logTransaction(0, true, `Redeemed: ${name}`, `#1d4ed8`);
       alert(`Success! Check your email for your R${value} ${name}. Remaining points: ${points}`);
-      renderGoals(); // Re-renders to grey out buttons if points hit 0
+      renderGoals(); 
     } else {
       alert(`Insufficient Points. You need ${cost} points, but only have ${points}.`);
     }
@@ -610,7 +673,6 @@ claimCashBtn.addEventListener('click', () => {
     balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
     balanceDisplay.className = currentBalance >= 0 ? 'balance positive' : 'balance negative';
     
-    // Mark reached goals as rewardClaimed
     goals.forEach(g => {
       if (g.saved >= g.target) g.rewardClaimed = true;
     });
@@ -621,7 +683,7 @@ claimCashBtn.addEventListener('click', () => {
     updateHeaderPoints();
     rewardsModal.classList.remove('active');
     alert(`Success! R ${rewardCash.toLocaleString(undefined, {minimumFractionDigits: 2})} has been deposited into your balance.`);
-    renderGoals(); // Re-renders to grey out buttons since points are 0
+    renderGoals(); 
   } else {
     alert("You don't have any points to claim yet!");
   }
@@ -671,7 +733,7 @@ function logTransaction(amount, isDeposit, categoryName, customColor = null) {
   transactionList.prepend(li);
 }
 
-// 50 Points for standard main balance deposits
+// Main Balance Deposits
 addBtn.addEventListener('click', () => {
   const amount = parseFloat(amountInput.value);
   const isDeposit = typeSelect.value === 'Deposit';
@@ -703,11 +765,10 @@ addBtn.addEventListener('click', () => {
   logTransaction(amount, isDeposit, categoryName);
   amountInput.value = '';
   
-  // Re-render goals to update "0 points" button states dynamically
   renderGoals();
 });
 
-// Add Goal
+// Create Portfolio
 document.getElementById('set-goal-btn').addEventListener('click', () => {
   const target = parseFloat(document.getElementById('goal-target-input').value);
   const name = document.getElementById('goal-name-input').value || 'Portfolio';
@@ -754,7 +815,7 @@ addGigBtn.addEventListener('click', () => {
       <strong class="gig-title-text">Pending: ${gigName}</strong>
       <div class="gig-amount-text">R ${gigAmount.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
     </div>
-    <button class="mark-paid-btn" style="background: #15803d; font-size: 12px; padding: 8px 12px;">${icons.check} Cleared</button>
+    <button class="mark-paid-btn" aria-label="Mark Invoice as Paid" style="background: #15803d; font-size: 12px; padding: 8px 12px;">${icons.check} Cleared</button>
   `;
 
   li.querySelector('.mark-paid-btn').addEventListener('click', () => {
@@ -770,7 +831,6 @@ addGigBtn.addEventListener('click', () => {
     gigCount--;
     if (gigCount === 0) gigList.appendChild(gigEmptyState);
     
-    // Unlock any goals if points were previously at 0
     renderGoals();
   });
 
