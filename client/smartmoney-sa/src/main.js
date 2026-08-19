@@ -31,7 +31,7 @@ document.querySelector('#app').innerHTML = `
       <p class="slogan">Making Smart Money Moves</p>
     </div>
     
-    <!-- Auth Status Container (Hidden initially) -->
+    <!-- Auth Status Container -->
     <div id="auth-status" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: none; flex-direction: column; align-items: center; z-index: 10000; opacity: 0; transition: opacity 0.3s ease;">
        <div id="spinner" class="spinner"></div>
        <div id="success-tick" class="success-tick" style="display: none;">
@@ -308,34 +308,29 @@ const splashScreen = document.getElementById('splash-screen');
 const dashboard = document.getElementById('dashboard');
 
 enterBtn.addEventListener('click', () => {
-  // Step 1: Start card swipe and hide button
   bankCard.style.left = '50%';
   bankCard.style.transform = 'translate(-50%, -50%)';
   enterBtn.style.opacity = '0';
   enterBtn.style.pointerEvents = 'none';
   
   setTimeout(() => {
-    // Step 2: Card is in the middle. Hide Logo and Show Auth Spinner
     document.getElementById('logo-container').style.opacity = '0';
     
     const authStatus = document.getElementById('auth-status');
     authStatus.style.display = 'flex';
     setTimeout(() => authStatus.style.opacity = '1', 50);
 
-    // Step 3: Card leaves screen, background blurs
     bankCard.style.left = '150%'; 
     splashScreen.style.backdropFilter = 'blur(12px)';
     splashScreen.style.webkitBackdropFilter = 'blur(12px)';
     splashScreen.style.backgroundColor = 'rgba(244, 247, 245, 0.7)';
     
     setTimeout(() => {
-      // Step 4: Loading is complete. Show Tick.
       document.getElementById('spinner').style.display = 'none';
       document.getElementById('success-tick').style.display = 'block';
       document.getElementById('auth-text').textContent = 'Secure Connection Established';
       
       setTimeout(() => {
-        // Step 5: Fade out Splash and unveil Dashboard
         splashScreen.style.opacity = '0';
         setTimeout(() => {
           splashScreen.style.display = 'none';
@@ -356,8 +351,7 @@ let points = 0;
 let transactionCount = 0;
 let gigCount = 0;
 
-// Initialize with an empty array. No portfolios on load.
-let goals = [];
+let goals = []; // No default portfolio anymore
 
 // Elements
 const balanceDisplay = document.getElementById('total-balance');
@@ -401,18 +395,14 @@ function renderGoals() {
     const goalElement = document.createElement('div');
     goalElement.className = 'goal';
     
-    // Dynamic Button State based on zero points and completion
     let goalActionBtn = '';
     if (isReached) {
       if (points === 0) {
-        // Points are drained, button greys out
         goalActionBtn = `<button disabled style="width: 100%; margin-top: 15px; background: #9ca3af; cursor: not-allowed;">${icons.check} Reward Claimed (0 pts)</button>`;
       } else {
-        // Goal reached, points available
         goalActionBtn = `<button class="open-store-btn" data-id="${goal.id}" style="width: 100%; margin-top: 15px; background: #16a34a; cursor: pointer;">${icons.unlock} Goal Complete! Open Rewards</button>`;
       }
     } else {
-      // Goal not reached
       goalActionBtn = `<button disabled style="width: 100%; margin-top: 15px; background: #9ca3af; cursor: not-allowed;">${icons.lock} Reward Locked</button>`;
     }
 
@@ -433,7 +423,6 @@ function renderGoals() {
         <div class="progress-text">${Math.round(goalPercentage)}% Reached</div>
       </div>
       
-      <!-- Direct Goal Deposit & Withdraw Area -->
       <div class="goal-funding">
         <input type="number" id="fund-input-${goal.id}" placeholder="Amount..." style="flex: 1;" />
         <button class="fund-goal-btn" data-id="${goal.id}" style="width: auto;">Deposit</button>
@@ -446,7 +435,7 @@ function renderGoals() {
     goalsContainer.appendChild(goalElement);
   });
 
-  // Goal Deposit Logic (Anti-Exploit + Dynamic Multipliers)
+  // Deposit Logic
   document.querySelectorAll('.fund-goal-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = parseInt(e.target.getAttribute('data-id'));
@@ -475,7 +464,6 @@ function renderGoals() {
         
         let pointsEarned = 0;
         
-        // Anti-Exploit Check: If rewards were already claimed, re-deposits yield 0 points
         if (goal.rewardClaimed) {
           pointsEarned = 0;
         } else if (wasReached) {
@@ -489,7 +477,7 @@ function renderGoals() {
           }
 
           if (isReachedNow) {
-            pointsEarned += 50; // Goal completion bonus
+            pointsEarned += 50; 
           }
         }
 
@@ -505,7 +493,7 @@ function renderGoals() {
     });
   });
 
-  // Goal Withdrawal Logic
+  // Withdraw Logic
   document.querySelectorAll('.withdraw-goal-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = parseInt(e.target.getAttribute('data-id'));
@@ -539,7 +527,7 @@ function renderGoals() {
     });
   });
 
-  // Goal Deletion with Refund Logic
+  // Delete Logic
   document.querySelectorAll('.delete-goal-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = parseInt(e.target.getAttribute('data-id'));
@@ -557,7 +545,7 @@ function renderGoals() {
     });
   });
 
-  // Open Rewards Store
+  // Store Modal
   document.querySelectorAll('.open-store-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       rewardsModal.classList.add('active');
@@ -565,7 +553,6 @@ function renderGoals() {
   });
 }
 
-// Initial Render
 renderGoals();
 
 
@@ -588,7 +575,6 @@ claimStoreBtns.forEach(btn => {
     if (points >= cost) {
       points -= cost;
       
-      // Mark reached goals as rewardClaimed to prevent exploits
       goals.forEach(g => {
         if (g.saved >= g.target) g.rewardClaimed = true;
       });
@@ -597,7 +583,7 @@ claimStoreBtns.forEach(btn => {
       rewardsModal.classList.remove('active');
       logTransaction(0, true, `Redeemed: ${name}`, `#1d4ed8`);
       alert(`Success! Check your email for your R${value} ${name}. Remaining points: ${points}`);
-      renderGoals(); // Re-renders to grey out buttons if points hit 0
+      renderGoals(); 
     } else {
       alert(`Insufficient Points. You need ${cost} points, but only have ${points}.`);
     }
@@ -611,7 +597,6 @@ claimCashBtn.addEventListener('click', () => {
     balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
     balanceDisplay.className = currentBalance >= 0 ? 'balance positive' : 'balance negative';
     
-    // Mark reached goals as rewardClaimed
     goals.forEach(g => {
       if (g.saved >= g.target) g.rewardClaimed = true;
     });
@@ -622,7 +607,7 @@ claimCashBtn.addEventListener('click', () => {
     updateHeaderPoints();
     rewardsModal.classList.remove('active');
     alert(`Success! R ${rewardCash.toLocaleString(undefined, {minimumFractionDigits: 2})} has been deposited into your balance.`);
-    renderGoals(); // Re-renders to grey out buttons since points are 0
+    renderGoals(); 
   } else {
     alert("You don't have any points to claim yet!");
   }
@@ -662,8 +647,8 @@ function logTransaction(amount, isDeposit, categoryName, customColor = null) {
 
   li.innerHTML = `
     <div>
-      <strong style="color: var(--text-color, #1e293b); font-size: 14px;">${categoryName}</strong>
-      <div style="font-size: 12px; color: #64748b; margin-top: 4px;">Just now</div>
+      <strong class="transaction-title-text">${categoryName}</strong>
+      <div class="transaction-date-text">Just now</div>
     </div>
     <div style="font-weight: 600; color: ${amountColor};">
       ${amountPrefix}${amount.toLocaleString(undefined, {minimumFractionDigits: 2})}
@@ -672,7 +657,7 @@ function logTransaction(amount, isDeposit, categoryName, customColor = null) {
   transactionList.prepend(li);
 }
 
-// 50 Points for standard main balance deposits
+// Main Balance Deposits
 addBtn.addEventListener('click', () => {
   const amount = parseFloat(amountInput.value);
   const isDeposit = typeSelect.value === 'Deposit';
@@ -704,11 +689,10 @@ addBtn.addEventListener('click', () => {
   logTransaction(amount, isDeposit, categoryName);
   amountInput.value = '';
   
-  // Re-render goals to update "0 points" button states dynamically
   renderGoals();
 });
 
-// Add Goal
+// Create Portfolio
 document.getElementById('set-goal-btn').addEventListener('click', () => {
   const target = parseFloat(document.getElementById('goal-target-input').value);
   const name = document.getElementById('goal-name-input').value || 'Portfolio';
@@ -771,7 +755,6 @@ addGigBtn.addEventListener('click', () => {
     gigCount--;
     if (gigCount === 0) gigList.appendChild(gigEmptyState);
     
-    // Unlock any goals if points were previously at 0
     renderGoals();
   });
 
@@ -780,7 +763,7 @@ addGigBtn.addEventListener('click', () => {
   gigAmountInput.value = '';
 });
 
-// Bank Simulator Logic
+// Bank Simulator
 const simBtn = document.getElementById('simulate-btn');
 const simClearBtn = document.getElementById('sim-clear-btn');
 const simAccountType = document.getElementById('sim-account-type');
