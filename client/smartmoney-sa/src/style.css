@@ -57,6 +57,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: opacity 0.3s ease;
 }
 
 .splash-logo {
@@ -90,6 +91,28 @@ body {
   text-transform: uppercase;
 }
 
+/* Auth Spinner Styles */
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border-left-color: #15803d;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.success-tick svg {
+  width: 48px;
+  height: 48px;
+  stroke: #15803d;
+  stroke-width: 3;
+}
+
 /* =========================
    Corporate Buttons
    ========================= */
@@ -97,7 +120,7 @@ button {
   padding: 12px 20px;
   border: none;
   border-radius: 8px;
-  background: #14532d; /* Primary App Green */
+  background: #14532d;
   color: white;
   font-size: 14px;
   font-weight: 600;
@@ -402,7 +425,7 @@ select:focus {
 .balance.positive { color: #15803d; }
 .balance.negative { color: #b91c1c; }
 
-/* Dynamic Text Classes for Dark Mode Support */
+/* Dynamic Text Classes */
 .section-subtitle {
   font-size: 14px;
   margin-bottom: 10px;
@@ -689,6 +712,17 @@ body.dark-mode label,
 body.dark-mode .modal-header h2,
 body.dark-mode .reward-info h4 {
   color: #f8fafc;
+}
+
+body.dark-mode #auth-text {
+  color: #f8fafc !important;
+}
+body.dark-mode .spinner {
+  border-color: rgba(255, 255, 255, 0.1);
+  border-left-color: #a7f3d0;
+}
+body.dark-mode .success-tick svg {
+  stroke: #a7f3d0 !important;
 }
 
 /* Dynamic Dark Mode Text Overrides */
