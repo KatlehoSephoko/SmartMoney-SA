@@ -1,6 +1,6 @@
 import './style.css'
 
-// Professional SVG Icons
+// Professional SVG Icons (Added Vibrate Icon)
 const icons = {
   check: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
   lock: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`,
@@ -13,7 +13,8 @@ const icons = {
   accessibility: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"></circle><path d="m5 8 7-2 7 2"></path><path d="M12 14v7"></path><path d="M8 22l4-8 4 8"></path></svg>`,
   speech: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>`,
   text: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>`,
-  eye: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`
+  eye: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`,
+  vibrate: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><path d="M8 2h8"></path><path d="M12 18h.01"></path><path d="M2 9v6"></path><path d="M22 9v6"></path></svg>`
 };
 
 document.querySelector('#app').innerHTML = `
@@ -306,6 +307,7 @@ document.querySelector('#app').innerHTML = `
   </button>
   <div id="a11y-menu" class="a11y-menu" aria-label="Accessibility Menu" role="dialog">
     <h3>Accessibility Tools</h3>
+    <button id="a11y-haptic-btn" class="a11y-btn">${icons.vibrate} Haptic Feedback: Off</button>
     <button id="a11y-text-btn" class="a11y-btn">${icons.text} Text Magnifier</button>
     <button id="a11y-dyslexia-btn" class="a11y-btn">${icons.eye} Dyslexia Font</button>
     <button id="a11y-speech-btn" class="a11y-btn">${icons.speech} Read Dashboard Aloud</button>
@@ -344,6 +346,8 @@ enterBtn.addEventListener('click', () => {
       document.getElementById('spinner').style.display = 'none';
       document.getElementById('success-tick').style.display = 'block';
       document.getElementById('auth-text').textContent = 'Secure Connection Established';
+      
+      triggerHaptic('success'); // Vibrate on auth success
       
       setTimeout(() => {
         splashScreen.style.opacity = '0';
@@ -394,10 +398,45 @@ const a11yMenu = document.getElementById('a11y-menu');
 const a11yTextBtn = document.getElementById('a11y-text-btn');
 const a11yDyslexiaBtn = document.getElementById('a11y-dyslexia-btn');
 const a11ySpeechBtn = document.getElementById('a11y-speech-btn');
+const a11yHapticBtn = document.getElementById('a11y-haptic-btn');
 
 a11yFab.addEventListener('click', () => {
   a11yMenu.classList.toggle('active');
 });
+
+// Haptic Feedback Engine
+let hapticsEnabled = false;
+
+a11yHapticBtn.addEventListener('click', () => {
+  hapticsEnabled = !hapticsEnabled;
+  if (hapticsEnabled) {
+    a11yHapticBtn.innerHTML = `${icons.vibrate} Haptic Feedback: On`;
+    a11yHapticBtn.style.color = '#15803d'; // Green highlight to show it's active
+    if (navigator.vibrate) navigator.vibrate(50);
+  } else {
+    a11yHapticBtn.innerHTML = `${icons.vibrate} Haptic Feedback: Off`;
+    a11yHapticBtn.style.color = ''; // Revert to default text color
+  }
+});
+
+// Centralized Haptic Trigger Function
+function triggerHaptic(type = 'default') {
+  if (!hapticsEnabled || !navigator.vibrate) return;
+  
+  if (type === 'success') {
+    navigator.vibrate([100, 50, 100]); // Double pulse celebration
+  } else if (type === 'error') {
+    navigator.vibrate([50, 50, 50, 50]); // Rapid stutter warning
+  } else {
+    navigator.vibrate(50); // Standard single tap
+  }
+}
+
+// Custom Alert that triggers haptic errors
+function appAlert(message) {
+  triggerHaptic('error');
+  alert(message);
+}
 
 // Text Magnifier Cycle
 let textSizeState = 0; 
@@ -441,7 +480,7 @@ a11ySpeechBtn.addEventListener('click', () => {
     
     a11yMenu.classList.remove('active'); 
   } else {
-    alert("Text-to-Speech is not fully supported in this browser.");
+    appAlert("Text-to-Speech is not fully supported in this browser.");
   }
 });
 
@@ -513,12 +552,12 @@ function renderGoals() {
       const amount = parseFloat(input.value);
 
       if (isNaN(amount) || amount <= 0) {
-        alert("Please enter a valid deposit amount.");
+        appAlert("Please enter a valid deposit amount.");
         return;
       }
 
       if (amount > currentBalance) {
-        alert(`Insufficient funds! You only have R ${currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2})} available in your main balance. Add funds via the Transaction Log first.`);
+        appAlert(`Insufficient funds! You only have R ${currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2})} available in your main balance. Add funds via the Transaction Log first.`);
         return;
       }
 
@@ -553,6 +592,9 @@ function renderGoals() {
           if (isReachedNow) {
             pointsEarned += 50; 
             goal.previouslyReached = true; 
+            triggerHaptic('success'); // Celebrate hitting a goal
+          } else {
+            triggerHaptic('default'); // Standard deposit tap
           }
         }
 
@@ -576,14 +618,14 @@ function renderGoals() {
       const amount = parseFloat(input.value);
 
       if (isNaN(amount) || amount <= 0) {
-        alert("Please enter a valid withdrawal amount.");
+        appAlert("Please enter a valid withdrawal amount.");
         return;
       }
 
       const goal = goals.find(g => g.id === id);
       if (goal) {
         if (amount > goal.saved) {
-          alert(`You only have R ${goal.saved.toLocaleString(undefined, {minimumFractionDigits: 2})} saved in this portfolio.`);
+          appAlert(`You only have R ${goal.saved.toLocaleString(undefined, {minimumFractionDigits: 2})} saved in this portfolio.`);
           return;
         }
         
@@ -595,6 +637,9 @@ function renderGoals() {
         
         balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
         logTransaction(amount, true, `Portfolio Withdrawal: ${goal.name}`, '#0284c7');
+        
+        triggerHaptic('default');
+        
         updateHeaderPoints();
         input.value = '';
         renderGoals(); 
@@ -612,6 +657,7 @@ function renderGoals() {
         currentBalance += goalToCancel.saved;
         balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
         logTransaction(goalToCancel.saved, true, `Refund from deleted portfolio: ${goalToCancel.name}`, '#0284c7');
+        triggerHaptic('success');
         alert(`R ${goalToCancel.saved.toLocaleString()} was safely returned to your available balance.`);
       }
       
@@ -623,6 +669,7 @@ function renderGoals() {
   // Store Modal
   document.querySelectorAll('.open-store-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+      triggerHaptic('default');
       rewardsModal.classList.add('active');
     });
   });
@@ -634,6 +681,7 @@ renderGoals();
 // --- Rewards Store Logic ---
 
 navOpenRewardsBtn.addEventListener('click', () => {
+  triggerHaptic('default');
   rewardsModal.classList.add('active');
 });
 
@@ -657,10 +705,12 @@ claimStoreBtns.forEach(btn => {
       updateHeaderPoints();
       rewardsModal.classList.remove('active');
       logTransaction(0, true, `Redeemed: ${name}`, `#1d4ed8`);
+      
+      triggerHaptic('success');
       alert(`Success! Check your email for your R${value} ${name}. Remaining points: ${points}`);
       renderGoals(); 
     } else {
-      alert(`Insufficient Points. You need ${cost} points, but only have ${points}.`);
+      appAlert(`Insufficient Points. You need ${cost} points, but only have ${points}.`);
     }
   });
 });
@@ -681,10 +731,12 @@ claimCashBtn.addEventListener('click', () => {
     points = 0;
     updateHeaderPoints();
     rewardsModal.classList.remove('active');
+    
+    triggerHaptic('success');
     alert(`Success! R ${rewardCash.toLocaleString(undefined, {minimumFractionDigits: 2})} has been deposited into your balance.`);
     renderGoals(); 
   } else {
-    alert("You don't have any points to claim yet!");
+    appAlert("You don't have any points to claim yet!");
   }
 });
 
@@ -739,12 +791,12 @@ addBtn.addEventListener('click', () => {
   const categoryName = categorySelect.value;
   
   if (isNaN(amount) || amount <= 0) {
-    alert("Please enter a valid amount.");
+    appAlert("Please enter a valid amount.");
     return;
   }
 
   if (!isDeposit && amount > currentBalance) {
-    alert(`Insufficient funds! You only have R ${currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2})} available.`);
+    appAlert(`Insufficient funds! You only have R ${currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2})} available.`);
     return;
   }
 
@@ -756,6 +808,8 @@ addBtn.addEventListener('click', () => {
     points -= 100; 
     if (points < 0) points = 0; 
   }
+
+  triggerHaptic('default');
 
   balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
   balanceDisplay.className = currentBalance >= 0 ? 'balance positive' : 'balance negative';
@@ -774,10 +828,11 @@ document.getElementById('set-goal-btn').addEventListener('click', () => {
   const duration = parseFloat(document.getElementById('goal-duration-input').value) || 0;
 
   if (isNaN(target) || target <= 0) {
-    alert('Please enter a valid target amount.');
+    appAlert('Please enter a valid target amount.');
     return;
   }
 
+  triggerHaptic('default');
   goals.push({ id: Date.now(), name: name, target: target, duration: duration, saved: 0, rewardClaimed: false, previouslyReached: false });
   renderGoals(); 
   
@@ -805,6 +860,7 @@ addGigBtn.addEventListener('click', () => {
 
   if (gigCount === 0 && gigEmptyState) gigEmptyState.remove();
   gigCount++;
+  triggerHaptic('default');
 
   const li = document.createElement('li');
   li.className = 'gig-item';
@@ -824,6 +880,8 @@ addGigBtn.addEventListener('click', () => {
     
     logTransaction(gigAmount, true, `Invoice Cleared: ${gigName}`);
     points += 100; 
+    
+    triggerHaptic('success');
     updateHeaderPoints();
 
     li.remove();
@@ -856,9 +914,11 @@ simBtn.addEventListener('click', () => {
   const years = parseFloat(simYearsInput.value);
 
   if ((initialDeposit <= 0 && monthlyDeposit <= 0) || isNaN(years) || years <= 0) {
-    alert("Please ensure you enter a valid duration and at least one deposit amount.");
+    appAlert("Please ensure you enter a valid duration and at least one deposit amount.");
     return;
   }
+
+  triggerHaptic('default');
 
   const months = years * 12;
   const monthlyRate = annualRate / 12;
@@ -892,6 +952,7 @@ simBtn.addEventListener('click', () => {
 });
 
 simClearBtn.addEventListener('click', () => {
+  triggerHaptic('default');
   simInitialInput.value = '';
   simMonthlyInput.value = '';
   simYearsInput.value = '';
@@ -904,6 +965,7 @@ const themeLabel = document.getElementById('theme-label');
 const themeIcon = document.getElementById('theme-icon');
 
 themeToggle.addEventListener('change', (e) => {
+  triggerHaptic('default');
   if(e.target.checked) {
     document.body.classList.add('dark-mode');
     themeLabel.textContent = 'Dark Mode';
