@@ -41,7 +41,7 @@ document.querySelector('#app').innerHTML = `
        <div id="success-tick" class="success-tick" style="display: none;">
          <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
        </div>
-       <p id="auth-text" style="color: #111827; font-weight: 600; margin-top: 15px; font-size: 16px;">Authenticating...</p>
+       <p id="auth-text" style="color: #111827; font-weight: 600; margin-top: 15px; font-size: calc(16px * var(--text-scale));">Authenticating...</p>
     </div>
 
     <button id="enter-app-btn" class="enter-btn" style="transition: opacity 0.3s ease;">${icons.lock} Access Dashboard</button>
@@ -52,9 +52,9 @@ document.querySelector('#app').innerHTML = `
     <div class="modal-content">
       <div class="modal-header">
         <h2>Corporate Partner Rewards</h2>
-        <button id="close-modal-btn" class="secondary" aria-label="Close Modal" style="padding: 8px 16px; font-size: 14px;">Close</button>
+        <button id="close-modal-btn" class="secondary" aria-label="Close Modal" style="padding: 8px 16px; font-size: calc(14px * var(--text-scale));">Close</button>
       </div>
-      <p style="font-size: 13px; color: #64748b; margin-top: 0; margin-bottom: 15px;">Redeem your points for retail vouchers. 1 Point = R0.25</p>
+      <p style="font-size: calc(13px * var(--text-scale)); color: #64748b; margin-top: 0; margin-bottom: 15px;">Redeem your points for retail vouchers. 1 Point = R0.25</p>
       
       <div class="rewards-grid">
         <div class="reward-item">
@@ -131,7 +131,7 @@ document.querySelector('#app').innerHTML = `
       </div>
       <div class="stat">
         <h3>User Tier</h3>
-        <p id="user-level" style="color: #334155; font-size: 20px;">Standard</p>
+        <p id="user-level" style="color: #334155; font-size: calc(20px * var(--text-scale));">Standard</p>
       </div>
       <div class="stat">
         <h3>Active Goals</h3>
@@ -147,7 +147,7 @@ document.querySelector('#app').innerHTML = `
           ${icons.trending}
           <h2>Transaction Log</h2>
         </div>
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Deposit your actual cash here to earn 50 base points. You must have an Available Balance before you can fund your portfolios.</p>
+        <p style="font-size: calc(13px * var(--text-scale)); color: #64748b; margin-bottom: 15px;">Deposit your actual cash here to earn 50 base points. You must have an Available Balance before you can fund your portfolios.</p>
         
         <div class="form-group">
           <label>Amount (ZAR)</label>
@@ -182,7 +182,7 @@ document.querySelector('#app').innerHTML = `
           ${icons.briefcase}
           <h2>Pending Invoices</h2>
         </div>
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Track gig economy money owed to you. Once marked 'Cleared', it moves directly into your Available Balance.</p>
+        <p style="font-size: calc(13px * var(--text-scale)); color: #64748b; margin-bottom: 15px;">Track gig economy money owed to you. Once marked 'Cleared', it moves directly into your Available Balance.</p>
         
         <div class="border-divider">
           <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
@@ -201,7 +201,7 @@ document.querySelector('#app').innerHTML = `
         <div>
           <h3 class="section-subtitle">Outstanding Receivables</h3>
           <ul id="gig-list" style="list-style: none; padding: 0; margin: 0;">
-            <li id="gig-empty-state" style="padding: 10px 0; color: #94a3b8; font-size: 13px; font-style: italic;">
+            <li id="gig-empty-state" style="padding: 10px 0; color: #94a3b8; font-size: calc(13px * var(--text-scale)); font-style: italic;">
               No pending invoices.
             </li>
           </ul>
@@ -213,7 +213,7 @@ document.querySelector('#app').innerHTML = `
     <!-- Savings Goals -->
     <div class="card" style="margin-top: 20px;">
       <h2>Savings Portfolios</h2>
-      <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">Deposit multiples of your target to scale points fast! Hit 100% to earn a 50pt completion bonus. You can withdraw funds back to main balance if needed.</p>
+      <p style="font-size: calc(13px * var(--text-scale)); color: #64748b; margin-bottom: 15px;">Deposit multiples of your target to scale points fast! Hit 100% to earn a 50pt completion bonus. You can withdraw funds back to main balance if needed.</p>
       
       <div class="border-divider">
         <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
@@ -245,7 +245,7 @@ document.querySelector('#app').innerHTML = `
         ${icons.trending}
         <h2>Bank Savings Simulator</h2>
       </div>
-      <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">Calculate exactly how your money would grow in real-world South African bank accounts using compound interest formulas.</p>
+      <p style="font-size: calc(13px * var(--text-scale)); color: #64748b; margin-bottom: 20px;">Calculate exactly how your money would grow in real-world South African bank accounts using compound interest formulas.</p>
       
       <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
         <div class="form-group" style="margin-bottom: 0;">
@@ -281,8 +281,8 @@ document.querySelector('#app').innerHTML = `
       
       <div class="simulator-result" id="sim-result" style="display: none;">
         <h3>Estimated Future Value:</h3>
-        <p class="balance positive" id="sim-display" style="margin-top: 5px; font-size: 24px;">R 0</p>
-        <div id="sim-breakdown" style="font-size: 13px; color: #4b5563; margin-top: 10px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px;">
+        <p class="balance positive" id="sim-display" style="margin-top: 5px; font-size: calc(24px * var(--text-scale));">R 0</p>
+        <div id="sim-breakdown" style="font-size: calc(13px * var(--text-scale)); color: #4b5563; margin-top: 10px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px;">
           <!-- Breakdown injected here -->
         </div>
       </div>
@@ -292,7 +292,7 @@ document.querySelector('#app').innerHTML = `
     <div class="card" style="margin-top: 20px;">
       <h2>Account History</h2>
       <ul id="transaction-list" style="list-style: none; padding: 0; margin: 0;" aria-live="polite">
-        <li id="empty-state" style="padding: 15px 0; color: #94a3b8; font-style: italic; text-align: center; font-size: 14px;">
+        <li id="empty-state" style="padding: 15px 0; color: #94a3b8; font-style: italic; text-align: center; font-size: calc(14px * var(--text-scale));">
           No recent activity.
         </li>
       </ul>
@@ -400,7 +400,7 @@ a11yFab.addEventListener('click', () => {
 });
 
 // Text Magnifier Cycle
-let textSizeState = 0; // 0: Normal, 1: Large, 2: X-Large
+let textSizeState = 0; 
 a11yTextBtn.addEventListener('click', () => {
   textSizeState = (textSizeState + 1) % 3;
   document.body.classList.remove('text-large', 'text-xlarge');
@@ -424,9 +424,8 @@ a11yDyslexiaBtn.addEventListener('click', () => {
 // Text-to-Speech Native API Integration
 a11ySpeechBtn.addEventListener('click', () => {
   if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel(); // Stop any current speech
+    window.speechSynthesis.cancel(); 
     
-    // Construct the verbal string to read to the user
     let speechText = `Smart Money Dashboard Summary. Your available balance is ${currentBalance} Rand. You have ${points} reward points. You currently have ${goals.length} active saving portfolios.`;
     
     if (goals.length > 0) {
@@ -437,10 +436,10 @@ a11ySpeechBtn.addEventListener('click', () => {
     }
 
     const utterance = new SpeechSynthesisUtterance(speechText);
-    utterance.rate = 0.9; // Slightly slower for better comprehension
+    utterance.rate = 0.9; 
     window.speechSynthesis.speak(utterance);
     
-    a11yMenu.classList.remove('active'); // Close menu after activating
+    a11yMenu.classList.remove('active'); 
   } else {
     alert("Text-to-Speech is not fully supported in this browser.");
   }
@@ -452,7 +451,7 @@ function renderGoals() {
   activeGoalsCount.textContent = goals.length;
 
   if (goals.length === 0) {
-    goalsContainer.innerHTML = '<p style="color: #64748b; font-size: 14px; text-align: center; font-style: italic;">No active portfolios. Create one above to start saving!</p>';
+    goalsContainer.innerHTML = `<p style="color: #64748b; font-size: calc(14px * var(--text-scale)); text-align: center; font-style: italic;">No active portfolios. Create one above to start saving!</p>`;
     return;
   }
 
@@ -483,8 +482,8 @@ function renderGoals() {
       </div>
       <button class="delete-goal-btn" data-id="${goal.id}" aria-label="Delete Portfolio">&times;</button>
       
-      <p style="font-size: 13px; color: #64748b; margin-top: 5px; margin-bottom: 0;">${goal.duration > 0 ? `Term: ${goal.duration} Months` : 'Term: Open'}</p>
-      ${monthlyMin > 0 ? `<p style="font-size: 13px; font-weight: 600; color: #15803d; margin-top: 4px; margin-bottom: 0;">Min. Deposit: R ${monthlyMin.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>` : ''}
+      <p style="font-size: calc(13px * var(--text-scale)); color: #64748b; margin-top: 5px; margin-bottom: 0;">${goal.duration > 0 ? `Term: ${goal.duration} Months` : 'Term: Open'}</p>
+      ${monthlyMin > 0 ? `<p style="font-size: calc(13px * var(--text-scale)); font-weight: 600; color: #15803d; margin-top: 4px; margin-bottom: 0;">Min. Deposit: R ${monthlyMin.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>` : ''}
       
       <div class="progress-container" aria-hidden="true">
         <div class="progress-bar" style="width: ${goalPercentage}%;"></div>
@@ -815,7 +814,7 @@ addGigBtn.addEventListener('click', () => {
       <strong class="gig-title-text">Pending: ${gigName}</strong>
       <div class="gig-amount-text">R ${gigAmount.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
     </div>
-    <button class="mark-paid-btn" aria-label="Mark Invoice as Paid" style="background: #15803d; font-size: 12px; padding: 8px 12px;">${icons.check} Cleared</button>
+    <button class="mark-paid-btn" aria-label="Mark Invoice as Paid" style="background: #15803d; font-size: calc(12px * var(--text-scale)); padding: 8px 12px;">${icons.check} Cleared</button>
   `;
 
   li.querySelector('.mark-paid-btn').addEventListener('click', () => {
