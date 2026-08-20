@@ -1,6 +1,6 @@
 import './style.css'
 
-// Professional SVG Icons (Added Vibrate Icon)
+// Professional SVG Icons
 const icons = {
   check: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
   lock: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`,
@@ -240,30 +240,14 @@ document.querySelector('#app').innerHTML = `
       <div id="goals-container"></div>
     </div>
 
-    <!-- Real-World Bank Savings Simulator -->
+    <!-- SA Bank Savings Simulator Aggregator -->
     <div class="card" style="margin-top: 20px;">
       <div class="card-header">
         ${icons.trending}
-        <h2>Bank Savings Simulator</h2>
+        <h2>SA Bank Comparison Simulator</h2>
       </div>
-      <p style="font-size: calc(13px * var(--text-scale)); color: #64748b; margin-bottom: 20px;">Calculate exactly how your money would grow in real-world South African bank accounts using compound interest formulas.</p>
+      <p style="font-size: calc(13px * var(--text-scale)); color: #64748b; margin-bottom: 20px;">Compare how your money will grow across major South African banks based on approximate 2026 fixed/notice deposit rates.</p>
       
-      <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
-        <div class="form-group" style="margin-bottom: 0;">
-          <label>Account Type</label>
-          <select id="sim-account-type" aria-label="Simulator Account Type">
-            <option value="6.00">Access (Up to 6.00%)</option>
-            <option value="7.25">Notice Deposit (Up to 7.25%)</option>
-            <option value="7.00">Tax-free (Up to 7.00%)</option>
-            <option value="8.25" selected>Fixed-term (Up to 8.25%)</option>
-          </select>
-        </div>
-        <div class="form-group" style="margin-bottom: 0;">
-          <label>Duration (Years)</label>
-          <input type="number" id="sim-years" placeholder="e.g. 2" aria-label="Simulator Years" />
-        </div>
-      </div>
-
       <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
         <div class="form-group" style="margin-bottom: 0;">
           <label>Initial Deposit (ZAR)</label>
@@ -275,16 +259,21 @@ document.querySelector('#app').innerHTML = `
         </div>
       </div>
 
+      <div class="form-group" style="margin-bottom: 15px; width: 50%;">
+        <label>Duration (Years)</label>
+        <input type="number" id="sim-years" placeholder="e.g. 2" aria-label="Simulator Years" />
+      </div>
+
       <div style="display: flex; gap: 10px; margin-top: 5px;">
-        <button id="simulate-btn" style="flex: 2;">Run Bank Simulation</button>
+        <button id="simulate-btn" style="flex: 2;">Compare SA Banks</button>
         <button class="secondary" id="sim-clear-btn" style="flex: 1;">Clear</button>
       </div>
       
+      <!-- Leaderboard Container -->
       <div class="simulator-result" id="sim-result" style="display: none;">
-        <h3>Estimated Future Value:</h3>
-        <p class="balance positive" id="sim-display" style="margin-top: 5px; font-size: calc(24px * var(--text-scale));">R 0</p>
-        <div id="sim-breakdown" style="font-size: calc(13px * var(--text-scale)); color: #4b5563; margin-top: 10px; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 10px;">
-          <!-- Breakdown injected here -->
+        <h3>Projected Returns Leaderboard</h3>
+        <div id="bank-leaderboard" class="bank-leaderboard">
+          <!-- Dynamically injected bank comparison cards -->
         </div>
       </div>
     </div>
@@ -347,7 +336,7 @@ enterBtn.addEventListener('click', () => {
       document.getElementById('success-tick').style.display = 'block';
       document.getElementById('auth-text').textContent = 'Secure Connection Established';
       
-      triggerHaptic('success'); // Vibrate on auth success
+      triggerHaptic('success'); 
       
       setTimeout(() => {
         splashScreen.style.opacity = '0';
@@ -369,7 +358,7 @@ let points = 0;
 let transactionCount = 0;
 let gigCount = 0;
 
-let goals = []; // No default portfolio anymore
+let goals = []; 
 
 // Elements
 const balanceDisplay = document.getElementById('total-balance');
@@ -411,28 +400,25 @@ a11yHapticBtn.addEventListener('click', () => {
   hapticsEnabled = !hapticsEnabled;
   if (hapticsEnabled) {
     a11yHapticBtn.innerHTML = `${icons.vibrate} Haptic Feedback: On`;
-    a11yHapticBtn.style.color = '#15803d'; // Green highlight to show it's active
+    a11yHapticBtn.style.color = '#15803d'; 
     if (navigator.vibrate) navigator.vibrate(50);
   } else {
     a11yHapticBtn.innerHTML = `${icons.vibrate} Haptic Feedback: Off`;
-    a11yHapticBtn.style.color = ''; // Revert to default text color
+    a11yHapticBtn.style.color = ''; 
   }
 });
 
-// Centralized Haptic Trigger Function
 function triggerHaptic(type = 'default') {
   if (!hapticsEnabled || !navigator.vibrate) return;
-  
   if (type === 'success') {
-    navigator.vibrate([100, 50, 100]); // Double pulse celebration
+    navigator.vibrate([100, 50, 100]); 
   } else if (type === 'error') {
-    navigator.vibrate([50, 50, 50, 50]); // Rapid stutter warning
+    navigator.vibrate([50, 50, 50, 50]); 
   } else {
-    navigator.vibrate(50); // Standard single tap
+    navigator.vibrate(50); 
   }
 }
 
-// Custom Alert that triggers haptic errors
 function appAlert(message) {
   triggerHaptic('error');
   alert(message);
@@ -460,7 +446,7 @@ a11yDyslexiaBtn.addEventListener('click', () => {
   document.body.classList.toggle('dyslexia-mode');
 });
 
-// Text-to-Speech Native API Integration
+// Text-to-Speech
 a11ySpeechBtn.addEventListener('click', () => {
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel(); 
@@ -477,7 +463,6 @@ a11ySpeechBtn.addEventListener('click', () => {
     const utterance = new SpeechSynthesisUtterance(speechText);
     utterance.rate = 0.9; 
     window.speechSynthesis.speak(utterance);
-    
     a11yMenu.classList.remove('active'); 
   } else {
     appAlert("Text-to-Speech is not fully supported in this browser.");
@@ -592,9 +577,9 @@ function renderGoals() {
           if (isReachedNow) {
             pointsEarned += 50; 
             goal.previouslyReached = true; 
-            triggerHaptic('success'); // Celebrate hitting a goal
+            triggerHaptic('success'); 
           } else {
-            triggerHaptic('default'); // Standard deposit tap
+            triggerHaptic('default'); 
           }
         }
 
@@ -896,19 +881,26 @@ addGigBtn.addEventListener('click', () => {
   gigAmountInput.value = '';
 });
 
-// Bank Simulator Logic
+// --- Aggregator Bank Simulator Logic ---
 const simBtn = document.getElementById('simulate-btn');
 const simClearBtn = document.getElementById('sim-clear-btn');
-const simAccountType = document.getElementById('sim-account-type');
 const simInitialInput = document.getElementById('sim-initial');
 const simMonthlyInput = document.getElementById('sim-monthly');
 const simYearsInput = document.getElementById('sim-years');
 const simResult = document.getElementById('sim-result');
-const simDisplay = document.getElementById('sim-display');
-const simBreakdown = document.getElementById('sim-breakdown');
+const bankLeaderboard = document.getElementById('bank-leaderboard');
+
+// 2026 Approx Fixed/Notice Rates for SA Banks
+const saBanks = [
+  { name: 'African Bank', rate: 0.105 }, // 10.50%
+  { name: 'TymeBank', rate: 0.100 },     // 10.00%
+  { name: 'Capitec', rate: 0.095 },      // 9.50%
+  { name: 'Nedbank', rate: 0.090 },      // 9.00%
+  { name: 'Standard Bank', rate: 0.0885 },// 8.85%
+  { name: 'FNB', rate: 0.0825 }          // 8.25%
+];
 
 simBtn.addEventListener('click', () => {
-  const annualRate = parseFloat(simAccountType.value) / 100;
   const initialDeposit = parseFloat(simInitialInput.value) || 0;
   const monthlyDeposit = parseFloat(simMonthlyInput.value) || 0;
   const years = parseFloat(simYearsInput.value);
@@ -919,35 +911,50 @@ simBtn.addEventListener('click', () => {
   }
 
   triggerHaptic('default');
-
   const months = years * 12;
-  const monthlyRate = annualRate / 12;
-  
-  const principalCompound = initialDeposit * Math.pow(1 + monthlyRate, months);
-  
-  let contributionCompound = 0;
-  if (monthlyDeposit > 0) {
-    contributionCompound = monthlyDeposit * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
-  }
-  
-  const futureValue = principalCompound + contributionCompound;
-  
   const totalInvested = initialDeposit + (monthlyDeposit * months);
-  const totalInterest = futureValue - totalInvested;
+  
+  // Calculate results for each bank
+  let results = saBanks.map(bank => {
+    const monthlyRate = bank.rate / 12;
+    const principalCompound = initialDeposit * Math.pow(1 + monthlyRate, months);
+    let contributionCompound = 0;
+    if (monthlyDeposit > 0) {
+      contributionCompound = monthlyDeposit * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+    }
+    const futureValue = principalCompound + contributionCompound;
+    const profit = futureValue - totalInvested;
+    
+    return {
+      ...bank,
+      futureValue,
+      profit
+    };
+  });
 
-  simDisplay.textContent = 'R ' + futureValue.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 });
-  
-  simBreakdown.innerHTML = `
-    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-      <span>Total Invested:</span>
-      <strong>R ${totalInvested.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>
-    </div>
-    <div style="display: flex; justify-content: space-between; color: #15803d;">
-      <span>Total Interest Earned:</span>
-      <strong>+ R ${totalInterest.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>
-    </div>
-  `;
-  
+  // Sort by highest return
+  results.sort((a, b) => b.futureValue - a.futureValue);
+
+  // Render Leaderboard
+  bankLeaderboard.innerHTML = '';
+  results.forEach((res, index) => {
+    const isFirst = index === 0;
+    const item = document.createElement('div');
+    item.className = `bank-row ${isFirst ? 'bank-rank-1' : ''}`;
+    
+    item.innerHTML = `
+      <div class="bank-info">
+        <h4>${isFirst ? '🏆 ' : ''}${res.name}</h4>
+        <div class="bank-rate">${(res.rate * 100).toFixed(2)}% p.a.</div>
+      </div>
+      <div class="bank-return">
+        <div class="bank-total">R ${res.futureValue.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</div>
+        <div class="bank-profit">+ R ${res.profit.toLocaleString(undefined, { maximumFractionDigits: 2 })} profit</div>
+      </div>
+    `;
+    bankLeaderboard.appendChild(item);
+  });
+
   simResult.style.display = 'block';
 });
 
