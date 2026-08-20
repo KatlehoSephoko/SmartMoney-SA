@@ -684,71 +684,38 @@ select:focus {
 }
 
 /* =========================
-   Bank Leaderboard Styles
+   Bank Simulator Results
    ========================= */
-
 .simulator-result {
   background: #ecfdf5;
-  padding: 18px;
+  padding: 20px;
   border-radius: 10px;
   margin-top: 20px;
+  border: 1px solid #d1fae5;
 }
 
-.simulator-result h3 {
-  margin: 0 0 15px 0;
-  color: #14532d;
-  font-size: calc(16px * var(--text-scale));
-}
-
-.bank-leaderboard {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.bank-row {
+.sim-bank-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  background: white;
-  padding: 12px 15px;
-  border-radius: 8px;
-  border: 1px solid #d1fae5;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  align-items: flex-start;
+  margin-bottom: 15px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding-bottom: 15px;
 }
 
-.bank-rank-1 {
-  border: 2px solid #10b981;
-  background: #f0fdf4;
-}
-
-.bank-info h4 {
+.sim-bank-title {
   margin: 0;
-  font-size: calc(15px * var(--text-scale));
-  color: #111827;
+  color: #14532d;
+  font-size: calc(18px * var(--text-scale));
 }
 
-.bank-rate {
-  font-size: calc(12px * var(--text-scale));
+.sim-bank-rate {
+  font-size: calc(14px * var(--text-scale));
   color: #059669;
-  font-weight: bold;
-  margin-top: 2px;
-}
-
-.bank-return {
-  text-align: right;
-}
-
-.bank-total {
-  font-size: calc(16px * var(--text-scale));
   font-weight: 700;
-  color: #111827;
-}
-
-.bank-profit {
-  font-size: calc(12px * var(--text-scale));
-  color: #15803d;
-  margin-top: 2px;
+  background: #d1fae5;
+  padding: 4px 10px;
+  border-radius: 20px;
 }
 
 /* =========================
@@ -905,8 +872,7 @@ body.dark-mode .goal-name-text,
 body.dark-mode .goal-saved-text,
 body.dark-mode .gig-amount-text,
 body.dark-mode .transaction-title-text,
-body.dark-mode .bank-total,
-body.dark-mode .bank-info h4 {
+body.dark-mode .sim-bank-title {
   color: #f8fafc !important;
 }
 
@@ -945,14 +911,9 @@ body.dark-mode .progress-container {
   background: #334155;
 }
 
-body.dark-mode .gig-item,
-body.dark-mode .bank-row {
+body.dark-mode .gig-item {
   background: #1e293b;
   border-color: #334155;
-}
-
-body.dark-mode .bank-rank-1 {
-  border-color: #10b981;
 }
 
 body.dark-mode .transaction-item {
@@ -961,9 +922,16 @@ body.dark-mode .transaction-item {
 
 body.dark-mode .simulator-result {
   background: #064e3b;
+  border-color: #064e3b;
 }
-body.dark-mode .simulator-result h3 {
+
+body.dark-mode .sim-bank-rate {
+  background: #065f46;
   color: #a7f3d0;
+}
+
+body.dark-mode .sim-bank-header {
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 /* =========================
