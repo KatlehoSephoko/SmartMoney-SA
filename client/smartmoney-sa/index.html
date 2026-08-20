@@ -1,13 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>smartmoney-sa</title>
+    <!-- Prevents users from pinching to zoom, making it feel like a native app -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>SmartMoney-SA</title>
+    
+    <!-- PWA Requirements -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#064e3b">
+    
+    <!-- Apple iOS Specific Tags -->
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SmartMoney">
   </head>
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
+    
+    <!-- Register the Service Worker -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then(registration => {
+            console.log('PWA ServiceWorker registered successfully!');
+          }).catch(error => {
+            console.log('PWA ServiceWorker registration failed: ', error);
+          });
+        });
+      }
+    </script>
   </body>
 </html>
