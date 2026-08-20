@@ -240,14 +240,43 @@ document.querySelector('#app').innerHTML = `
       <div id="goals-container"></div>
     </div>
 
-    <!-- SA Bank Savings Simulator Aggregator -->
+    <!-- Independent SA Bank Savings Simulator -->
     <div class="card" style="margin-top: 20px;">
       <div class="card-header">
         ${icons.trending}
-        <h2>SA Bank Comparison Simulator</h2>
+        <h2>Bank Interest Simulator</h2>
       </div>
-      <p style="font-size: calc(13px * var(--text-scale)); color: #64748b; margin-bottom: 20px;">Compare how your money will grow across major South African banks based on approximate 2026 fixed/notice deposit rates.</p>
+      <p style="font-size: calc(13px * var(--text-scale)); color: #64748b; margin-bottom: 20px;">
+        Compare actual market rates. Select a specific South African bank and account type to calculate your projected returns based on approximate 2026 benchmark rates.
+      </p>
       
+      <!-- New Bank & Account Type Selection -->
+      <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Select SA Bank</label>
+          <select id="sim-bank" aria-label="Select Bank">
+            <option value="Absa">Absa</option>
+            <option value="African Bank">African Bank</option>
+            <option value="Capitec">Capitec</option>
+            <option value="Discovery Bank">Discovery Bank</option>
+            <option value="FNB">FNB</option>
+            <option value="Investec">Investec</option>
+            <option value="Nedbank">Nedbank</option>
+            <option value="Standard Bank">Standard Bank</option>
+            <option value="TymeBank">TymeBank</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Account Type</label>
+          <select id="sim-account-type" aria-label="Simulator Account Type">
+            <option value="Access">Anytime Access (Lower rate, instant access)</option>
+            <option value="Notice">Notice Deposit (32/60 Days)</option>
+            <option value="Fixed">Fixed Deposit (Highest rate, locked)</option>
+            <option value="Tax-Free">Tax-Free Savings</option>
+          </select>
+        </div>
+      </div>
+
       <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
         <div class="form-group" style="margin-bottom: 0;">
           <label>Initial Deposit (ZAR)</label>
@@ -259,22 +288,35 @@ document.querySelector('#app').innerHTML = `
         </div>
       </div>
 
-      <div class="form-group" style="margin-bottom: 15px; width: 50%;">
+      <div class="form-group" style="margin-bottom: 15px; width: 100%; max-width: 50%;">
         <label>Duration (Years)</label>
         <input type="number" id="sim-years" placeholder="e.g. 2" aria-label="Simulator Years" />
       </div>
 
       <div style="display: flex; gap: 10px; margin-top: 5px;">
-        <button id="simulate-btn" style="flex: 2;">Compare SA Banks</button>
+        <button id="simulate-btn" style="flex: 2;">Calculate Investment</button>
         <button class="secondary" id="sim-clear-btn" style="flex: 1;">Clear</button>
       </div>
       
-      <!-- Leaderboard Container -->
+      <!-- Dynamic Simulator Result Card -->
       <div class="simulator-result" id="sim-result" style="display: none;">
-        <h3>Projected Returns Leaderboard</h3>
-        <div id="bank-leaderboard" class="bank-leaderboard">
-          <!-- Dynamically injected bank comparison cards -->
+        <div class="sim-bank-header">
+          <div>
+            <h3 class="sim-bank-title" id="res-bank-name">Bank Name</h3>
+            <div style="font-size: calc(13px * var(--text-scale)); color: #64748b; margin-top: 4px;" id="res-acc-type">Account Type</div>
+          </div>
+          <div class="sim-bank-rate" id="res-rate">0.00% p.a.</div>
         </div>
+        
+        <p class="balance positive" id="sim-display" style="margin-top: 5px; font-size: calc(28px * var(--text-scale)); line-height: 1;">R 0</p>
+        <div style="font-size: calc(12px * var(--text-scale)); color: #64748b; margin-bottom: 15px;">Projected Future Value</div>
+        
+        <div id="sim-breakdown" style="font-size: calc(13px * var(--text-scale)); color: #4b5563; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 15px;">
+          <!-- Breakdown injected here -->
+        </div>
+        <p style="font-size: calc(11px * var(--text-scale)); color: #9ca3af; margin-top: 15px; margin-bottom: 0; font-style: italic;">
+          *Rates are approximate benchmarks based on 2025/2026 data and may vary by exact balance or term.
+        </p>
       </div>
     </div>
 
@@ -446,7 +488,7 @@ a11yDyslexiaBtn.addEventListener('click', () => {
   document.body.classList.toggle('dyslexia-mode');
 });
 
-// Text-to-Speech
+// Text-to-Speech Native API Integration
 a11ySpeechBtn.addEventListener('click', () => {
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel(); 
@@ -463,6 +505,7 @@ a11ySpeechBtn.addEventListener('click', () => {
     const utterance = new SpeechSynthesisUtterance(speechText);
     utterance.rate = 0.9; 
     window.speechSynthesis.speak(utterance);
+    
     a11yMenu.classList.remove('active'); 
   } else {
     appAlert("Text-to-Speech is not fully supported in this browser.");
@@ -881,26 +924,42 @@ addGigBtn.addEventListener('click', () => {
   gigAmountInput.value = '';
 });
 
-// --- Aggregator Bank Simulator Logic ---
+// --- Dynamic Bank Simulator Data & Logic ---
+
+// Mock Database of Benchmark SA Rates (2025/2026 Approx)
+const bankRates = {
+  "Absa": { "Access": 4.50, "Notice": 6.50, "Fixed": 8.20, "Tax-Free": 6.50 },
+  "African Bank": { "Access": 5.50, "Notice": 7.00, "Fixed": 8.47, "Tax-Free": 7.50 },
+  "Capitec": { "Access": 4.50, "Notice": 6.50, "Fixed": 8.50, "Tax-Free": 6.50 },
+  "Discovery Bank": { "Access": 6.00, "Notice": 7.30, "Fixed": 9.80, "Tax-Free": 6.75 },
+  "FNB": { "Access": 4.50, "Notice": 6.50, "Fixed": 8.25, "Tax-Free": 6.50 },
+  "Investec": { "Access": 5.50, "Notice": 7.50, "Fixed": 9.00, "Tax-Free": 7.00 },
+  "Nedbank": { "Access": 5.00, "Notice": 7.55, "Fixed": 8.50, "Tax-Free": 7.00 },
+  "Standard Bank": { "Access": 4.50, "Notice": 7.28, "Fixed": 8.50, "Tax-Free": 6.78 },
+  "TymeBank": { "Access": 7.00, "Notice": 8.00, "Fixed": 9.75, "Tax-Free": 7.00 }
+};
+
 const simBtn = document.getElementById('simulate-btn');
 const simClearBtn = document.getElementById('sim-clear-btn');
+const simBankSelect = document.getElementById('sim-bank');
+const simAccountTypeSelect = document.getElementById('sim-account-type');
 const simInitialInput = document.getElementById('sim-initial');
 const simMonthlyInput = document.getElementById('sim-monthly');
 const simYearsInput = document.getElementById('sim-years');
-const simResult = document.getElementById('sim-result');
-const bankLeaderboard = document.getElementById('bank-leaderboard');
 
-// 2026 Approx Fixed/Notice Rates for SA Banks
-const saBanks = [
-  { name: 'African Bank', rate: 0.105 }, // 10.50%
-  { name: 'TymeBank', rate: 0.100 },     // 10.00%
-  { name: 'Capitec', rate: 0.095 },      // 9.50%
-  { name: 'Nedbank', rate: 0.090 },      // 9.00%
-  { name: 'Standard Bank', rate: 0.0885 },// 8.85%
-  { name: 'FNB', rate: 0.0825 }          // 8.25%
-];
+// Result Elements
+const simResult = document.getElementById('sim-result');
+const resBankName = document.getElementById('res-bank-name');
+const resAccType = document.getElementById('res-acc-type');
+const resRate = document.getElementById('res-rate');
+const simDisplay = document.getElementById('sim-display');
+const simBreakdown = document.getElementById('sim-breakdown');
 
 simBtn.addEventListener('click', () => {
+  const selectedBank = simBankSelect.value;
+  const selectedType = simAccountTypeSelect.value;
+  const typeLabel = simAccountTypeSelect.options[simAccountTypeSelect.selectedIndex].text;
+  
   const initialDeposit = parseFloat(simInitialInput.value) || 0;
   const monthlyDeposit = parseFloat(simMonthlyInput.value) || 0;
   const years = parseFloat(simYearsInput.value);
@@ -910,51 +969,44 @@ simBtn.addEventListener('click', () => {
     return;
   }
 
-  triggerHaptic('default');
-  const months = years * 12;
-  const totalInvested = initialDeposit + (monthlyDeposit * months);
+  triggerHaptic('success');
+
+  // Fetch benchmark rate from mock DB
+  const rawRate = bankRates[selectedBank][selectedType];
+  const annualRate = rawRate / 100;
   
-  // Calculate results for each bank
-  let results = saBanks.map(bank => {
-    const monthlyRate = bank.rate / 12;
-    const principalCompound = initialDeposit * Math.pow(1 + monthlyRate, months);
-    let contributionCompound = 0;
-    if (monthlyDeposit > 0) {
-      contributionCompound = monthlyDeposit * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
-    }
-    const futureValue = principalCompound + contributionCompound;
-    const profit = futureValue - totalInvested;
-    
-    return {
-      ...bank,
-      futureValue,
-      profit
-    };
-  });
+  const months = years * 12;
+  const monthlyRate = annualRate / 12;
+  
+  const principalCompound = initialDeposit * Math.pow(1 + monthlyRate, months);
+  
+  let contributionCompound = 0;
+  if (monthlyDeposit > 0) {
+    contributionCompound = monthlyDeposit * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+  }
+  
+  const futureValue = principalCompound + contributionCompound;
+  const totalInvested = initialDeposit + (monthlyDeposit * months);
+  const totalInterest = futureValue - totalInvested;
 
-  // Sort by highest return
-  results.sort((a, b) => b.futureValue - a.futureValue);
+  // Render Data into DOM
+  resBankName.textContent = selectedBank;
+  resAccType.textContent = typeLabel;
+  resRate.textContent = `${rawRate.toFixed(2)}% p.a.`;
 
-  // Render Leaderboard
-  bankLeaderboard.innerHTML = '';
-  results.forEach((res, index) => {
-    const isFirst = index === 0;
-    const item = document.createElement('div');
-    item.className = `bank-row ${isFirst ? 'bank-rank-1' : ''}`;
-    
-    item.innerHTML = `
-      <div class="bank-info">
-        <h4>${isFirst ? '🏆 ' : ''}${res.name}</h4>
-        <div class="bank-rate">${(res.rate * 100).toFixed(2)}% p.a.</div>
-      </div>
-      <div class="bank-return">
-        <div class="bank-total">R ${res.futureValue.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}</div>
-        <div class="bank-profit">+ R ${res.profit.toLocaleString(undefined, { maximumFractionDigits: 2 })} profit</div>
-      </div>
-    `;
-    bankLeaderboard.appendChild(item);
-  });
-
+  simDisplay.textContent = 'R ' + futureValue.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 });
+  
+  simBreakdown.innerHTML = `
+    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+      <span>Total Invested:</span>
+      <strong>R ${totalInvested.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>
+    </div>
+    <div style="display: flex; justify-content: space-between; color: #15803d;">
+      <span>Total Interest Earned:</span>
+      <strong>+ R ${totalInterest.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>
+    </div>
+  `;
+  
   simResult.style.display = 'block';
 });
 
