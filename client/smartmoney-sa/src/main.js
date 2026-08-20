@@ -48,9 +48,8 @@ const tickerHtml = jseStocks.map(stock => {
 
 document.querySelector('#app').innerHTML = `
   
-  <!-- AUTHENTICATION SCREEN -->
+  <!-- AUTHENTICATION SCREEN (Commented out for Beta Testing phase)
   <div id="auth-screen">
-    <!-- Registration Form -->
     <div class="auth-card" id="register-card">
       <img src="https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG" alt="SmartMoney Logo" class="auth-logo" />
       <h2>Create Account</h2>
@@ -70,7 +69,6 @@ document.querySelector('#app').innerHTML = `
       </div>
     </div>
 
-    <!-- Login Form (Hidden initially) -->
     <div class="auth-card" id="login-card" style="display: none;">
       <img src="https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG" alt="SmartMoney Logo" class="auth-logo" />
       <h2>Welcome Back</h2>
@@ -87,6 +85,7 @@ document.querySelector('#app').innerHTML = `
       </div>
     </div>
   </div>
+  -->
 
   <!-- Bank Card Transition Element -->
   <div id="bank-card-transition">
@@ -95,7 +94,7 @@ document.querySelector('#app').innerHTML = `
     <div class="card-name" id="display-card-name">SMARTMONEY SA</div>
   </div>
 
-  <!-- Landing / Splash Screen (Shows AFTER Login) -->
+  <!-- Landing / Splash Screen (Visible by default for Beta) -->
   <div id="splash-screen">
     <div class="logo-container" id="logo-container">
       <img src="https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG" alt="SmartMoney Logo" class="splash-logo" />
@@ -132,7 +131,7 @@ document.querySelector('#app').innerHTML = `
             <h4>FlySafair Flight Voucher</h4>
             <p>Value: R300 | Cost: 1200 pts</p>
           </div>
-          <button class="secondary claim-store-btn" data-cost="1200" data-value="300" data-name="FlySafair Voucher" style="width: auto;">Redeem</button>
+          <button class="secondary claim-store-btn" data-cost="1200" data-value="R300" data-name="FlySafair Voucher" style="width: auto;">Redeem</button>
         </div>
         
         <div class="reward-item">
@@ -148,7 +147,7 @@ document.querySelector('#app').innerHTML = `
             <h4>TFG / Sportscene Voucher</h4>
             <p>Value: R200 | Cost: 800 pts</p>
           </div>
-          <button class="secondary claim-store-btn" data-cost="800" data-value="200" data-name="TFG Voucher" style="width: auto;">Redeem</button>
+          <button class="secondary claim-store-btn" data-cost="800" data-value="R200" data-name="TFG Voucher" style="width: auto;">Redeem</button>
         </div>
         
         <div class="reward-item">
@@ -156,7 +155,7 @@ document.querySelector('#app').innerHTML = `
             <h4>Checkers Sixty60</h4>
             <p>Value: R100 | Cost: 400 pts</p>
           </div>
-          <button class="secondary claim-store-btn" data-cost="400" data-value="100" data-name="Checkers Voucher" style="width: auto;">Redeem</button>
+          <button class="secondary claim-store-btn" data-cost="400" data-value="R100" data-name="Checkers Voucher" style="width: auto;">Redeem</button>
         </div>
 
         <div class="reward-item">
@@ -164,7 +163,7 @@ document.querySelector('#app').innerHTML = `
             <h4>Takealot.com Voucher</h4>
             <p>Value: R50 | Cost: 200 pts</p>
           </div>
-          <button class="secondary claim-store-btn" data-cost="200" data-value="50" data-name="Takealot Voucher" style="width: auto;">Redeem</button>
+          <button class="secondary claim-store-btn" data-cost="200" data-value="R50" data-name="Takealot Voucher" style="width: auto;">Redeem</button>
         </div>
       </div>
 
@@ -336,9 +335,10 @@ document.querySelector('#app').innerHTML = `
         <h2>Bank Interest Simulator</h2>
       </div>
       <p style="font-size: calc(13px * var(--text-scale)); color: #64748b; margin-bottom: 20px;">
-        Compare actual market rates. Select a specific South African bank and account type to calculate your projected returns based on approximate 2026 benchmark rates.
+        Compare actual market rates. Select a specific South African bank and account type to calculate your projected returns based on approximate benchmark rates.
       </p>
       
+      <!-- New Bank & Account Type Selection -->
       <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
         <div class="form-group" style="margin-bottom: 0;">
           <label>Select SA Bank</label>
@@ -403,7 +403,7 @@ document.querySelector('#app').innerHTML = `
           <!-- Breakdown injected here -->
         </div>
         <p style="font-size: calc(11px * var(--text-scale)); color: #9ca3af; margin-top: 15px; margin-bottom: 0; font-style: italic;">
-          *Rates are approximate benchmarks based on 2025/2026 data and may vary by exact balance or term.
+          *Rates are approximate benchmarks and may vary by exact balance or term.
         </p>
       </div>
     </div>
@@ -445,9 +445,19 @@ document.querySelector('#app').innerHTML = `
    JAVASCRIPT LOGIC
    ========================================== */
 
-let currentUser = null;
+// Set a mock user for the Beta testing phase since auth is disabled
+let currentUser = { 
+  firstName: "Tester", 
+  surname: "Account", 
+  email: "beta.tester@smartmoney.co.za" 
+};
 
-// --- Authentication Flow ---
+// Inject Name into Dashboard and Card manually for Beta
+document.getElementById('dash-user-name').textContent = currentUser.firstName;
+document.getElementById('display-card-name').textContent = `${currentUser.firstName} ${currentUser.surname}`.toUpperCase();
+
+/* 
+// --- Authentication Flow (Commented out for Beta) ---
 const authScreen = document.getElementById('auth-screen');
 const registerCard = document.getElementById('register-card');
 const loginCard = document.getElementById('login-card');
@@ -463,7 +473,6 @@ document.getElementById('link-to-register').addEventListener('click', () => {
   registerCard.style.display = 'block';
 });
 
-// Registration Simulation
 document.getElementById('btn-register').addEventListener('click', () => {
   const fName = document.getElementById('reg-firstname').value;
   const lName = document.getElementById('reg-surname').value;
@@ -476,7 +485,6 @@ document.getElementById('btn-register').addEventListener('click', () => {
     return;
   }
 
-  // Simulate storing in a database (LocalStorage for frontend mock)
   const userData = { firstName: fName, surname: lName, phone: contact, email: email, password: pass };
   localStorage.setItem('smartMoneyUser', JSON.stringify(userData));
   
@@ -485,7 +493,6 @@ document.getElementById('btn-register').addEventListener('click', () => {
   loginCard.style.display = 'block';
 });
 
-// Login Simulation
 document.getElementById('btn-login').addEventListener('click', () => {
   const email = document.getElementById('login-email').value;
   const pass = document.getElementById('login-password').value;
@@ -494,11 +501,9 @@ document.getElementById('btn-login').addEventListener('click', () => {
   if(storedUser && storedUser.email === email && storedUser.password === pass) {
     currentUser = storedUser;
     
-    // Inject Name into Dashboard and Card
     document.getElementById('dash-user-name').textContent = currentUser.firstName;
-    document.getElementById('display-card-name').textContent = `${currentUser.firstName} ${currentUser.surname}`.toUpperCase();
+    document.getElementById('display-card-name').textContent = \`\${currentUser.firstName} \${currentUser.surname}\`.toUpperCase();
 
-    // Hide Auth, Show Splash
     authScreen.style.display = 'none';
     splashScreen.style.display = 'flex';
     setTimeout(() => splashScreen.style.opacity = '1', 50);
@@ -507,11 +512,12 @@ document.getElementById('btn-login').addEventListener('click', () => {
     alert("Invalid Email or Password. Have you registered?");
   }
 });
-
+*/
 
 // --- Cinematic Splash Logic ---
 const enterBtn = document.getElementById('enter-app-btn');
 const bankCard = document.getElementById('bank-card-transition');
+const splashScreen = document.getElementById('splash-screen');
 const dashboard = document.getElementById('dashboard');
 
 enterBtn.addEventListener('click', () => {
@@ -553,7 +559,6 @@ enterBtn.addEventListener('click', () => {
   }, 800); 
 });
 
-
 // --- State Management ---
 let currentBalance = 0;
 let points = 0;
@@ -584,7 +589,6 @@ const qrSuccessView = document.getElementById('qr-success-view');
 const qrImageContainer = document.getElementById('qr-image-container');
 const qrDoneBtn = document.getElementById('qr-done-btn');
 
-
 // --- Accessibility Toolkit Logic ---
 const a11yFab = document.getElementById('a11y-fab');
 const a11yMenu = document.getElementById('a11y-menu');
@@ -597,7 +601,6 @@ a11yFab.addEventListener('click', () => {
   a11yMenu.classList.toggle('active');
 });
 
-// Haptic Feedback Engine
 let hapticsEnabled = false;
 
 a11yHapticBtn.addEventListener('click', () => {
@@ -628,7 +631,7 @@ function appAlert(message) {
   alert(message);
 }
 
-// Text Magnifier
+// Text Magnifier Cycle
 let textSizeState = 0; 
 a11yTextBtn.addEventListener('click', () => {
   textSizeState = (textSizeState + 1) % 3;
@@ -645,14 +648,15 @@ a11yTextBtn.addEventListener('click', () => {
   }
 });
 
-// Dyslexia Font
+// Dyslexia Font Toggle
 a11yDyslexiaBtn.addEventListener('click', () => {
   document.body.classList.toggle('dyslexia-mode');
 });
 
-// Text-to-Speech
+// Text-to-Speech Native API Integration (Toggle System)
 a11ySpeechBtn.addEventListener('click', () => {
   if ('speechSynthesis' in window) {
+    
     if (window.speechSynthesis.speaking) {
       window.speechSynthesis.cancel();
       a11ySpeechBtn.innerHTML = `${icons.speech} Read Dashboard Aloud`;
@@ -665,6 +669,13 @@ a11ySpeechBtn.addEventListener('click', () => {
     
     let speechText = `Smart Money Dashboard Summary. Your available balance is ${currentBalance} Rand. You have ${points} reward points. You currently have ${goals.length} active saving portfolios.`;
     
+    if (goals.length > 0) {
+      speechText += " Your portfolios are: ";
+      goals.forEach(g => {
+        speechText += `${g.name}, with a target of ${g.target} Rand. You have saved ${g.saved} Rand so far. `;
+      });
+    }
+
     const utterance = new SpeechSynthesisUtterance(speechText);
     utterance.rate = 0.9; 
     
@@ -676,6 +687,11 @@ a11ySpeechBtn.addEventListener('click', () => {
     utterance.onend = () => {
       a11ySpeechBtn.innerHTML = `${icons.speech} Read Dashboard Aloud`;
       a11ySpeechBtn.style.color = ''; 
+    };
+
+    utterance.onerror = () => {
+      a11ySpeechBtn.innerHTML = `${icons.speech} Read Dashboard Aloud`;
+      a11ySpeechBtn.style.color = '';
     };
 
     window.speechSynthesis.speak(utterance);
