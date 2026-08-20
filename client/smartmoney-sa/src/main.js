@@ -184,9 +184,12 @@ document.querySelector('#app').innerHTML = `
   <!-- Main Dashboard -->
   <div id="dashboard" class="container" style="display: none; opacity: 0; transition: opacity 0.4s ease;">
     
-    <!-- Top Controls -->
+        <!-- Top Controls -->
     <div class="top-controls">
       <img src="https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG" alt="App Logo" class="top-logo" />
+
+      <!-- PWA Install Button (Hidden initially) -->
+      <button id="install-app-btn" aria-label="Install App">📥 Install App</button>
 
       <div class="theme-switch-wrapper">
         <span id="theme-label" style="margin-right: 15px;">Welcome, <span id="dash-user-name">User</span></span>
@@ -198,6 +201,7 @@ document.querySelector('#app').innerHTML = `
         </label>
       </div>
     </div>
+
 
     <!-- Centered Navigation -->
     <div class="navbar">
