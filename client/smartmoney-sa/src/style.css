@@ -355,85 +355,6 @@ input:checked + .slider .slider-icon {
 }
 
 /* =========================
-   JSE Stock Ticker
-   ========================= */
-
-.ticker-wrap {
-  width: 100%;
-  overflow: hidden;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 12px 0;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-  display: flex;
-  white-space: nowrap;
-  position: relative;
-}
-
-.ticker-wrap::before, .ticker-wrap::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 40px;
-  height: 100%;
-  z-index: 2;
-}
-.ticker-wrap::before {
-  left: 0;
-  background: linear-gradient(to right, #ffffff, transparent);
-}
-.ticker-wrap::after {
-  right: 0;
-  background: linear-gradient(to left, #ffffff, transparent);
-}
-
-.ticker {
-  display: inline-block;
-  white-space: nowrap;
-  padding-left: 100%;
-  animation: ticker-scroll 35s linear infinite;
-}
-
-.ticker:hover {
-  animation-play-state: paused;
-}
-
-@keyframes ticker-scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
-}
-
-.ticker-item {
-  display: inline-block;
-  padding: 0 25px;
-  font-size: calc(14px * var(--text-scale));
-  font-weight: 600;
-  color: #111827;
-  border-right: 1px solid #e2e8f0;
-}
-
-.ticker-item:last-child {
-  border-right: none;
-}
-
-.ticker-symbol {
-  color: #64748b;
-  margin-right: 5px;
-}
-
-.ticker-up {
-  color: #10b981;
-  margin-left: 5px;
-}
-
-.ticker-down {
-  color: #ef4444;
-  margin-left: 5px;
-}
-
-/* =========================
    Dashboard Elements
    ========================= */
 
@@ -796,6 +717,89 @@ select:focus {
   background: #d1fae5;
   padding: 4px 10px;
   border-radius: 20px;
+}
+
+/* =========================
+   JSE Stock Ticker
+   ========================= */
+
+.ticker-wrap {
+  width: 100%;
+  overflow: hidden;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 0;
+  margin-top: 30px; /* Separates it from the rest of the dashboard */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  display: flex;
+  white-space: nowrap;
+  position: relative;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.ticker-wrap::before, .ticker-wrap::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 40px;
+  height: 100%;
+  z-index: 2;
+  transition: background 0.3s ease;
+}
+.ticker-wrap::before {
+  left: 0;
+  background: linear-gradient(to right, #ffffff, transparent);
+}
+.ticker-wrap::after {
+  right: 0;
+  background: linear-gradient(to left, #ffffff, transparent);
+}
+
+.ticker {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100%;
+  animation: ticker-scroll 45s linear infinite; /* Slower, readable scroll */
+}
+
+.ticker:hover {
+  animation-play-state: paused;
+}
+
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+.ticker-item {
+  display: inline-block;
+  padding: 0 30px;
+  font-size: calc(14px * var(--text-scale));
+  font-weight: 600;
+  color: #111827;
+  border-right: 1px solid #e2e8f0;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.ticker-item:last-child {
+  border-right: none;
+}
+
+.ticker-symbol {
+  color: #64748b;
+  margin-right: 8px;
+  font-weight: 700;
+}
+
+.ticker-up {
+  color: #10b981;
+  margin-left: 5px;
+}
+
+.ticker-down {
+  color: #ef4444;
+  margin-left: 5px;
 }
 
 /* =========================
