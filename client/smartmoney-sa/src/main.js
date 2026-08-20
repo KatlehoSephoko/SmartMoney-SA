@@ -14,7 +14,8 @@ const icons = {
   speech: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>`,
   text: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>`,
   eye: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`,
-  vibrate: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><path d="M8 2h8"></path><path d="M12 18h.01"></path><path d="M2 9v6"></path><path d="M22 9v6"></path></svg>`
+  vibrate: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><path d="M8 2h8"></path><path d="M12 18h.01"></path><path d="M2 9v6"></path><path d="M22 9v6"></path></svg>`,
+  user: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`
 };
 
 // --- Real JSE Retail Stock Data (ZAR) ---
@@ -30,7 +31,6 @@ const jseStocks = [
   { symbol: 'SHP', name: 'Shoprite', price: 304.34, change: -0.90 }
 ];
 
-// Generate Ticker HTML
 const tickerHtml = jseStocks.map(stock => {
   const isPositive = stock.change >= 0;
   const indicator = isPositive ? '▲' : '▼';
@@ -48,14 +48,54 @@ const tickerHtml = jseStocks.map(stock => {
 
 document.querySelector('#app').innerHTML = `
   
+  <!-- AUTHENTICATION SCREEN -->
+  <div id="auth-screen">
+    <!-- Registration Form -->
+    <div class="auth-card" id="register-card">
+      <img src="https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG" alt="SmartMoney Logo" class="auth-logo" />
+      <h2>Create Account</h2>
+      <p>Start making smart money moves today.</p>
+      
+      <div class="auth-form">
+        <input type="text" id="reg-firstname" placeholder="First Name" required />
+        <input type="text" id="reg-surname" placeholder="Surname" required />
+        <input type="tel" id="reg-contact" placeholder="Contact Number" required />
+        <input type="email" id="reg-email" placeholder="Email Address" required />
+        <input type="password" id="reg-password" placeholder="Create Password" required />
+        <button id="btn-register" style="width: 100%; margin-top: 10px;">${icons.user} Register Securely</button>
+      </div>
+      
+      <div class="auth-switch">
+        Already have an account? <a id="link-to-login">Log In</a>
+      </div>
+    </div>
+
+    <!-- Login Form (Hidden initially) -->
+    <div class="auth-card" id="login-card" style="display: none;">
+      <img src="https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG" alt="SmartMoney Logo" class="auth-logo" />
+      <h2>Welcome Back</h2>
+      <p>Log in to access your financial dashboard.</p>
+      
+      <div class="auth-form">
+        <input type="email" id="login-email" placeholder="Email Address" required />
+        <input type="password" id="login-password" placeholder="Password" required />
+        <button id="btn-login" style="width: 100%; margin-top: 10px;">${icons.lock} Access Account</button>
+      </div>
+      
+      <div class="auth-switch">
+        New to SmartMoney? <a id="link-to-register">Create an Account</a>
+      </div>
+    </div>
+  </div>
+
   <!-- Bank Card Transition Element -->
   <div id="bank-card-transition">
     <div class="card-chip"></div>
     <div class="card-number">**** **** **** 1250</div>
-    <div class="card-name">SMARTMONEY SA</div>
+    <div class="card-name" id="display-card-name">SMARTMONEY SA</div>
   </div>
 
-  <!-- Landing / Splash Screen -->
+  <!-- Landing / Splash Screen (Shows AFTER Login) -->
   <div id="splash-screen">
     <div class="logo-container" id="logo-container">
       <img src="https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG" alt="SmartMoney Logo" class="splash-logo" />
@@ -77,7 +117,7 @@ document.querySelector('#app').innerHTML = `
     <button id="enter-app-btn" class="enter-btn" style="transition: opacity 0.3s ease;">${icons.lock} Access Dashboard</button>
   </div>
 
-  <!-- Rewards Store Modal (No Cash Option) -->
+  <!-- Rewards Store Modal (No Cash Option, Partner Focused) -->
   <div id="rewards-modal" class="modal-overlay" aria-hidden="true" role="dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -86,13 +126,13 @@ document.querySelector('#app').innerHTML = `
       </div>
       <p style="font-size: calc(13px * var(--text-scale)); color: #64748b; margin-top: 0; margin-bottom: 15px;">Redeem your points for exclusive travel and retail vouchers.</p>
       
-      <div class="rewards-grid">
+      <div id="rewards-list-container" class="rewards-grid">
         <div class="reward-item">
           <div class="reward-info">
             <h4>FlySafair Flight Voucher</h4>
             <p>Value: R300 | Cost: 1200 pts</p>
           </div>
-          <button class="secondary claim-store-btn" data-cost="1200" data-value="300" data-name="FlySafair Flight Voucher" style="width: auto;">Redeem</button>
+          <button class="secondary claim-store-btn" data-cost="1200" data-value="300" data-name="FlySafair Voucher" style="width: auto;">Redeem</button>
         </div>
         
         <div class="reward-item">
@@ -100,7 +140,7 @@ document.querySelector('#app').innerHTML = `
             <h4>South African Airways (SAA)</h4>
             <p>Value: 15% Off Domestic | Cost: 1000 pts</p>
           </div>
-          <button class="secondary claim-store-btn" data-cost="1000" data-value="15% Off" data-name="SAA Domestic Discount" style="width: auto;">Redeem</button>
+          <button class="secondary claim-store-btn" data-cost="1000" data-value="15% Off" data-name="SAA Discount" style="width: auto;">Redeem</button>
         </div>
 
         <div class="reward-item">
@@ -127,6 +167,18 @@ document.querySelector('#app').innerHTML = `
           <button class="secondary claim-store-btn" data-cost="200" data-value="50" data-name="Takealot Voucher" style="width: auto;">Redeem</button>
         </div>
       </div>
+
+      <!-- Success QR View (Hidden initially) -->
+      <div id="qr-success-view" style="display: none; text-align: center;">
+        <h3 style="color: #15803d; margin-top: 0;">Reward Claimed Successfully!</h3>
+        <p style="font-size: calc(13px * var(--text-scale)); color: #4b5563;">Scan the QR code below at the partner checkout, or check your email for the backup link.</p>
+        <div class="qr-container" id="qr-image-container">
+          <!-- QR Code injected here -->
+        </div>
+        <p style="font-size: calc(12px * var(--text-scale)); color: #9ca3af; font-style: italic; margin-bottom: 20px;">*An email confirmation has been sent to your registered address.</p>
+        <button id="qr-done-btn" style="width: 100%;">${icons.check} Done</button>
+      </div>
+
     </div>
   </div>
 
@@ -138,7 +190,7 @@ document.querySelector('#app').innerHTML = `
       <img src="https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG" alt="App Logo" class="top-logo" />
 
       <div class="theme-switch-wrapper">
-        <span id="theme-label">Light Mode</span>
+        <span id="theme-label" style="margin-right: 15px;">Welcome, <span id="dash-user-name">User</span></span>
         <label class="switch">
           <input type="checkbox" id="theme-toggle" aria-label="Toggle Dark Mode">
           <span class="slider">
@@ -287,7 +339,6 @@ document.querySelector('#app').innerHTML = `
         Compare actual market rates. Select a specific South African bank and account type to calculate your projected returns based on approximate 2026 benchmark rates.
       </p>
       
-      <!-- New Bank & Account Type Selection -->
       <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
         <div class="form-group" style="margin-bottom: 0;">
           <label>Select SA Bank</label>
@@ -394,10 +445,73 @@ document.querySelector('#app').innerHTML = `
    JAVASCRIPT LOGIC
    ========================================== */
 
-// --- Cinematic Landing Page & Blur Logic ---
+let currentUser = null;
+
+// --- Authentication Flow ---
+const authScreen = document.getElementById('auth-screen');
+const registerCard = document.getElementById('register-card');
+const loginCard = document.getElementById('login-card');
+const splashScreen = document.getElementById('splash-screen');
+
+document.getElementById('link-to-login').addEventListener('click', () => {
+  registerCard.style.display = 'none';
+  loginCard.style.display = 'block';
+});
+
+document.getElementById('link-to-register').addEventListener('click', () => {
+  loginCard.style.display = 'none';
+  registerCard.style.display = 'block';
+});
+
+// Registration Simulation
+document.getElementById('btn-register').addEventListener('click', () => {
+  const fName = document.getElementById('reg-firstname').value;
+  const lName = document.getElementById('reg-surname').value;
+  const contact = document.getElementById('reg-contact').value;
+  const email = document.getElementById('reg-email').value;
+  const pass = document.getElementById('reg-password').value;
+
+  if(!fName || !lName || !contact || !email || !pass) {
+    alert("Please fill in all registration fields.");
+    return;
+  }
+
+  // Simulate storing in a database (LocalStorage for frontend mock)
+  const userData = { firstName: fName, surname: lName, phone: contact, email: email, password: pass };
+  localStorage.setItem('smartMoneyUser', JSON.stringify(userData));
+  
+  alert("Registration Successful! Please log in.");
+  registerCard.style.display = 'none';
+  loginCard.style.display = 'block';
+});
+
+// Login Simulation
+document.getElementById('btn-login').addEventListener('click', () => {
+  const email = document.getElementById('login-email').value;
+  const pass = document.getElementById('login-password').value;
+  const storedUser = JSON.parse(localStorage.getItem('smartMoneyUser'));
+
+  if(storedUser && storedUser.email === email && storedUser.password === pass) {
+    currentUser = storedUser;
+    
+    // Inject Name into Dashboard and Card
+    document.getElementById('dash-user-name').textContent = currentUser.firstName;
+    document.getElementById('display-card-name').textContent = `${currentUser.firstName} ${currentUser.surname}`.toUpperCase();
+
+    // Hide Auth, Show Splash
+    authScreen.style.display = 'none';
+    splashScreen.style.display = 'flex';
+    setTimeout(() => splashScreen.style.opacity = '1', 50);
+
+  } else {
+    alert("Invalid Email or Password. Have you registered?");
+  }
+});
+
+
+// --- Cinematic Splash Logic ---
 const enterBtn = document.getElementById('enter-app-btn');
 const bankCard = document.getElementById('bank-card-transition');
-const splashScreen = document.getElementById('splash-screen');
 const dashboard = document.getElementById('dashboard');
 
 enterBtn.addEventListener('click', () => {
@@ -439,12 +553,12 @@ enterBtn.addEventListener('click', () => {
   }, 800); 
 });
 
+
 // --- State Management ---
 let currentBalance = 0;
 let points = 0;
 let transactionCount = 0;
 let gigCount = 0;
-
 let goals = []; 
 
 // Elements
@@ -465,6 +579,11 @@ const rewardsModal = document.getElementById('rewards-modal');
 const closeModalBtn = document.getElementById('close-modal-btn');
 const claimStoreBtns = document.querySelectorAll('.claim-store-btn');
 const navOpenRewardsBtn = document.getElementById('nav-open-rewards-btn');
+const rewardsListContainer = document.getElementById('rewards-list-container');
+const qrSuccessView = document.getElementById('qr-success-view');
+const qrImageContainer = document.getElementById('qr-image-container');
+const qrDoneBtn = document.getElementById('qr-done-btn');
+
 
 // --- Accessibility Toolkit Logic ---
 const a11yFab = document.getElementById('a11y-fab');
@@ -509,7 +628,7 @@ function appAlert(message) {
   alert(message);
 }
 
-// Text Magnifier Cycle
+// Text Magnifier
 let textSizeState = 0; 
 a11yTextBtn.addEventListener('click', () => {
   textSizeState = (textSizeState + 1) % 3;
@@ -526,7 +645,7 @@ a11yTextBtn.addEventListener('click', () => {
   }
 });
 
-// Dyslexia Font Toggle
+// Dyslexia Font
 a11yDyslexiaBtn.addEventListener('click', () => {
   document.body.classList.toggle('dyslexia-mode');
 });
@@ -534,7 +653,6 @@ a11yDyslexiaBtn.addEventListener('click', () => {
 // Text-to-Speech
 a11ySpeechBtn.addEventListener('click', () => {
   if ('speechSynthesis' in window) {
-    
     if (window.speechSynthesis.speaking) {
       window.speechSynthesis.cancel();
       a11ySpeechBtn.innerHTML = `${icons.speech} Read Dashboard Aloud`;
@@ -547,13 +665,6 @@ a11ySpeechBtn.addEventListener('click', () => {
     
     let speechText = `Smart Money Dashboard Summary. Your available balance is ${currentBalance} Rand. You have ${points} reward points. You currently have ${goals.length} active saving portfolios.`;
     
-    if (goals.length > 0) {
-      speechText += " Your portfolios are: ";
-      goals.forEach(g => {
-        speechText += `${g.name}, with a target of ${g.target} Rand. You have saved ${g.saved} Rand so far. `;
-      });
-    }
-
     const utterance = new SpeechSynthesisUtterance(speechText);
     utterance.rate = 0.9; 
     
@@ -565,11 +676,6 @@ a11ySpeechBtn.addEventListener('click', () => {
     utterance.onend = () => {
       a11ySpeechBtn.innerHTML = `${icons.speech} Read Dashboard Aloud`;
       a11ySpeechBtn.style.color = ''; 
-    };
-
-    utterance.onerror = () => {
-      a11ySpeechBtn.innerHTML = `${icons.speech} Read Dashboard Aloud`;
-      a11ySpeechBtn.style.color = '';
     };
 
     window.speechSynthesis.speak(utterance);
@@ -762,10 +868,12 @@ function renderGoals() {
     });
   });
 
-  // Store Modal
+  // Store Modal trigger
   document.querySelectorAll('.open-store-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       triggerHaptic('default');
+      rewardsListContainer.style.display = 'grid';
+      qrSuccessView.style.display = 'none';
       rewardsModal.classList.add('active');
     });
   });
@@ -774,10 +882,12 @@ function renderGoals() {
 renderGoals();
 
 
-// --- Rewards Store Logic ---
+// --- Rewards Store & SMTP Email Logic ---
 
 navOpenRewardsBtn.addEventListener('click', () => {
   triggerHaptic('default');
+  rewardsListContainer.style.display = 'grid';
+  qrSuccessView.style.display = 'none';
   rewardsModal.classList.add('active');
 });
 
@@ -785,10 +895,34 @@ closeModalBtn.addEventListener('click', () => {
   rewardsModal.classList.remove('active');
 });
 
+qrDoneBtn.addEventListener('click', () => {
+  rewardsModal.classList.remove('active');
+});
+
+// Mock Function to simulate sending an email via SMTP / EmailJS
+function simulateEmailDelivery(userEmail, rewardName, qrCodeUrl) {
+  console.log(`--- SMTP EMAIL SIMULATION ---`);
+  console.log(`To: ${userEmail}`);
+  console.log(`Subject: Your SmartMoney-SA Reward is Here!`);
+  console.log(`Body: Hi, thank you for your financial discipline. Here is your code for: ${rewardName}.`);
+  console.log(`Attachment: ${qrCodeUrl}`);
+  console.log(`-----------------------------`);
+  
+  /* 
+    DEVELOPER NOTE: To make this real without a backend, 
+    sign up for EmailJS (https://www.emailjs.com/) and replace the above with:
+    
+    emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+      to_email: userEmail,
+      reward_name: rewardName,
+      qr_link: qrCodeUrl,
+    });
+  */
+}
+
 claimStoreBtns.forEach(btn => {
   btn.addEventListener('click', (e) => {
     const cost = parseInt(e.target.getAttribute('data-cost'));
-    const value = e.target.getAttribute('data-value');
     const name = e.target.getAttribute('data-name');
 
     if (points >= cost) {
@@ -799,11 +933,24 @@ claimStoreBtns.forEach(btn => {
       });
 
       updateHeaderPoints();
-      rewardsModal.classList.remove('active');
       logTransaction(0, true, `Redeemed: ${name}`, `#1d4ed8`);
       
       triggerHaptic('success');
-      alert(`Success! Check your email for your ${value} ${name}. Remaining points: ${points}`);
+      
+      // Generate a unique voucher code for the QR
+      const uniqueVoucherCode = `SMART-${Math.floor(Math.random() * 90000) + 10000}`;
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${uniqueVoucherCode}`;
+      
+      // Trigger Mock Email
+      if(currentUser) {
+        simulateEmailDelivery(currentUser.email, name, qrApiUrl);
+      }
+
+      // Hide the grid, Show the QR Code Success View
+      rewardsListContainer.style.display = 'none';
+      qrImageContainer.innerHTML = `<img src="${qrApiUrl}" class="qr-code-img" alt="Reward QR Code" />`;
+      qrSuccessView.style.display = 'block';
+      
       renderGoals(); 
     } else {
       appAlert(`Insufficient Points. You need ${cost} points, but only have ${points}.`);
@@ -966,7 +1113,6 @@ addGigBtn.addEventListener('click', () => {
 });
 
 // --- Dynamic Bank Simulator Data & Logic ---
-
 const bankRates = {
   "Absa": { "Access": 4.50, "Notice": 6.50, "Fixed": 8.20, "Tax-Free": 6.50 },
   "African Bank": { "Access": 5.50, "Notice": 7.00, "Fixed": 8.47, "Tax-Free": 7.50 },
@@ -987,7 +1133,6 @@ const simInitialInput = document.getElementById('sim-initial');
 const simMonthlyInput = document.getElementById('sim-monthly');
 const simYearsInput = document.getElementById('sim-years');
 
-// Result Elements
 const simResult = document.getElementById('sim-result');
 const resBankName = document.getElementById('res-bank-name');
 const resAccType = document.getElementById('res-acc-type');
