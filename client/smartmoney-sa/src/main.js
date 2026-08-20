@@ -17,6 +17,38 @@ const icons = {
   vibrate: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><path d="M8 2h8"></path><path d="M12 18h.01"></path><path d="M2 9v6"></path><path d="M22 9v6"></path></svg>`
 };
 
+// --- Mock JSE Stock Data ---
+const jseStocks = [
+  { symbol: 'JSE Top 40', price: 105844.36, change: 0.20 },
+  { symbol: 'NPN', name: 'Naspers', price: 784.48, change: 0.67 },
+  { symbol: 'CPI', name: 'Capitec', price: 4736.14, change: -0.13 },
+  { symbol: 'FSR', name: 'FirstRand', price: 97.33, change: -0.34 },
+  { symbol: 'SBK', name: 'Standard Bank', price: 319.87, change: 1.27 },
+  { symbol: 'MTN', name: 'MTN Group', price: 191.02, change: 1.29 },
+  { symbol: 'VOD', name: 'Vodacom', price: 148.28, change: 0.01 },
+  { symbol: 'SOL', name: 'Sasol', price: 195.44, change: 0.98 },
+  { symbol: 'SHP', name: 'Shoprite', price: 304.34, change: -0.90 },
+  { symbol: 'DSY', name: 'Discovery', price: 256.72, change: -0.47 },
+  { symbol: 'AGL', name: 'Anglo American', price: 841.51, change: -0.09 }
+];
+
+// Generate Ticker HTML
+const tickerHtml = jseStocks.map(stock => {
+  const isPositive = stock.change >= 0;
+  const indicator = isPositive ? '▲' : '▼';
+  const colorClass = isPositive ? 'ticker-up' : 'ticker-down';
+  const sign = isPositive ? '+' : '';
+  
+  return `
+    <div class="ticker-item">
+      <span class="ticker-symbol">${stock.symbol}</span>
+      R ${stock.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+      <span class="${colorClass}">${indicator} ${sign}${stock.change}%</span>
+    </div>
+  `;
+}).join('');
+
+
 document.querySelector('#app').innerHTML = `
   
   <!-- Bank Card Transition Element -->
@@ -122,6 +154,15 @@ document.querySelector('#app').innerHTML = `
         <div id="reward-value">Reward Value: R 0.00</div>
       </div>
       <button id="nav-open-rewards-btn" style="background: #10b981; color: white; margin-top: 10px;">${icons.gift} Open Rewards Store</button>
+    </div>
+
+    <!-- JSE Stock Ticker -->
+    <div class="ticker-wrap" aria-hidden="true">
+      <div class="ticker">
+        ${tickerHtml}
+        <!-- Duplicate for seamless looping -->
+        ${tickerHtml}
+      </div>
     </div>
 
     <!-- Statistics -->
@@ -492,7 +533,6 @@ a11yDyslexiaBtn.addEventListener('click', () => {
 a11ySpeechBtn.addEventListener('click', () => {
   if ('speechSynthesis' in window) {
     
-    // IF ALREADY SPEAKING -> Stop and Reset Button
     if (window.speechSynthesis.speaking) {
       window.speechSynthesis.cancel();
       a11ySpeechBtn.innerHTML = `${icons.speech} Read Dashboard Aloud`;
@@ -501,7 +541,6 @@ a11ySpeechBtn.addEventListener('click', () => {
       return; 
     }
     
-    // OTHERWISE -> Clear queue, build text, and start reading
     window.speechSynthesis.cancel(); 
     
     let speechText = `Smart Money Dashboard Summary. Your available balance is ${currentBalance} Rand. You have ${points} reward points. You currently have ${goals.length} active saving portfolios.`;
@@ -518,12 +557,12 @@ a11ySpeechBtn.addEventListener('click', () => {
     
     utterance.onstart = () => {
       a11ySpeechBtn.innerHTML = `${icons.speech} Stop Reading Dashboard`;
-      a11ySpeechBtn.style.color = '#b91c1c'; // Turn red
+      a11ySpeechBtn.style.color = '#b91c1c'; 
     };
 
     utterance.onend = () => {
       a11ySpeechBtn.innerHTML = `${icons.speech} Read Dashboard Aloud`;
-      a11ySpeechBtn.style.color = ''; // Revert to normal
+      a11ySpeechBtn.style.color = ''; 
     };
 
     utterance.onerror = () => {
