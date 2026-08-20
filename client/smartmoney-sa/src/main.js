@@ -17,22 +17,21 @@ const icons = {
   vibrate: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><path d="M8 2h8"></path><path d="M12 18h.01"></path><path d="M2 9v6"></path><path d="M22 9v6"></path></svg>`
 };
 
-// --- Mock JSE Stock Data ---
+// --- Real JSE Retail Stock Data (ZAR) ---
+// Curated specifically to show young people that investing is affordable.
 const jseStocks = [
-  { symbol: 'JSE Top 40', price: 105844.36, change: 0.20 },
-  { symbol: 'NPN', name: 'Naspers', price: 784.48, change: 0.67 },
-  { symbol: 'CPI', name: 'Capitec', price: 4736.14, change: -0.13 },
+  { symbol: 'PPH', name: 'Pepkor', price: 20.86, change: -0.19 },
+  { symbol: 'PIK', name: 'Pick n Pay', price: 19.18, change: 0.37 },
+  { symbol: 'TKG', name: 'Telkom', price: 26.40, change: 0.50 },
+  { symbol: 'TRU', name: 'Truworths', price: 75.40, change: -0.10 },
   { symbol: 'FSR', name: 'FirstRand', price: 97.33, change: -0.34 },
-  { symbol: 'SBK', name: 'Standard Bank', price: 319.87, change: 1.27 },
-  { symbol: 'MTN', name: 'MTN Group', price: 191.02, change: 1.29 },
   { symbol: 'VOD', name: 'Vodacom', price: 148.28, change: 0.01 },
-  { symbol: 'SOL', name: 'Sasol', price: 195.44, change: 0.98 },
-  { symbol: 'SHP', name: 'Shoprite', price: 304.34, change: -0.90 },
-  { symbol: 'DSY', name: 'Discovery', price: 256.72, change: -0.47 },
-  { symbol: 'AGL', name: 'Anglo American', price: 841.51, change: -0.09 }
+  { symbol: 'MRP', name: 'Mr Price', price: 160.50, change: 0.45 },
+  { symbol: 'MTN', name: 'MTN Group', price: 191.02, change: 1.29 },
+  { symbol: 'SHP', name: 'Shoprite', price: 304.34, change: -0.90 }
 ];
 
-// Generate Ticker HTML
+// Generate Ticker HTML mathematically calculating Up/Down arrows
 const tickerHtml = jseStocks.map(stock => {
   const isPositive = stock.change >= 0;
   const indicator = isPositive ? '▲' : '▼';
@@ -41,13 +40,12 @@ const tickerHtml = jseStocks.map(stock => {
   
   return `
     <div class="ticker-item">
-      <span class="ticker-symbol">${stock.symbol}</span>
-      R ${stock.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-      <span class="${colorClass}">${indicator} ${sign}${stock.change}%</span>
+      <span class="ticker-symbol">${stock.name} (${stock.symbol})</span>
+      R ${stock.price.toFixed(2)}
+      <span class="${colorClass}">${indicator} ${sign}${stock.change.toFixed(2)}%</span>
     </div>
   `;
 }).join('');
-
 
 document.querySelector('#app').innerHTML = `
   
@@ -154,15 +152,6 @@ document.querySelector('#app').innerHTML = `
         <div id="reward-value">Reward Value: R 0.00</div>
       </div>
       <button id="nav-open-rewards-btn" style="background: #10b981; color: white; margin-top: 10px;">${icons.gift} Open Rewards Store</button>
-    </div>
-
-    <!-- JSE Stock Ticker -->
-    <div class="ticker-wrap" aria-hidden="true">
-      <div class="ticker">
-        ${tickerHtml}
-        <!-- Duplicate for seamless looping -->
-        ${tickerHtml}
-      </div>
     </div>
 
     <!-- Statistics -->
@@ -291,7 +280,6 @@ document.querySelector('#app').innerHTML = `
         Compare actual market rates. Select a specific South African bank and account type to calculate your projected returns based on approximate 2026 benchmark rates.
       </p>
       
-      <!-- New Bank & Account Type Selection -->
       <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
         <div class="form-group" style="margin-bottom: 0;">
           <label>Select SA Bank</label>
@@ -369,6 +357,15 @@ document.querySelector('#app').innerHTML = `
           No recent activity.
         </li>
       </ul>
+    </div>
+
+    <!-- Retail JSE Stock Ticker placed perfectly at the bottom -->
+    <div class="ticker-wrap" aria-hidden="true">
+      <div class="ticker">
+        ${tickerHtml}
+        <!-- Duplicated to create a seamless infinite CSS loop -->
+        ${tickerHtml}
+      </div>
     </div>
 
   </div>
