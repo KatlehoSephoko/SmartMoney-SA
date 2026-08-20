@@ -1238,3 +1238,51 @@ themeToggle.addEventListener('change', (e) => {
     themeIcon.innerHTML = icons.sun;
   }
 });
+
+// ==========================================
+//   PWA INSTALLATION LOGIC
+// ==========================================
+
+let deferredPrompt;
+const installAppBtn = document.getElementById('install-app-btn');
+
+// Listen for the browser's install prompt event
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevent Chrome 67 and earlier from automatically showing the prompt
+  e.preventDefault();
+  
+  // Stash the event so it can be triggered later
+  deferredPrompt = e;
+  
+  // Update UI to notify the user they can add to home screen
+  installAppBtn.style.display = 'block';
+});
+
+installAppBtn.addEventListener('click', async () => {
+  if (deferredPrompt !== null) {
+    // Show the native install prompt
+    deferredPrompt.prompt();
+    
+    // Wait for the user to respond to the prompt
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      console.log('User accepted the PWA install prompt');
+      triggerHaptic('success');
+      // Hide the button once they accept
+      installAppBtn.style.display = 'none';
+    } else {
+      console.log('User dismissed the PWA install prompt');
+    }
+    
+    // We've used the prompt, and can't use it again, so throw it away
+    deferredPrompt = null;
+  }
+});
+
+// If the app is successfully installed via any method, hide the button
+window.addEventListener('appinstalled', () => {
+  installAppBtn.style.display = 'none';
+  deferredPrompt = null;
+  console.log('SmartMoney-SA was successfully installed!');
+});
