@@ -2,7 +2,7 @@ const CACHE_NAME = 'smartmoney-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/logo.PNG'
+  'https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG'
 ];
 
 // Install the service worker and cache the core files
