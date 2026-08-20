@@ -29,11 +29,77 @@ body {
   padding: 30px 20px;
 }
 
-/* Accessibility Strict Focus */
 *:focus-visible {
   outline: 3px solid #10b981 !important;
   outline-offset: 3px !important;
   border-radius: 4px;
+}
+
+/* =========================
+   Authentication Screens
+   ========================= */
+#auth-screen {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: #f4f7f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 20000; /* Highest z-index to block app */
+  padding: 20px;
+}
+
+.auth-card {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.auth-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 16px;
+  margin-bottom: 15px;
+}
+
+.auth-card h2 {
+  margin: 0 0 5px 0;
+  font-size: calc(24px * var(--text-scale));
+  color: #111827;
+}
+
+.auth-card p {
+  margin: 0 0 20px 0;
+  font-size: calc(14px * var(--text-scale));
+  color: #64748b;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  text-align: left;
+}
+
+.auth-switch {
+  margin-top: 20px;
+  font-size: calc(14px * var(--text-scale));
+  color: #64748b;
+}
+
+.auth-switch a {
+  color: #15803d;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
 }
 
 /* =========================
@@ -47,13 +113,12 @@ body {
   width: 100%; 
   height: 100%;
   background: #f4f7f5;
-  display: flex;
+  display: none; /* Hidden until login */
   flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 100;
   transition: opacity 0.8s ease, background-color 0.8s ease, backdrop-filter 0.8s ease;
-  animation: splashFadeIn 1.2s ease-out forwards;
   opacity: 0; 
 }
 
@@ -161,14 +226,6 @@ button.secondary {
 }
 button.secondary:hover {
   background: #a7f3d0;
-}
-
-button.danger {
-  background: #fef2f2;
-  color: #b91c1c;
-}
-button.danger:hover {
-  background: #fee2e2;
 }
 
 /* =========================
@@ -436,7 +493,6 @@ select:focus {
 .balance.positive { color: #15803d; }
 .balance.negative { color: #b91c1c; }
 
-/* Dynamic Text Classes */
 .section-subtitle {
   font-size: calc(14px * var(--text-scale));
   margin-bottom: 10px;
@@ -625,8 +681,8 @@ select:focus {
   background: white;
   width: 90%;
   max-width: 500px;
-  max-height: 90vh; /* Prevents it from flowing off screen */
-  overflow-y: auto; /* Allows scrolling inside the modal */
+  max-height: 90vh; 
+  overflow-y: auto; 
   border-radius: 12px;
   padding: 25px;
   transform: translateY(20px);
@@ -683,6 +739,18 @@ select:focus {
   margin: 0;
   font-size: calc(13px * var(--text-scale));
   color: #64748b;
+}
+
+/* Success QR Modal Additions */
+.qr-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+.qr-code-img {
+  border-radius: 8px;
+  border: 4px solid white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 /* =========================
@@ -878,7 +946,6 @@ select:focus {
   background: #e2e8f0;
 }
 
-/* Accessibility Feature Classes */
 body.dyslexia-mode {
   font-family: 'Comic Sans MS', 'Arial', sans-serif !important;
   letter-spacing: 0.05em !important;
@@ -886,7 +953,6 @@ body.dyslexia-mode {
   line-height: 1.6 !important;
 }
 
-/* Updating the Text Scale Variable */
 body.text-large { --text-scale: 1.15; }
 body.text-xlarge { --text-scale: 1.35; }
 
@@ -898,7 +964,8 @@ body.dark-mode {
   color: #f8fafc;
 }
 
-body.dark-mode #splash-screen {
+body.dark-mode #splash-screen,
+body.dark-mode #auth-screen {
   background: #0f172a;
 }
 
@@ -917,7 +984,8 @@ body.dark-mode .top-logo {
 body.dark-mode .card,
 body.dark-mode .stat,
 body.dark-mode .modal-content,
-body.dark-mode .a11y-menu {
+body.dark-mode .a11y-menu,
+body.dark-mode .auth-card {
   background: #1e293b;
   border-color: #334155;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
@@ -928,7 +996,8 @@ body.dark-mode .stat p,
 body.dark-mode label,
 body.dark-mode .modal-header h2,
 body.dark-mode .reward-info h4,
-body.dark-mode .a11y-menu h3 {
+body.dark-mode .a11y-menu h3,
+body.dark-mode .auth-card h2 {
   color: #f8fafc;
 }
 
@@ -952,7 +1021,6 @@ body.dark-mode .a11y-btn:hover {
   background: #475569;
 }
 
-/* Dynamic Dark Mode Text Overrides */
 body.dark-mode .section-subtitle,
 body.dark-mode .goal-name-text,
 body.dark-mode .goal-saved-text,
@@ -1025,7 +1093,6 @@ body.dark-mode .sim-bank-header {
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Dark mode specific overrides for the ticker */
 body.dark-mode .ticker-wrap {
   background-color: #1e293b;
   border-color: #334155;
@@ -1043,10 +1110,6 @@ body.dark-mode .ticker-item {
   color: #f8fafc;
   border-color: #334155;
 }
-
-/* =========================
-   Mobile / Responsive
-   ========================= */
 
 @media (max-width: 768px) {
   .container { padding: 15px; }
