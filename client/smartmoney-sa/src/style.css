@@ -625,6 +625,8 @@ select:focus {
   background: white;
   width: 90%;
   max-width: 500px;
+  max-height: 90vh; /* Prevents it from flowing off screen */
+  overflow-y: auto; /* Allows scrolling inside the modal */
   border-radius: 12px;
   padding: 25px;
   transform: translateY(20px);
@@ -730,7 +732,7 @@ select:focus {
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 16px 0;
-  margin-top: 30px; /* Separates it from the rest of the dashboard */
+  margin-top: 30px; 
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   display: flex;
   white-space: nowrap;
@@ -760,7 +762,7 @@ select:focus {
   display: inline-block;
   white-space: nowrap;
   padding-left: 100%;
-  animation: ticker-scroll 45s linear infinite; /* Slower, readable scroll */
+  animation: ticker-scroll 45s linear infinite; 
 }
 
 .ticker:hover {
