@@ -488,9 +488,20 @@ a11yDyslexiaBtn.addEventListener('click', () => {
   document.body.classList.toggle('dyslexia-mode');
 });
 
-// Text-to-Speech Native API Integration
+// Text-to-Speech Native API Integration (Toggle System)
 a11ySpeechBtn.addEventListener('click', () => {
   if ('speechSynthesis' in window) {
+    
+    // IF ALREADY SPEAKING -> Stop and Reset Button
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+      a11ySpeechBtn.innerHTML = `${icons.speech} Read Dashboard Aloud`;
+      a11ySpeechBtn.style.color = '';
+      a11yMenu.classList.remove('active');
+      return; 
+    }
+    
+    // OTHERWISE -> Clear queue, build text, and start reading
     window.speechSynthesis.cancel(); 
     
     let speechText = `Smart Money Dashboard Summary. Your available balance is ${currentBalance} Rand. You have ${points} reward points. You currently have ${goals.length} active saving portfolios.`;
@@ -504,9 +515,25 @@ a11ySpeechBtn.addEventListener('click', () => {
 
     const utterance = new SpeechSynthesisUtterance(speechText);
     utterance.rate = 0.9; 
-    window.speechSynthesis.speak(utterance);
     
+    utterance.onstart = () => {
+      a11ySpeechBtn.innerHTML = `${icons.speech} Stop Reading Dashboard`;
+      a11ySpeechBtn.style.color = '#b91c1c'; // Turn red
+    };
+
+    utterance.onend = () => {
+      a11ySpeechBtn.innerHTML = `${icons.speech} Read Dashboard Aloud`;
+      a11ySpeechBtn.style.color = ''; // Revert to normal
+    };
+
+    utterance.onerror = () => {
+      a11ySpeechBtn.innerHTML = `${icons.speech} Read Dashboard Aloud`;
+      a11ySpeechBtn.style.color = '';
+    };
+
+    window.speechSynthesis.speak(utterance);
     a11yMenu.classList.remove('active'); 
+
   } else {
     appAlert("Text-to-Speech is not fully supported in this browser.");
   }
@@ -926,7 +953,6 @@ addGigBtn.addEventListener('click', () => {
 
 // --- Dynamic Bank Simulator Data & Logic ---
 
-// Mock Database of Benchmark SA Rates (2025/2026 Approx)
 const bankRates = {
   "Absa": { "Access": 4.50, "Notice": 6.50, "Fixed": 8.20, "Tax-Free": 6.50 },
   "African Bank": { "Access": 5.50, "Notice": 7.00, "Fixed": 8.47, "Tax-Free": 7.50 },
@@ -971,7 +997,6 @@ simBtn.addEventListener('click', () => {
 
   triggerHaptic('success');
 
-  // Fetch benchmark rate from mock DB
   const rawRate = bankRates[selectedBank][selectedType];
   const annualRate = rawRate / 100;
   
@@ -989,7 +1014,6 @@ simBtn.addEventListener('click', () => {
   const totalInvested = initialDeposit + (monthlyDeposit * months);
   const totalInterest = futureValue - totalInvested;
 
-  // Render Data into DOM
   resBankName.textContent = selectedBank;
   resAccType.textContent = typeLabel;
   resRate.textContent = `${rawRate.toFixed(2)}% p.a.`;
