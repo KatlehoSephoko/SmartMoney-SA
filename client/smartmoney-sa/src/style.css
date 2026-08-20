@@ -5,7 +5,6 @@
    ========================= */
 
 :root {
-  /* The global text scale multiplier */
   --text-scale: 1;
 }
 
@@ -253,7 +252,6 @@ button.danger:hover {
   transition: color 0.3s;
 }
 
-/* Clean SVG Toggle Switch */
 .switch {
   position: relative;
   display: inline-block;
@@ -399,62 +397,6 @@ input:checked + .slider .slider-icon {
   fill: none;
 }
 
-/* INFO TOOLTIP SYSTEM */
-.info-wrapper {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  margin-left: 10px;
-  cursor: help;
-  color: #94a3b8;
-  transition: color 0.2s;
-}
-
-.info-wrapper:hover {
-  color: #15803d;
-}
-
-.info-tooltip {
-  visibility: hidden;
-  opacity: 0;
-  position: absolute;
-  bottom: 130%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #1f2937;
-  color: white;
-  padding: 10px 14px;
-  border-radius: 6px;
-  font-size: calc(12px * var(--text-scale));
-  font-weight: 400;
-  white-space: normal;
-  width: max-content;
-  max-width: 220px;
-  text-align: center;
-  z-index: 10;
-  transition: all 0.2s ease;
-  line-height: 1.4;
-  pointer-events: none;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.info-tooltip::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -6px;
-  border-width: 6px;
-  border-style: solid;
-  border-color: #1f2937 transparent transparent transparent;
-}
-
-.info-wrapper:hover .info-tooltip {
-  visibility: visible;
-  opacity: 1;
-  bottom: 150%;
-}
-
 .form-group {
   margin-bottom: 15px;
 }
@@ -494,7 +436,7 @@ select:focus {
 .balance.positive { color: #15803d; }
 .balance.negative { color: #b91c1c; }
 
-/* Dynamic Text Classes for Scaling & Dark Mode */
+/* Dynamic Text Classes */
 .section-subtitle {
   font-size: calc(14px * var(--text-scale));
   margin-bottom: 10px;
@@ -709,15 +651,6 @@ select:focus {
   color: #111827;
 }
 
-.close-modal {
-  background: none;
-  border: none;
-  font-size: calc(24px * var(--text-scale));
-  color: #64748b;
-  cursor: pointer;
-  padding: 0;
-}
-
 .rewards-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -750,7 +683,10 @@ select:focus {
   color: #64748b;
 }
 
-/* Simulator Results */
+/* =========================
+   Bank Leaderboard Styles
+   ========================= */
+
 .simulator-result {
   background: #ecfdf5;
   padding: 18px;
@@ -759,9 +695,60 @@ select:focus {
 }
 
 .simulator-result h3 {
-  margin: 0;
+  margin: 0 0 15px 0;
   color: #14532d;
   font-size: calc(16px * var(--text-scale));
+}
+
+.bank-leaderboard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bank-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #d1fae5;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.bank-rank-1 {
+  border: 2px solid #10b981;
+  background: #f0fdf4;
+}
+
+.bank-info h4 {
+  margin: 0;
+  font-size: calc(15px * var(--text-scale));
+  color: #111827;
+}
+
+.bank-rate {
+  font-size: calc(12px * var(--text-scale));
+  color: #059669;
+  font-weight: bold;
+  margin-top: 2px;
+}
+
+.bank-return {
+  text-align: right;
+}
+
+.bank-total {
+  font-size: calc(16px * var(--text-scale));
+  font-weight: 700;
+  color: #111827;
+}
+
+.bank-profit {
+  font-size: calc(12px * var(--text-scale));
+  color: #15803d;
+  margin-top: 2px;
 }
 
 /* =========================
@@ -917,14 +904,16 @@ body.dark-mode .section-subtitle,
 body.dark-mode .goal-name-text,
 body.dark-mode .goal-saved-text,
 body.dark-mode .gig-amount-text,
-body.dark-mode .transaction-title-text {
+body.dark-mode .transaction-title-text,
+body.dark-mode .bank-total,
+body.dark-mode .bank-info h4 {
   color: #f8fafc !important;
 }
 
 body.dark-mode .gig-title-text,
 body.dark-mode .transaction-date-text,
 body.dark-mode .a11y-menu h3 {
-  color: #cbd5e1 !important;
+  border-color: #475569;
 }
 
 body.dark-mode input,
@@ -956,9 +945,14 @@ body.dark-mode .progress-container {
   background: #334155;
 }
 
-body.dark-mode .gig-item {
+body.dark-mode .gig-item,
+body.dark-mode .bank-row {
   background: #1e293b;
   border-color: #334155;
+}
+
+body.dark-mode .bank-rank-1 {
+  border-color: #10b981;
 }
 
 body.dark-mode .transaction-item {
