@@ -8,13 +8,13 @@
   "theme_color": "#064e3b",
   "icons": [
     {
-      "src": "/logo.PNG",
+      "src": "https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/logo.PNG",
+      "src": "https://raw.githubusercontent.com/KatlehoSephoko/SmartMoney-SA/refs/heads/main/public/logo.PNG",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
