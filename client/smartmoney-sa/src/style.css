@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+h@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
 
 /* =========================
    Global Styles & Accessibility Math
@@ -355,6 +355,85 @@ input:checked + .slider .slider-icon {
 }
 
 /* =========================
+   JSE Stock Ticker
+   ========================= */
+
+.ticker-wrap {
+  width: 100%;
+  overflow: hidden;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 0;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  display: flex;
+  white-space: nowrap;
+  position: relative;
+}
+
+.ticker-wrap::before, .ticker-wrap::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 40px;
+  height: 100%;
+  z-index: 2;
+}
+.ticker-wrap::before {
+  left: 0;
+  background: linear-gradient(to right, #ffffff, transparent);
+}
+.ticker-wrap::after {
+  right: 0;
+  background: linear-gradient(to left, #ffffff, transparent);
+}
+
+.ticker {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100%;
+  animation: ticker-scroll 35s linear infinite;
+}
+
+.ticker:hover {
+  animation-play-state: paused;
+}
+
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+.ticker-item {
+  display: inline-block;
+  padding: 0 25px;
+  font-size: calc(14px * var(--text-scale));
+  font-weight: 600;
+  color: #111827;
+  border-right: 1px solid #e2e8f0;
+}
+
+.ticker-item:last-child {
+  border-right: none;
+}
+
+.ticker-symbol {
+  color: #64748b;
+  margin-right: 5px;
+}
+
+.ticker-up {
+  color: #10b981;
+  margin-left: 5px;
+}
+
+.ticker-down {
+  color: #ef4444;
+  margin-left: 5px;
+}
+
+/* =========================
    Dashboard Elements
    ========================= */
 
@@ -684,11 +763,12 @@ select:focus {
 }
 
 /* =========================
-   Bank Simulator Results
+   Bank Leaderboard Styles
    ========================= */
+
 .simulator-result {
   background: #ecfdf5;
-  padding: 20px;
+  padding: 18px;
   border-radius: 10px;
   margin-top: 20px;
   border: 1px solid #d1fae5;
@@ -911,9 +991,14 @@ body.dark-mode .progress-container {
   background: #334155;
 }
 
-body.dark-mode .gig-item {
+body.dark-mode .gig-item,
+body.dark-mode .bank-row {
   background: #1e293b;
   border-color: #334155;
+}
+
+body.dark-mode .bank-rank-1 {
+  border-color: #10b981;
 }
 
 body.dark-mode .transaction-item {
@@ -932,6 +1017,25 @@ body.dark-mode .sim-bank-rate {
 
 body.dark-mode .sim-bank-header {
   border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Dark mode specific overrides for the ticker */
+body.dark-mode .ticker-wrap {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+body.dark-mode .ticker-wrap::before {
+  background: linear-gradient(to right, #1e293b, transparent);
+}
+
+body.dark-mode .ticker-wrap::after {
+  background: linear-gradient(to left, #1e293b, transparent);
+}
+
+body.dark-mode .ticker-item {
+  color: #f8fafc;
+  border-color: #334155;
 }
 
 /* =========================
