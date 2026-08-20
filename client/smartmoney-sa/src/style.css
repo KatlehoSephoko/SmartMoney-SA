@@ -961,6 +961,42 @@ body.text-large { --text-scale: 1.15; }
 body.text-xlarge { --text-scale: 1.35; }
 
 /* =========================
+   PWA Install Button Styles
+   ========================= */
+#install-app-btn {
+  display: none; /* Hidden by default until the browser says it's ready */
+  background: linear-gradient(135deg, #f59e0b, #b45309);
+  color: white;
+  padding: 8px 16px;
+  font-size: calc(13px * var(--text-scale));
+  font-weight: 700;
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-right: 15px; /* Spaces it away from the theme toggle */
+}
+
+#install-app-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(245, 158, 11, 0.4);
+}
+
+/* Adjust layout in mobile view to keep the top bar neat */
+@media (max-width: 768px) {
+  .top-controls {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  #install-app-btn {
+    margin-right: auto;
+    margin-left: 10px;
+  }
+}
+
+
+/* =========================
    Dark Mode Styles
    ========================= */
 body.dark-mode {
@@ -1131,3 +1167,4 @@ body.dark-mode .ticker-item {
   .a11y-fab { bottom: 15px; right: 15px; }
   .a11y-menu { bottom: 80px; right: 15px; width: calc(100% - 30px); }
 }
+
