@@ -18,7 +18,6 @@ const icons = {
 };
 
 // --- Real JSE Retail Stock Data (ZAR) ---
-// Curated specifically to show young people that investing is affordable.
 const jseStocks = [
   { symbol: 'PPH', name: 'Pepkor', price: 20.86, change: -0.19 },
   { symbol: 'PIK', name: 'Pick n Pay', price: 19.18, change: 0.37 },
@@ -31,7 +30,7 @@ const jseStocks = [
   { symbol: 'SHP', name: 'Shoprite', price: 304.34, change: -0.90 }
 ];
 
-// Generate Ticker HTML mathematically calculating Up/Down arrows
+// Generate Ticker HTML
 const tickerHtml = jseStocks.map(stock => {
   const isPositive = stock.change >= 0;
   const indicator = isPositive ? '▲' : '▼';
@@ -78,16 +77,32 @@ document.querySelector('#app').innerHTML = `
     <button id="enter-app-btn" class="enter-btn" style="transition: opacity 0.3s ease;">${icons.lock} Access Dashboard</button>
   </div>
 
-  <!-- Rewards Store Modal -->
+  <!-- Rewards Store Modal (No Cash Option) -->
   <div id="rewards-modal" class="modal-overlay" aria-hidden="true" role="dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h2>Corporate Partner Rewards</h2>
         <button id="close-modal-btn" class="secondary" aria-label="Close Modal" style="padding: 8px 16px; font-size: calc(14px * var(--text-scale));">Close</button>
       </div>
-      <p style="font-size: calc(13px * var(--text-scale)); color: #64748b; margin-top: 0; margin-bottom: 15px;">Redeem your points for retail vouchers. 1 Point = R0.25</p>
+      <p style="font-size: calc(13px * var(--text-scale)); color: #64748b; margin-top: 0; margin-bottom: 15px;">Redeem your points for exclusive travel and retail vouchers.</p>
       
       <div class="rewards-grid">
+        <div class="reward-item">
+          <div class="reward-info">
+            <h4>FlySafair Flight Voucher</h4>
+            <p>Value: R300 | Cost: 1200 pts</p>
+          </div>
+          <button class="secondary claim-store-btn" data-cost="1200" data-value="300" data-name="FlySafair Flight Voucher" style="width: auto;">Redeem</button>
+        </div>
+        
+        <div class="reward-item">
+          <div class="reward-info">
+            <h4>South African Airways (SAA)</h4>
+            <p>Value: 15% Off Domestic | Cost: 1000 pts</p>
+          </div>
+          <button class="secondary claim-store-btn" data-cost="1000" data-value="15% Off" data-name="SAA Domestic Discount" style="width: auto;">Redeem</button>
+        </div>
+
         <div class="reward-item">
           <div class="reward-info">
             <h4>TFG / Sportscene Voucher</h4>
@@ -110,14 +125,6 @@ document.querySelector('#app').innerHTML = `
             <p>Value: R50 | Cost: 200 pts</p>
           </div>
           <button class="secondary claim-store-btn" data-cost="200" data-value="50" data-name="Takealot Voucher" style="width: auto;">Redeem</button>
-        </div>
-
-        <div class="reward-item">
-          <div class="reward-info">
-            <h4>Direct Cash Deposit</h4>
-            <p>Convert all available points to ZAR</p>
-          </div>
-          <button class="claim-cash-btn" style="width: auto; background: #064e3b; color: white;">Cash Out</button>
         </div>
       </div>
     </div>
@@ -149,7 +156,7 @@ document.querySelector('#app').innerHTML = `
       </div>
       <div class="points-container">
         <div class="points" id="user-points" aria-live="polite">0 pts</div>
-        <div id="reward-value">Reward Value: R 0.00</div>
+        <div id="reward-value" style="font-size: calc(13px * var(--text-scale)); color: #a7f3d0; margin-top: 4px;">Spend points in the Rewards Store</div>
       </div>
       <button id="nav-open-rewards-btn" style="background: #10b981; color: white; margin-top: 10px;">${icons.gift} Open Rewards Store</button>
     </div>
@@ -280,6 +287,7 @@ document.querySelector('#app').innerHTML = `
         Compare actual market rates. Select a specific South African bank and account type to calculate your projected returns based on approximate 2026 benchmark rates.
       </p>
       
+      <!-- New Bank & Account Type Selection -->
       <div class="dashboard-grid" style="gap: 15px; margin-bottom: 15px;">
         <div class="form-group" style="margin-bottom: 0;">
           <label>Select SA Bank</label>
@@ -363,7 +371,6 @@ document.querySelector('#app').innerHTML = `
     <div class="ticker-wrap" aria-hidden="true">
       <div class="ticker">
         ${tickerHtml}
-        <!-- Duplicated to create a seamless infinite CSS loop -->
         ${tickerHtml}
       </div>
     </div>
@@ -447,7 +454,6 @@ const typeSelect = document.getElementById('transaction-type');
 const categorySelect = document.getElementById('transaction-category');
 const addBtn = document.getElementById('add-transaction-btn');
 const pointsDisplay = document.getElementById('user-points');
-const rewardDisplay = document.getElementById('reward-value');
 const levelDisplay = document.getElementById('user-level');
 const transactionList = document.getElementById('transaction-list');
 const emptyState = document.getElementById('empty-state');
@@ -458,7 +464,6 @@ const activeGoalsCount = document.getElementById('active-goals-count');
 const rewardsModal = document.getElementById('rewards-modal');
 const closeModalBtn = document.getElementById('close-modal-btn');
 const claimStoreBtns = document.querySelectorAll('.claim-store-btn');
-const claimCashBtn = document.querySelector('.claim-cash-btn');
 const navOpenRewardsBtn = document.getElementById('nav-open-rewards-btn');
 
 // --- Accessibility Toolkit Logic ---
@@ -526,7 +531,7 @@ a11yDyslexiaBtn.addEventListener('click', () => {
   document.body.classList.toggle('dyslexia-mode');
 });
 
-// Text-to-Speech Native API Integration (Toggle System)
+// Text-to-Speech
 a11ySpeechBtn.addEventListener('click', () => {
   if ('speechSynthesis' in window) {
     
@@ -783,7 +788,7 @@ closeModalBtn.addEventListener('click', () => {
 claimStoreBtns.forEach(btn => {
   btn.addEventListener('click', (e) => {
     const cost = parseInt(e.target.getAttribute('data-cost'));
-    const value = parseInt(e.target.getAttribute('data-value'));
+    const value = e.target.getAttribute('data-value');
     const name = e.target.getAttribute('data-name');
 
     if (points >= cost) {
@@ -798,7 +803,7 @@ claimStoreBtns.forEach(btn => {
       logTransaction(0, true, `Redeemed: ${name}`, `#1d4ed8`);
       
       triggerHaptic('success');
-      alert(`Success! Check your email for your R${value} ${name}. Remaining points: ${points}`);
+      alert(`Success! Check your email for your ${value} ${name}. Remaining points: ${points}`);
       renderGoals(); 
     } else {
       appAlert(`Insufficient Points. You need ${cost} points, but only have ${points}.`);
@@ -806,35 +811,8 @@ claimStoreBtns.forEach(btn => {
   });
 });
 
-claimCashBtn.addEventListener('click', () => {
-  const rewardCash = points * 0.25;
-  if (rewardCash > 0) {
-    currentBalance += rewardCash;
-    balanceDisplay.textContent = 'R ' + currentBalance.toLocaleString(undefined, {minimumFractionDigits: 2});
-    balanceDisplay.className = currentBalance >= 0 ? 'balance positive' : 'balance negative';
-    
-    goals.forEach(g => {
-      if (g.saved >= g.target) g.rewardClaimed = true;
-    });
-
-    logTransaction(rewardCash, true, 'Cash Reward Payout');
-    
-    points = 0;
-    updateHeaderPoints();
-    rewardsModal.classList.remove('active');
-    
-    triggerHaptic('success');
-    alert(`Success! R ${rewardCash.toLocaleString(undefined, {minimumFractionDigits: 2})} has been deposited into your balance.`);
-    renderGoals(); 
-  } else {
-    appAlert("You don't have any points to claim yet!");
-  }
-});
-
 function updateHeaderPoints() {
-  const rewardCash = points * 0.25;
   pointsDisplay.textContent = points.toLocaleString() + ' pts';
-  rewardDisplay.textContent = 'Reward Value: R ' + rewardCash.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   
   if (points >= 2000) {
     levelDisplay.textContent = "Platinum";
